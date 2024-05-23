@@ -23,11 +23,21 @@ export default defineNuxtConfig({
     images: fileURLToPath(new URL("./assets/images", import.meta.url)),
     styles: fileURLToPath(new URL("./assets/styles", import.meta.url)),
   },
+
+  csurf: {
+    https: false,
+    cookie: {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+    },
+    methodsToProtect: ["POST", "PUT", "PATCH"], // the request methods we want CSRF protection for
+    addCsrfTokenToEventCtx: true, // default false, to run useCsrfFetch on server set it to true
+  },
   modules: [
     [
       "@nuxtjs/google-fonts",
       {
-        // Add options for Google Fonts
         // https://google-fonts.nuxtjs.org/options
         families: {
           "Open+Sans": [300, 400, 600, 700],
@@ -37,42 +47,27 @@ export default defineNuxtConfig({
     [
       "@nuxt/image",
       {
-        // add nuxt-image config here
-        // https://v1.image.nuxtjs.org/configuration
         dir: "assets/images/",
       },
     ],
-    [
-      "@vueuse/nuxt",
-      {
-        // No options, but see the section Caveats for further info
-        // https://www.npmjs.com/package/@vueuse/nuxt}
-      },
-    ],
-    [
-      "@nuxtjs/color-mode",
-      {
-        // Control the site color Mode
-        // https://color-mode.nuxtjs.org/
-      },
-    ],
-    [
-      "nuxt-icon",
-      {
-        // Add custom options for NuxtIcon
-        // https://github.com/nuxt-modules/icon
-      },
-    ],
-    [
-      "@morev/vue-transitions/nuxt",
-      {
-        // Add custom options for vueTransitions
-        // https://github.com/MorevM/vue-transitions#usage-with-nuxt
-      },
-    ],
+    "nuxt-csurf",
     "@pinia/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
     "@nuxtjs/tailwindcss",
     "shadcn-nuxt",
     "@nuxt/eslint",
+    "@vueuse/nuxt",
+    "nuxt-icon",
+    "@nuxtjs/color-mode",
+    "@morev/vue-transitions/nuxt",
+    // 時間處理
+    // https://nuxt.com/modules/dayjs
+    "dayjs-nuxt",
+    // RWD
+    // https://nuxt.com/modules/nuxt-viewport
+    "nuxt-viewport",
+    // Supabase
+    // https://supabase.nuxtjs.org/get-started
+    "@nuxtjs/supabase",
   ],
 });
