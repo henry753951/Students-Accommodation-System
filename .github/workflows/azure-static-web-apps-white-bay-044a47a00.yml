@@ -48,7 +48,7 @@ jobs:
       - name: "Move staticwebapp.config.json"
         run: "mv staticwebapp.config.json .output/public/staticwebapp.config.json"
       - name: "Copy assets to _ipx (AZURE STATIC WEB APPS BUG)"
-        run: "cp assets/images .output/public/_ipx -r"
+        run: "cp assets/images .output/public/_ipx/_ -r"
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
