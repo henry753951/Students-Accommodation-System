@@ -47,8 +47,8 @@ jobs:
         run: "pnpm run build --preset=azure"
       - name: "Move staticwebapp.config.json"
         run: "mv staticwebapp.config.json .output/public/staticwebapp.config.json"
-      - name: "Move assets"
-        run: "mv assets .output/public/_ipx"
+      - name: "Copy assets to _ipx (AZURE STATIC WEB APPS BUG)"
+        run: "cp assets .output/public/_ipx -r"
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
