@@ -19,11 +19,9 @@ export default defineNuxtConfig({
   components: {
     dirs: ["~/components"],
   },
-  alias: {
-    images: fileURLToPath(new URL("./assets/images", import.meta.url)),
-    styles: fileURLToPath(new URL("./assets/styles", import.meta.url)),
+  supabase: {
+    redirect: false,
   },
-
   csurf: {
     https: false,
     cookie: {
@@ -60,14 +58,15 @@ export default defineNuxtConfig({
     "nuxt-icon",
     "@nuxtjs/color-mode",
     "@morev/vue-transitions/nuxt",
-    // 時間處理
-    // https://nuxt.com/modules/dayjs
-    "dayjs-nuxt",
     // RWD
     // https://nuxt.com/modules/nuxt-viewport
     "nuxt-viewport",
     // Supabase
     // https://supabase.nuxtjs.org/get-started
     "@nuxtjs/supabase",
+    "vue-view-transitions/nuxt",
   ],
+  experimental: {
+    viewTransition: true,
+  },
 });
