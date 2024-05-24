@@ -14,4 +14,8 @@ export default [
     path: "/auth/login/*",
     role: ["unauthenticated"],
   },
+  {
+    name: "changePassword",
+    path: "/auth/changePassword",
+  },
 ];

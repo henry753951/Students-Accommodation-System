@@ -16,7 +16,7 @@ const props = defineProps<{
   <div class="flex gap-3 items-center">
     <hr :class="cn(dividerVariants(), props.class)">
     <span
-      class="text-nowrap"
+      class="text-nowrap whitespace-nowrap"
       :class="textClass"
     >{{ props.text }}</span>
     <hr :class="cn(dividerVariants(), props.class)">

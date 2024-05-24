@@ -77,6 +77,7 @@ export default defineNuxtConfig({
     // https://supabase.nuxtjs.org/get-started
     "@nuxtjs/supabase",
     "vue-view-transitions/nuxt",
+    '@vee-validate/nuxt',
   ],
   experimental: {
     viewTransition: true,

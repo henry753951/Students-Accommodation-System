@@ -1,10 +1,17 @@
 <template>
-  <div />
+  <div>
+    <div class="flex items-center justify-center h-[100vh]">
+      <div class="flex flex-col items-center space-y-4">
+        <div>登出中...</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { useToast } from "@/components/ui/toast/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { set } from "@vueuse/core";
 
 const { toast } = useToast();
 const supabase = useSupabaseClient();
@@ -13,7 +20,9 @@ const supabase = useSupabaseClient();
 onMounted(async () => {
   const { error } = await supabase.auth.signOut();
   if (!error) {
-    window.location.href = "/";
+    setTimeout(() => {
+      navigateTo("/");
+    }, 1000);
   } else {
     console.error(error);
     toast({
@@ -33,6 +42,9 @@ onMounted(async () => {
         },
       ),
     });
+    setTimeout(() => {
+      navigateTo("/");
+    }, 3000);
   }
 });
 </script>
