@@ -35,6 +35,15 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: "",
   },
+  nitro: {
+    azure: {
+      config: {
+        platform: {
+          apiRuntime: 'node:18'
+        }
+      }
+    }
+  },
   modules: [
     [
       "@nuxtjs/google-fonts",
