@@ -12,7 +12,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     // 若是沒有設定 role 就是有登入就放行
     if(!route.role){
-      if (user) {
+      if (user) { 
         return true;
       }
       return false;

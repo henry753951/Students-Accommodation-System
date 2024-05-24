@@ -92,7 +92,7 @@ const form = useForm({
 // [Methods]
 const resetPassword = form.handleSubmit(async (values) => {
   const { data, error } = await supabase.auth.resetPasswordForEmail(values.email, {
-    redirectTo: window.location.protocol + "//" + window.location.host + "/auth/ForgetPasswordPanel",
+    redirectTo: window.location.protocol + "//" + window.location.host + "/auth/changePassword",
   });
   if (error) {
     console.error(error);
