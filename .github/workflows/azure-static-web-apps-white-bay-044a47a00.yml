@@ -48,7 +48,7 @@ jobs:
       - name: "Move staticwebapp.config.json"
         run: "mv staticwebapp.config.json .output/public/staticwebapp.config.json"
       - name: "Move assets"
-        run: "mv assets .output/server/assets"
+        run: "mv assets .output/public/_ipx"
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
