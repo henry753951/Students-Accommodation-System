@@ -47,6 +47,8 @@ jobs:
         run: "pnpm run build --preset=azure"
       - name: "Move staticwebapp.config.json"
         run: "mv staticwebapp.config.json .output/public/staticwebapp.config.json"
+      - name: "Make _ipx folder"
+        run: "mkdir .output/public/_ipx"
       - name: "Copy assets to _ipx (AZURE STATIC WEB APPS BUG)"
         run: "cp assets/images .output/public/_ipx/_ -r"
       - name: Build And Deploy
