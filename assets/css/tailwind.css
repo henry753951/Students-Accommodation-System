@@ -78,7 +78,8 @@
   button {
     user-select: none;
   }
-  @view-transition {
-    navigation: auto;
+  * {
+    transition:
+      background-color 0.4s,
   }
 }

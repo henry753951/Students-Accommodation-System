@@ -32,6 +32,9 @@ export default defineNuxtConfig({
     methodsToProtect: ["POST", "PUT", "PATCH"], // the request methods we want CSRF protection for
     addCsrfTokenToEventCtx: true, // default false, to run useCsrfFetch on server set it to true
   },
+  colorMode: {
+    classSuffix: "",
+  },
   modules: [
     [
       "@nuxtjs/google-fonts",

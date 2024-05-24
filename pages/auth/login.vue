@@ -1,6 +1,6 @@
 <template>
-  <div class="flex justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
-    <div class="flex max-w-4xl w-full mx-auto my-auto bg-white md:rounded-xl shadow-lg md:min-h-fit min-h-screen">
+  <div class="flex justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="flex max-w-4xl w-full mx-auto my-auto bg-white dark:bg-black md:rounded-2xl shadow-lg md:min-h-fit min-h-screen">
       <div class="p-12 w-full md:w-1/2 mb-[70px]">
         <Button
           variant="ghost"
@@ -59,7 +59,7 @@
               type="email"
             />
             <Button
-              class="w-full"
+              class="w-full dark:bg-gray-800 dark:text-white"
               @click="AuthMethods.loginWithEmail"
             >
               使用 Email 登入
@@ -108,10 +108,10 @@
           </p>
         </div>
       </div>
-      <div class="hidden md:block md:w-1/2 bg-blue-50">
+      <div class="hidden md:block md:w-1/2 rounded-r-2xl bg-current overflow-hidden">
         <NuxtImg
           alt="illustration"
-          class="object-cover h-full w-full rounded-r-lg"
+          class="object-cover h-full w-full rounded-r-2xl"
           :style="{ objectFit: 'cover' }"
           src="House.png"
         />
