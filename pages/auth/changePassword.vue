@@ -102,6 +102,7 @@ const changePassword = form.handleSubmit(async (values) => {
     toast({
       title: "密碼已更新",
     });
+    navigateTo("/");
   }
 });
 

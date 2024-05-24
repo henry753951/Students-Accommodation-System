@@ -42,6 +42,7 @@ onMounted(async () => {
         },
       ),
     });
+    localStorage.removeItem(`sb-cxbuvmlyimilvflpwslv-auth-token`);
     setTimeout(() => {
       navigateTo("/");
     }, 3000);
