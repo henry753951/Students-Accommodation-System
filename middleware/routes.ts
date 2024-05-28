@@ -18,4 +18,8 @@ export default [
     name: "changePassword",
     path: "/auth/changePassword",
   },
+  {
+    name: "account",
+    path: "/account/*",
+  },
 ];

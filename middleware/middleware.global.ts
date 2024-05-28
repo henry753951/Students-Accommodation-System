@@ -2,7 +2,12 @@ import routes from "./routes";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const route = routes.find((route) => {
-    const regex = new RegExp(`^${route.path.replace(/\//g, "\\/").replace(/:\w+/g, "[^/]+")}$`);
+    const regex = new RegExp(
+      `^${route.path
+        .replace(/\//g, "\\/") // Escape forward slashes
+        .replace(/:\w+/g, "[^/]+") // Replace route parameters with regex pattern
+        .replace(/\*/g, ".*")}$`,
+    ); // Replace wildcard with regex pattern to match any sequence
     return regex.test(to.path);
   });
   // Check is route is protected
@@ -11,8 +16,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const user = useSupabaseUser().value;
 
     // 若是沒有設定 role 就是有登入就放行
-    if(!route.role){
-      if (user) { 
+    if (!route.role) {
+      if (user) {
         return true;
       }
       return false;

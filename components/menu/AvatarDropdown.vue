@@ -1,9 +1,7 @@
 <template>
   <DropdownMenu v-if="user">
     <DropdownMenuTrigger class="h-[40px]">
-      <Avatar
-        class="bg-slate-200"
-      >
+      <Avatar class="bg-slate-200">
         <AvatarImage
           :src="user?.user_metadata.avatar_url"
           alt="@radix-vue"
@@ -19,6 +17,13 @@
         />
         <span>{{ user?.user_metadata.full_name }}</span>
       </DropdownMenuLabel>
+      <DropdownMenuItem @click="navigateTo('/account/profile')">
+        <Icon
+          name="tabler:settings"
+          class="mr-1"
+        />
+        <span>個人資料編輯</span>
+      </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="navigateTo('/auth/logout')">
         <Icon

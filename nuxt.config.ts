@@ -1,10 +1,8 @@
 import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
+  ssr: false,
   shadcn: {
-    /**
-     * Prefix for all the imported component
-     */
     prefix: "",
   },
   devtools: true,
@@ -22,16 +20,6 @@ export default defineNuxtConfig({
   supabase: {
     redirect: false,
   },
-  csurf: {
-    https: false,
-    cookie: {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-    },
-    methodsToProtect: ["POST", "PUT", "PATCH"], // the request methods we want CSRF protection for
-    addCsrfTokenToEventCtx: true, // default false, to run useCsrfFetch on server set it to true
-  },
   colorMode: {
     classSuffix: "",
   },
@@ -39,10 +27,24 @@ export default defineNuxtConfig({
     azure: {
       config: {
         platform: {
-          apiRuntime: 'node:18'
-        }
-      }
-    }
+          apiRuntime: "node:18",
+        },
+      },
+    },
+  },
+  routeRules: {
+    "/api/*": {
+      csurf: {
+        https: false,
+        cookie: {
+          path: "/",
+          httpOnly: true,
+          sameSite: "strict",
+        },
+        methodsToProtect: ["POST", "PUT", "PATCH", "GET"],
+        addCsrfTokenToEventCtx: true,
+      },
+    },
   },
   modules: [
     [
@@ -77,7 +79,7 @@ export default defineNuxtConfig({
     // https://supabase.nuxtjs.org/get-started
     "@nuxtjs/supabase",
     "vue-view-transitions/nuxt",
-    '@vee-validate/nuxt',
+    "@vee-validate/nuxt",
   ],
   experimental: {
     viewTransition: true,

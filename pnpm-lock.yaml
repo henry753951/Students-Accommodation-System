@@ -35,6 +35,9 @@ dependencies:
   '@vee-validate/nuxt':
     specifier: ^4.12.8
     version: 4.12.8(vue@3.4.27)
+  '@vee-validate/yup':
+    specifier: ^4.12.8
+    version: 4.12.8(vue@3.4.27)
   '@vee-validate/zod':
     specifier: ^4.12.8
     version: 4.12.8(vue@3.4.27)
@@ -50,6 +53,9 @@ dependencies:
   clsx:
     specifier: ^2.1.1
     version: 2.1.1
+  jose:
+    specifier: ^5.3.0
+    version: 5.3.0
   lucide-vue-next:
     specifier: ^0.379.0
     version: 0.379.0(vue@3.4.27)
@@ -2947,6 +2953,16 @@ packages:
       - vue
     dev: false
 
+  /@vee-validate/yup@4.12.8(vue@3.4.27):
+    resolution: {integrity: sha512-0QNR2kcllSXoV4mtoY/XhMda87LDpuS2lq6vbVU94tn11tGHkwaGYPAaOqclc5zrkhRl3fANtc31NxnMYoejOA==}
+    dependencies:
+      type-fest: 4.18.2
+      vee-validate: 4.12.8(vue@3.4.27)
+      yup: 1.4.0
+    transitivePeerDependencies:
+      - vue
+    dev: false
+
   /@vee-validate/zod@4.12.8(vue@3.4.27):
     resolution: {integrity: sha512-P+G8grCc5iN7FMfvLzVWoGKxamBd0EYgN/hXBmzgbJV7B7FGnQADlUIsqt4jM+oGacbFW12B56zSORaVy3Owqg==}
     dependencies:
@@ -5806,6 +5822,10 @@ packages:
   /jiti@1.21.0:
     resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
     hasBin: true
+
+  /jose@5.3.0:
+    resolution: {integrity: sha512-IChe9AtAE79ru084ow8jzkN2lNrG3Ntfiv65Cvj9uOCE2m5LNsdHG+9EbxWxAoWRF9TgDOqLN5jm08++owDVRg==}
+    dev: false
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}

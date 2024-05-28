@@ -4,6 +4,7 @@
     <div class="inline-block w-full">
       <MenuTop class="p-2 sticky top-0" />
       <div class="p-4">
+        Default Account Layout
         <slot />
       </div>
     </div>
@@ -12,6 +13,4 @@
 
 <script lang="ts" setup></script>
 
-<style scoped>
-
-</style>
+<style></style>
