@@ -6,7 +6,7 @@ const route = useRoute();
 const router = useRouter();
 const user = useSupabaseUser();
 const { $csrfFetch } = useNuxtApp();
-const { data: test } = await useAPI("/test", {
+const { data: test } = await useAPI("/test", { // /api/test
   default: () => {
     return [];
   },
@@ -15,7 +15,9 @@ const { data: test } = await useAPI("/test", {
 
 <template>
   <div>
-    <div v-if="!user">
+    <div 
+      v-if="!user"
+    >
       <Button @click="navigateTo('auth/login')">
         Login
       </Button>
@@ -32,3 +34,5 @@ const { data: test } = await useAPI("/test", {
     </div>
   </div>
 </template>
+
+

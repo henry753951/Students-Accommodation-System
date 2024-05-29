@@ -17,6 +17,7 @@ export async function useAuth(event: any, roles: string[] = []) {
     const verify = await jose.jwtVerify(token, secret, {
       audience: "authenticated",
     });
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload = verify.payload as any;
     if (!payload) {
