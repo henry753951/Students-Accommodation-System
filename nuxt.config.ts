@@ -31,20 +31,24 @@ export default defineNuxtConfig({
         },
       },
     },
+    experimental: {
+      openAPI: true,
+    },
+
   },
   routeRules: {
-    "/api/*": {
-      csurf: {
-        https: false,
-        cookie: {
-          path: "/",
-          httpOnly: true,
-          sameSite: "strict",
-        },
-        methodsToProtect: ["POST", "PUT", "PATCH", "GET"],
-        addCsrfTokenToEventCtx: true,
-      },
-    },
+    // "/api/*": {
+    //   csurf: {
+    //     https: false,
+    //     cookie: {
+    //       path: "/",
+    //       httpOnly: true,
+    //       sameSite: "strict",
+    //     },
+        // methodsToProtect: ["POST", "PUT", "PATCH", "GET"],
+        // addCsrfTokenToEventCtx: true,
+    //   },
+    // },
   },
   modules: [
     [
