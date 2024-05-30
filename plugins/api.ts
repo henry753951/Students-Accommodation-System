@@ -1,8 +1,5 @@
 export default defineNuxtPlugin(async () => {
-  const baseURL = process.env.BASE_URL || "http://localhost:3000/api";
-
   const api = $fetch.create({
-    baseURL: baseURL,
     async onRequest({ request, options, error }) {
       const { csrf } = useCsrf();
       const supabase = useSupabaseClient();
