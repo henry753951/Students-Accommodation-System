@@ -34,5 +34,11 @@ const { data: test } = await useAPI("/api/test", {
       <h1>From Server :</h1>
       {{ test }}
     </div>
+    <!--  -->
+    <div>
+      <Button @click="navigateTo('test_student_rental')">
+        要先確認身分組 Student 新增租屋點
+      </Button>
+    </div>
   </div>
 </template>
