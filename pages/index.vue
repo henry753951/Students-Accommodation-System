@@ -40,5 +40,17 @@ const { data: test } = await useAPI("/api/test", {
         要先確認身分組 Student 新增租屋點
       </Button>
     </div>
+    <div class="現在這邊放連結方便快速過去 flex flex-row">
+      <NuxtLink to="/addRental" class="" >
+        <Button>
+          Add Rental page
+        </Button>
+      </NuxtLink>
+      <NuxtLink to="/test_student_rental" class="ml-4">
+        <Button>
+          test_student_rental page
+        </Button>
+      </NuxtLink>
+    </div>
   </div>
 </template>
