@@ -65,8 +65,7 @@ const propertyAttributesSex = ref('無');
 const propertyAttributesSubsidy = ref(false);
 
 const data_for_view = ref<Tables<"rental_property">[]>([]);
-
-const SubmitToRentalprop = async (time:string): Promise<string> => {
+const SubmitToRentalprop = async (time:string) => {
   console.log("BINHAN SO BIG");
   const { data, error } = await supabase
     .from("rental_property")
@@ -88,6 +87,8 @@ const SubmitToRentalprop = async (time:string): Promise<string> => {
   }
   return data[0]['id'];
 };
+
+
 
 const SubmitToRentalinfo = async (rental_id:string,time:string) => {
   console.log("BINHAN SO SMALL");

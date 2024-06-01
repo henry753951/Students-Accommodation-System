@@ -69,25 +69,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import type { Student } from "~/types";
 definePageMeta({
   name: "學生分配",
 });
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
-const All_Student = ref<Array<{
-    user_id: string;
-    department_id: string|null;
-    student_number: string|null;
-    isChecked: boolean;}>>([]);
+const All_Student = ref<Array<Student>>([]);
 
 onMounted(() => {
   ListAllStudent();
 });
-
 const ListAllStudent = async () => {
   const { data, error } = await supabase
     .from("student")
-    .select("*");
+    .select("user_id, department_id, student_number, app_user(*)".eq(
+      "app_user_id",
+      null
+    ));
   if (error) {
     toast.toast({
       title: "Error",

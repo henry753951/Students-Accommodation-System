@@ -9,13 +9,13 @@
       <div class="flex flex-col p-4 space-y-2">
         <nuxt-link
           to="/management/user"
-          class="p-2 bg-white rounded hover:bg-gray-200"
+          class="p-2 bg-white rounded hover:bg-gray-200 dark:bg-black dark:text-white"
         >
           使用者管理
         </nuxt-link>
         <nuxt-link
           to="/management/department"
-          class="p-2 bg-white rounded hover:bg-gray-200"
+          class="p-2 bg-white rounded hover:bg-gray-200 dark:bg-black dark:text-white"
         >
           系所管理
         </nuxt-link>

@@ -1,54 +1,101 @@
 <template>
-  <form @submit="onSubmit" class="space-y-6 border-2 border-black p-4 w-1/2">
-    <FormField v-slot="{ componentField }" name="price">
+  <form
+    class="space-y-6 border-2 border-black p-4 w-1/2"
+    @submit="onSubmit"
+  >
+    <FormField
+      v-slot="{ componentField }"
+      name="price"
+    >
       <FormItem>
         <FormLabel>Price</FormLabel>
         <FormControl>
-          <Input type="number" placeholder="Enter the price" v-bind="componentField" v-model="price" />
+          <Input
+            v-bind="componentField"
+            v-model="price"
+            type="number"
+            placeholder="Enter the price"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="description">
+    <FormField
+      v-slot="{ componentField }"
+      name="description"
+    >
       <FormItem>
         <FormLabel>Description</FormLabel>
         <FormControl>
-          <Textarea placeholder="Enter the description" v-bind="componentField" v-model="description"/>
+          <Textarea
+            v-bind="componentField"
+            v-model="description"
+            placeholder="Enter the description"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="is_public">
+    <FormField
+      v-slot="{ componentField }"
+      name="is_public"
+    >
       <FormItem>
         <FormLabel>Is Public</FormLabel>
         <FormControl>
-          <Button type="submit" class="ml-4" v-model="isPublic">確認是否已刊登?</Button>
+          <Button
+            v-model="isPublic"
+            type="submit"
+            class="ml-4"
+          >
+            確認是否已刊登?
+          </Button>
         </FormControl>
         <FormMessage />
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="property_attributes.type">
+    <FormField
+      v-slot="{ componentField }"
+      name="property_attributes.type"
+    >
       <FormItem>
         <FormLabel>Property Attributes(這邊應該是能否租屋補貼/限男女....)</FormLabel>
         <FormControl>
           <div class="flex flex-wrap gap-4">
             <!-- 第一個 Select -->
-            <Select v-bind="componentField" v-model="propertyAttributesType">
+            <Select
+              v-bind="componentField"
+              v-model="propertyAttributesType"
+            >
               <SelectTrigger class="w-[180px]">
                 <SelectValue placeholder="選擇屋種" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel class="text-red-500">房型</SelectLabel>
-                  <SelectItem value="透天">透天</SelectItem>
-                  <SelectItem value="公寓">公寓</SelectItem>
-                  <SelectItem value="大樓">大樓</SelectItem>
-                  <SelectItem value="雅房">雅房</SelectItem>
-                  <SelectItem value="套房">套房</SelectItem>
-                  <SelectItem value="其他房型">其他房型</SelectItem>
+                  <SelectLabel class="text-red-500">
+                    房型
+                  </SelectLabel>
+                  <SelectItem value="透天">
+                    透天
+                  </SelectItem>
+                  <SelectItem value="公寓">
+                    公寓
+                  </SelectItem>
+                  <SelectItem value="大樓">
+                    大樓
+                  </SelectItem>
+                  <SelectItem value="雅房">
+                    雅房
+                  </SelectItem>
+                  <SelectItem value="套房">
+                    套房
+                  </SelectItem>
+                  <SelectItem value="其他房型">
+                    其他房型
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -60,28 +107,41 @@
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel class="text-red-500">性別</SelectLabel>
-                  <SelectItem value="男">男</SelectItem>
-                  <SelectItem value="女">女</SelectItem>
-                  <SelectItem value="多元">多元</SelectItem>
-                  <SelectItem value="無">無</SelectItem>
+                  <SelectLabel class="text-red-500">
+                    性別
+                  </SelectLabel>
+                  <SelectItem value="男">
+                    男
+                  </SelectItem>
+                  <SelectItem value="女">
+                    女
+                  </SelectItem>
+                  <SelectItem value="多元">
+                    多元
+                  </SelectItem>
+                  <SelectItem value="無">
+                    無
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
 
             <!-- Checkbox -->
             <div class="flex items-center space-x-2">
-              <Checkbox id="checkbox" v-model:checked="propertyAttributesSubsidy" />
+              <Checkbox
+                id="checkbox"
+                v-model:checked="propertyAttributesSubsidy"
+              />
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger as-child>
                     <label
                       for="terms"
                       class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       是否能租屋補貼?
                     </label>
-                    <p>{{propertyAttributesSubsidy}}</p>
+                    <p>{{ propertyAttributesSubsidy }}</p>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>更多資訊：可以租屋補貼會讓刊登廣告推廣更好。</p>
@@ -90,7 +150,6 @@
               </TooltipProvider>
             </div>
             <!-- Checkbox -->
-
           </div>
         </FormControl>
         <FormMessage />
