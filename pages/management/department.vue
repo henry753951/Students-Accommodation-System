@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col gap-5 container">
+    <!-- 功能列 -->
     <Menubar>
       <MenubarMenu>
         <MenubarTrigger>操作</MenubarTrigger>
@@ -13,10 +14,12 @@
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
+    <!-- 表格 -->
     <div class="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
+            <!-- 全選功能 -->
             <TableHead>
               <Checkbox
                 :checked="isAllSelected"
@@ -59,6 +62,8 @@
         </TableBody>
       </Table>
     </div>
+
+    <!-- Dialog -->
     <Dialog v-model:open="isAddDialogOpen">
       <DialogContent>
         <DialogHeader>
