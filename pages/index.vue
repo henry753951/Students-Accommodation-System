@@ -40,6 +40,11 @@ const { data: test } = await useAPI("/api/test", {
         要先確認身分組 Student 新增租屋點
       </Button>
     </div>
+    <div>
+      <Button @click="navigateTo('map_teacher_student')">
+        教授使用 map 學生 
+      </Button>
+    </div>
     <div class="現在這邊放連結方便快速過去 flex flex-row">
       <NuxtLink to="/addRental" class="" >
         <Button>
