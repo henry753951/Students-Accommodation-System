@@ -1,5 +1,4 @@
 <template>
-
     <div class="w-11/12 mx-auto mt-6 table-container rounded-lg shadow-lg">
         <Table>
             <!-- <TableCaption>A list of your Student List.</TableCaption> -->
@@ -46,11 +45,10 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-
+const user = useSupabaseUser();
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 let All_Student = ref([{ "user_id": 0, "department_id": 0, "student_number": 0, "isChecked": false }]);
-
 onMounted(() => {
     ListAllStudent();
 });
