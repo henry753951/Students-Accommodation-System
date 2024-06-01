@@ -1,34 +1,58 @@
 <template>
-    <div class="w-11/12 mx-auto mt-6 table-container rounded-lg shadow-lg">
-        <Table>
-            <!-- <TableCaption>A list of your Student List.</TableCaption> -->
-            <TableHeader>
-                <TableRow class="flex flex-row items-center bg-slate-100 hover:bg-slate-100 rounded-t-lg">
-                    <TableHead class="basis-4/12">User ID</TableHead>
-                    <TableHead class="basis-3/12">Department ID</TableHead>
-                    <TableHead class="basis-2/12">Student Number</TableHead>
-                    <TableHead class="basis-2/12">Check Add</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                <TableRow v-for="(data, index) in All_Student" :key="index" class="flex items-center r ounded">
-                    <TableCell class="basis-4/12">{{ data.user_id }}</TableCell>
-                    <TableCell class="basis-3/12">{{ data.department_id }}</TableCell>
-                    <TableCell class="basis-2/12">{{ data.student_number }}</TableCell>
-                    <Checkbox :id="'terms-' + index" class="ml-4" v-model:checked="data.isChecked" />
-                    <label :for="'terms-' + index"
-                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pl-3">
-                        {{ data.isChecked ? "Teacher_id" : '未被分發' }}
-                    </label>
-                </TableRow>
-            </TableBody>
-        </Table>
-        <div class="flex justify-end mt-0 bg-transparent">
-            <Button @click="handleSubmit()">Submit</Button>
-        </div>
-        {{ All_Student[0].isChecked }}
+  <div class="w-11/12 mx-auto mt-6 table-container rounded-lg shadow-lg">
+    <Table>
+      <!-- <TableCaption>A list of your Student List.</TableCaption> -->
+      <TableHeader>
+        <TableRow class=" bg-slate-100 hover:bg-slate-100 rounded-t-lg">
+          <TableHead>
+            User ID
+          </TableHead>
+          <TableHead>
+            Department ID
+          </TableHead>
+          <TableHead>
+            Student Number
+          </TableHead>
+          <TableHead>
+            Check Add
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow
+          v-for="(data, index) in All_Student"
+          :key="index"
+        >
+          <TableCell class="">
+            {{ data.user_id }}
+          </TableCell>
+          <TableCell class="">
+            {{ data.department_id }}
+          </TableCell>
+          <TableCell class="">
+            {{ data.student_number }}
+          </TableCell>
+          <Checkbox
+            :id="'terms-' + index"
+            v-model:checked="data.isChecked"
+            class="ml-4"
+          />
+          <label
+            :for="'terms-' + index"
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pl-3"
+          >
+            {{ data.isChecked ? "Teacher_id" : '未被分發' }}
+          </label>
+        </TableRow>
+      </TableBody>
+    </Table>
+    <div class="flex justify-end mt-0 bg-transparent">
+      <Button @click="handleSubmit()">
+        Submit
+      </Button>
     </div>
-
+    {{ All_Student[0] }}
+  </div>
 </template>
 <script setup lang="ts">
 import type { Database, Tables, Enums } from "~/database.types";
@@ -58,10 +82,7 @@ onMounted(() => {
 const ListAllStudent = async () => {
   const { data, error } = await supabase
     .from("student")
-    .select("user_id, department_id, student_number, app_user(*)".eq(
-      "app_user_id",
-      null
-    ));
+    .select("user_id, department_id, student_number") ;
   if (error) {
     toast.toast({
       title: "Error",

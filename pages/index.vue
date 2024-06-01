@@ -12,10 +12,9 @@ const { data: test } = await useAPI("/api/test", {
   },
 });
 </script>
-
 <template>
   <!-- {{ user }} -->
-  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-10">
+  <div class="min-h-screen flex flex-col items-center justify-center p-10">
     <div class="w-full max-w-4xl bg-white rounded-lg shadow-md p-6 space-y-6">
       <div class="flex justify-between items-center">
         <div v-if="!user">
@@ -36,7 +35,6 @@ const { data: test } = await useAPI("/api/test", {
           <Button>Go to Swagger</Button>
         </a>
       </div>
-
       <div class="bg-gray-50 rounded-lg p-4 border-2 border-black">
         <h1 class="text-xl font-semibold text-gray-800 mb-4">
           From Server message:
@@ -45,7 +43,6 @@ const { data: test } = await useAPI("/api/test", {
           {{ test }}
         </div>
       </div>
-
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Button
           class="w-full"
@@ -57,10 +54,9 @@ const { data: test } = await useAPI("/api/test", {
           class="w-full"
           @click="navigateTo('map_teacher_student')"
         >
-          教授使用 map 學生 
+          教授使用 map 學生
         </Button>
       </div>
-
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <NuxtLink
           to="/addRental"

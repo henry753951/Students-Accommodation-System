@@ -40,6 +40,9 @@
 </template>
 <script lang="ts" setup>
 import { startViewTransition } from "vue-view-transitions";
+definePageMeta({
+  layout: "nothing",
+});
 // [Refs]
 const page = ref("login_root");
 
