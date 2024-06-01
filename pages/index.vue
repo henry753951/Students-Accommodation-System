@@ -7,7 +7,6 @@ const router = useRouter();
 const user = useSupabaseUser();
 const { $csrfFetch } = useNuxtApp();
 const { data: test } = await useAPI("/api/test", {
-  // /api/test
   default: () => {
     return [];
   },
@@ -15,47 +14,51 @@ const { data: test } = await useAPI("/api/test", {
 </script>
 
 <template>
-  <div class="flex gap-5">
-    <div v-if="!user">
-      <Button @click="navigateTo('auth/login')">
-        Login
-      </Button>
-    </div>
-    <div v-else>
-      {{ user.user_metadata.full_name }}
-      <Button @click="navigateTo('auth/logout')">
-        Logout
-      </Button>
-    </div>
-    <a href="/_nitro/openapi.json">
-      <Button> Go to Swagger </Button>
-    </a>
-    <div>
-      <h1>From Server :</h1>
-      {{ test }}
-    </div>
-    <!--  -->
-    <div>
-      <Button @click="navigateTo('test_student_rental')">
-        要先確認身分組 Student 新增租屋點
-      </Button>
-    </div>
-    <div>
-      <Button @click="navigateTo('map_teacher_student')">
-        教授使用 map 學生 
-      </Button>
-    </div>
-    <div class="現在這邊放連結方便快速過去 flex flex-row">
-      <NuxtLink to="/addRental" class="" >
-        <Button>
-          Add Rental page
+  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-10">
+    <div class="w-full max-w-4xl bg-white rounded-lg shadow-md p-6 space-y-6">
+      <div class="flex justify-between items-center">
+        <div v-if="!user">
+          <Button @click="navigateTo('auth/login')">
+            Login
+          </Button>
+        </div>
+        <div v-else class="flex items-center space-x-4">
+          <span class="text-gray-700 font-semibold">{{ user.user_metadata.full_name }}</span>
+          <Button @click="navigateTo('auth/logout')">
+            Logout
+          </Button>
+        </div>
+        <a href="/_nitro/openapi.json">
+          <Button>Go to Swagger</Button>
+        </a>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg p-4 border-2 border-black">
+        <h1 class="text-xl font-semibold text-gray-800 mb-4">From Server message:</h1>
+        <div class="text-gray-700">{{ test }}</div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Button @click="navigateTo('test_student_rental')" class="w-full">
+          要先確認身分組 Student 新增租屋點
         </Button>
-      </NuxtLink>
-      <NuxtLink to="/test_student_rental" class="ml-4">
-        <Button>
-          test_student_rental page
+        <Button @click="navigateTo('map_teacher_student')" class="w-full">
+          教授使用 map 學生 
         </Button>
-      </NuxtLink>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <NuxtLink to="/addRental" class="w-full sm:w-auto">
+          <Button class="w-full">
+            Add Rental page
+          </Button>
+        </NuxtLink>
+        <NuxtLink to="/test_student_rental" class="w-full sm:w-auto">
+          <Button class="w-full">
+            test_student_rental page
+          </Button>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
