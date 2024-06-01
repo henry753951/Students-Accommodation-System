@@ -14,7 +14,7 @@ const { data: test } = await useAPI("/api/test", {
 </script>
 <template>
   <!-- {{ user }} -->
-  <div class="min-h-screen flex flex-col items-center justify-center p-10">
+  <div class="flex flex-col items-center justify-center p-10">
     <div class="w-full max-w-4xl bg-white rounded-lg shadow-md p-6 space-y-6">
       <div class="flex justify-between items-center">
         <div v-if="!user">

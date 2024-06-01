@@ -1,11 +1,243 @@
 <template>
-  <div />
+  <div class="flex flex-col gap-5 container">
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>操作</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem @click="OpenAddDepartmentDialog">
+            新增
+          </MenubarItem>
+          <MenubarItem @click="deleteSelected">
+            刪除所選
+          </MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+    <div class="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>
+              <Checkbox
+                :checked="isAllSelected"
+                @update:checked="toggleSelectAll"
+              />
+            </TableHead>
+            <TableHead>系所名稱</TableHead>
+            <TableHead>系所代碼</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow
+            v-for="department in departments"
+            :key="department.id"
+          >
+            <TableCell>
+              <Checkbox v-model:checked="selectedDepartments[department.id]" />
+            </TableCell>
+            <TableCell>{{ department.department_name }}</TableCell>
+            <TableCell>{{ department.department_code }}</TableCell>
+            <TableCell>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                  >
+                    <Icon name="ri:more-fill" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem @click="OpenEditDepartmentDialog(department)">
+                    編輯
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>
+    <Dialog v-model:open="isAddDialogOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>新增系所</DialogTitle>
+        </DialogHeader>
+        <div class="flex flex-col gap-4">
+          <Input
+            v-model="newDepartment.department_name"
+            placeholder="系所名稱"
+          />
+          <Input
+            v-model="newDepartment.department_code"
+            placeholder="系所代碼"
+          />
+        </div>
+        <DialogFooter>
+          <Button @click="createDepartment">
+            保存
+          </Button>
+          <Button @click="isAddDialogOpen = false">
+            取消
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    <Dialog v-model:open="isEditDialogOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>編輯系所</DialogTitle>
+        </DialogHeader>
+        <div class="flex flex-col gap-4">
+          <Input
+            v-model="currentDepartment.department_name"
+            placeholder="系所名稱"
+          />
+          <Input
+            v-model="currentDepartment.department_code"
+            placeholder="系所代碼"
+          />
+        </div>
+        <DialogFooter>
+          <Button @click="saveChanges">
+            保存
+          </Button>
+          <Button @click="isEditDialogOpen = false">
+            取消
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </div>
 </template>
-
 <script lang="ts" setup>
+import type { Database, Tables, Enums } from "~/database.types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+definePageMeta(
+  {
+    name: "系所管理",
+    layout: "dashboard",
+  }
+);
+const supabase = useSupabaseClient<Database>();
+
+// [Data] (useAsyncData 配合 supabase 是最完美的用法)
+// 裡面有三個變數，data , pending 是是否正在載入，refresh 是重新獲取資料的方法，加冒號可以改變變數名稱，不加冒號就是原本的名稱
+
+const { data: departments, pending: isLoading, refresh: refresh } = await useAsyncData('departments', async () => {
+  const { data } = await supabase.from('school_department').select('*');
+  return data;
+});
+
+// 選取的系所 (打勾的)
+const selectedDepartments = ref<Record<string, boolean>>({});
+// 是否全選 (用來控制全選的checkbox的狀態)
+const isAllSelected = computed(() => {
+  if (!departments.value) return false;
+  return Object.values(selectedDepartments.value).every(Boolean) && Object.keys(selectedDepartments.value).length === departments.value.length;
+});
+
+const isEditDialogOpen = ref(false);
+const isAddDialogOpen = ref(false);
+
+// 用來存放Dialog中的資料
+const newDepartment = ref<Partial<Tables<'school_department'>>>({
+  department_name: '',
+  department_code: ''
+});
+
+const currentDepartment = ref<Partial<Tables<'school_department'>>>({
+  department_name: '',
+  department_code: ''
+});
+
+
+// [Methods]
+const toggleSelectAll = (checked: boolean) => {
+  if (!departments.value) return;
+  departments.value.forEach(department => {
+    selectedDepartments.value[department.id] = checked;
+  });
+};
+
+// Dialog  
+const OpenEditDepartmentDialog = (department: Tables<'school_department'>) => {
+  currentDepartment.value = { ...department };
+  isEditDialogOpen.value = true;
+};
+
+const OpenAddDepartmentDialog = () => {
+  newDepartment.value = { department_name: '', department_code: '' };
+  isAddDialogOpen.value = true;
+};
+
+// Database operations
+const createDepartment = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('school_department')
+      .insert({
+        department_name: newDepartment.value.department_name || '',
+        department_code: newDepartment.value.department_code
+      });
+
+    if (error) throw error;
+    refresh();
+    newDepartment.value = { department_name: '', department_code: '' };
+    isAddDialogOpen.value = false;
+  } catch (error) {
+    console.error('Error adding department:', error);
+  }
+};
+
+const deleteSelected = async () => {
+  try {
+    const selectedIds = Object.keys(selectedDepartments.value).filter(id => selectedDepartments.value[id]);
+
+    const { error } = await supabase
+      .from('school_department')
+      .delete()
+      .in('id', selectedIds);
+
+    if (error) throw error;
+    refresh();
+    selectedDepartments.value = {};
+  } catch (error) {
+    console.error('Error deleting selected departments:', error);
+  }
+};
+
+const saveChanges = async () => {
+  if (!currentDepartment.value) return;
+
+  try {
+    const { error } = await supabase
+      .from('school_department')
+      .update({
+        department_name: currentDepartment.value.department_name,
+        department_code: currentDepartment.value.department_code
+      })
+      .eq('id', currentDepartment.value.id!);
+
+    if (error) throw error;
+
+    refresh();
+    isEditDialogOpen.value = false;
+  } catch (error) {
+    console.error('Error saving changes:', error);
+  }
+};
+
+
 
 </script>
-
-<style>
-
-</style>
+<style></style>

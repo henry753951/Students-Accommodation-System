@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p-4">
+  <div class="container mx-auto">
     <div class="mb-4 ">
       <Tabs
         default-value="account"
@@ -26,25 +26,40 @@
         </TabsList>
         <TabsContent
           value="account"
-          class="p-2"
+          class="p-2 flex flex-col gap-5"
         >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>身分</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow
-                v-for="user in paginatedUsers"
-                :key="user.email"
-              >
-                <TableCell>{{ user.email }}</TableCell>
-                <TableCell>{{ user.role }}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Menubar>
+            <MenubarMenu>
+              <MenubarTrigger>操作</MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem @click="">
+                  新增
+                </MenubarItem>
+                <MenubarItem @click="">
+                  刪除所選
+                </MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
+          <div class="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Email</TableHead>
+                  <TableHead>身分</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow
+                  v-for="user in paginatedUsers"
+                  :key="user.email"
+                >
+                  <TableCell>{{ user.email }}</TableCell>
+                  <TableCell>{{ user.role }}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
           <div class="flex justify-end mt-4">
             <Button
               variant="outline"
@@ -66,13 +81,11 @@
         </TabsContent>
         <TabsContent
           value="StudentImport"
-          class="p-2"
         >
           <ManagementUserStudent />
         </TabsContent>
         <TabsContent
           value="TeacherImport"
-          class="p-2"
         >
           <ManagementUserTeacher />
         </TabsContent>
@@ -85,7 +98,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,

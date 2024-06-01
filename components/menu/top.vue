@@ -26,9 +26,9 @@
 <script lang="ts" setup>
 const user = useSupabaseUser();
 
+const router = useRouter();
 // [Methods]
 const back = () => {
-  const router = useRouter();
   if(router.getRoutes().length > 1) {
     router.back();
   } else {

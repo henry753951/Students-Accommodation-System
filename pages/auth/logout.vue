@@ -11,8 +11,9 @@
 <script lang="ts" setup>
 import { useToast } from "@/components/ui/toast/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { set } from "@vueuse/core";
-
+definePageMeta({
+  layout: "nothing",
+});
 const { toast } = useToast();
 const supabase = useSupabaseClient();
 

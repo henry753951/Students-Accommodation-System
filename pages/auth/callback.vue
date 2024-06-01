@@ -30,7 +30,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-definePageMeta({ layout: "account-no-nav" });
+definePageMeta({
+  layout: "nothing",
+});
 const user = useSupabaseUser();
 type Role = { selected: boolean; name: string };
 
