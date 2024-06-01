@@ -8,6 +8,7 @@ export async function useAuth(event: any, roles: string[] = []) {
   const session = await serverSupabaseSession(event);
   if (!session) {
     await event.respondWith(new Response("Hello World"));
+    return null;
   }
   return session;
 
