@@ -7,7 +7,14 @@
 
     <section>
       <h2 class="text-xl font-bold mb-4">Property Form</h2>
-      <RentalPropertyForm v-model:price="price" v-model:description="description" v-model:is_public="isPublic" v-model:property_attributes="propertyAttributes" />
+      <RentalPropertyForm 
+      v-model:price="price" 
+      v-model:description="description" 
+      v-model:is_public="isPublic" 
+      v-model:propertyAttributesType="propertyAttributesType" 
+      v-model:propertyAttributesSex="propertyAttributesSex" 
+      v-model:propertyAttributesSubsidy="propertyAttributesSubsidy" 
+      />
     </section>
 
     <Button type="submit" @click="handleSubmit">Submit</Button>
@@ -19,7 +26,7 @@
       <p>Price: {{ price }}</p>
       <p>Description: {{ description }}</p>
       <p>Is Public: {{ isPublic }}</p>
-      <p>Property Attributes: {{ propertyAttributes }}</p>
+      <p>Property Attributes: [{{ propertyAttributesType }},{{ propertyAttributesSex }},{{ propertyAttributesSubsidy }}]</p>
     </section>
   </div>
 </template>
@@ -37,7 +44,9 @@ const landlordName = ref('');
 const price = ref(0);
 const description = ref('');
 const isPublic = ref(false);
-const propertyAttributes = ref('');
+const propertyAttributesType = ref('');
+const propertyAttributesSex = ref('無');
+const propertyAttributesSubsidy = ref(false);
 
 const data_for_view = ref<Tables<"rental_property">[]>([]);
 
@@ -63,6 +72,7 @@ const SubmitToRentalprop = async (time:string): Promise<string> => {
   }
   return data[0]['id'];
 };
+
 const SubmitToRentalinfo = async (rental_id:string,time:string) => {
   console.log("BINHAN SO SMALL");
   const { data, error } = await supabase
@@ -72,6 +82,11 @@ const SubmitToRentalinfo = async (rental_id:string,time:string) => {
       "price":price.value,
       "is_public":false,
       "description":description.value,
+      "property_attributes":JSON.stringify({
+          type: propertyAttributesType.value,
+          sex: propertyAttributesSex.value,
+          subsidy: propertyAttributesSubsidy.value
+      }),
       "created_at":time,
       "updated_at":time,
       }
@@ -94,7 +109,7 @@ const handleSubmit = async() => {
     Price: ${price.value}
     Description: ${description.value}
     Is Public: ${isPublic.value}
-    Property Attributes: ${propertyAttributes.value}
+    Property Attributes: ${propertyAttributesType.value}, ${propertyAttributesSex.value}, ${propertyAttributesSubsidy.value}
     
     確定要送出嗎?
   `);
