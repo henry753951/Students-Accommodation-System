@@ -7,7 +7,11 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET || "");
 export async function useAuth(event: any, roles: string[] = []) {
   const session = await serverSupabaseSession(event);
   if (!session) {
-    await event.respondWith(new Response("Hello World"));
+    await event.respondWith({
+      status: 401,
+      body: "Unauthorized",
+    });
+    return null;
   }
   return session;
 

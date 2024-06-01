@@ -30,99 +30,104 @@
     </div>
 
 </template>
-
 <script setup lang="ts">
 import type { Database, Tables, Enums } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
-import * as z from 'zod'
+import * as z from 'zod';
 import { useModel } from 'vue';
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
-const user = useSupabaseUser();
+definePageMeta({
+  name: "學生分配",
+});
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
-let All_Student = ref([{ "user_id": 0, "department_id": 0, "student_number": 0, "isChecked": false }]);
+const All_Student = ref<Array<{
+    user_id: string;
+    department_id: string|null;
+    student_number: string|null;
+    isChecked: boolean;}>>([]);
+
 onMounted(() => {
-    ListAllStudent();
+  ListAllStudent();
 });
 
 const ListAllStudent = async () => {
-    const { data, error } = await supabase
-        .from("student")
-        .select("*")
-    if (error) {
-        toast.toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-        });
-        return 'error';
+  const { data, error } = await supabase
+    .from("student")
+    .select("*");
+  if (error) {
+    toast.toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+    return 'error';
+  }
+  All_Student.value = [];
+  // All_Student.value = data.map(student => ({ ...student, isChecked: false }));
+  for (let i = 0; i < data.length; i++) {
+    // 判斷那些教授有選擇學生了 isCHecked 顯示教授名字
+    if (i == 0) {
+      All_Student.value.push({
+        user_id: data[i].user_id,
+        department_id: data[i].department_id,
+        student_number: data[i].student_number,
+        isChecked: false
+      });
+    } else {
+      All_Student.value.push({
+        user_id: data[i].user_id,
+        department_id: data[i].department_id,
+        student_number: data[i].student_number,
+        isChecked: true
+      });
     }
-    All_Student.value = [];
-    // All_Student.value = data.map(student => ({ ...student, isChecked: false }));
-    for (let i = 0; i < data.length; i++) {
-        // 判斷那些教授有選擇學生了 isCHecked 顯示教授名字
-        if (i == 0) {
-            All_Student.value.push({
-                user_id: data[i].user_id,
-                department_id: data[i].department_id,
-                student_number: data[i].student_number,
-                isChecked: false
-            });
-        } else {
-            All_Student.value.push({
-                user_id: data[i].user_id,
-                department_id: data[i].department_id,
-                student_number: data[i].student_number,
-                isChecked: true
-            });
-        }
 
-    }
+  }
 };
 
 const handleSubmit = async () => {
-    const now_time = new Date().toISOString();
-    for (let i = 0; i < All_Student.value.length; i++) {
-        if (All_Student.value[i].isChecked) {
-            const { data, error } = await supabase
-                .from("map_teacher_student")
-                .insert([
-                    {
-                        "id": All_Student.value[i].user_id,
-                        "teacher_id": All_Student.value[i].department_id,
-                        "student_id": All_Student.value[i].user_id,
-                        "created_at": now_time,
-                        "updated_at": now_time,
-                    }
-                ])
-            if (error) {
-                toast.toast({
-                    title: "Error",
-                    description: error.message,
-                    variant: "destructive",
-                });
-                return;
-            }
-        }
+  const now_time = new Date().toISOString();
+  for (let i = 0; i < All_Student.value.length; i++) {
+    if (All_Student.value[i].isChecked) {
+      const { data, error } = await supabase
+        .from("map_teacher_student")
+        .insert([
+          {
+            "id": All_Student.value[i].user_id,
+            "teacher_id": All_Student.value[i].department_id,
+            "student_id": All_Student.value[i].user_id,
+            "created_at": now_time,
+            "updated_at": now_time,
+          }
+        ]);
+      if (error) {
+        toast.toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
     }
+  }
 
 };
 
 
 
 </script>
-
 <style scoped>
 .table-container {
-    background-color: #e2e8f0;
-    /* slate-300 */
+  background-color: #e2e8f0;
+  /* slate-300 */
 }
 </style>

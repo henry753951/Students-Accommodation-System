@@ -1,6 +1,8 @@
 <template>
   <div class="flex justify-center min-h-[100dvh] bg-gray-100 dark:bg-gray-900">
-    <div class="flex max-w-4xl w-full mx-auto my-auto bg-white dark:bg-black md:rounded-2xl shadow-lg md:min-h-fit min-h-[100dvh]">
+    <div
+      class="flex max-w-4xl w-full mx-auto my-auto bg-white dark:bg-black md:rounded-2xl shadow-lg md:min-h-fit min-h-[100dvh]"
+    >
       <div class="p-12 w-full md:w-1/2">
         <Button
           variant="ghost"
@@ -36,7 +38,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { startViewTransition } from "vue-view-transitions";
 // [Refs]
@@ -49,13 +50,16 @@ const back = async () => {
     await viewTransition.captured;
     page.value = "login_root";
   } else {
-    router.back();
+    if (router.getRoutes().length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
   }
 };
 
 // [onMounted]
-onMounted(() => {});
+onMounted(() => { });
 
 </script>
-
 <style></style>

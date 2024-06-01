@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
+  name: "首頁",
   layout: "dashboard",
 });
 const route = useRoute();
@@ -23,7 +24,10 @@ const { data: test } = await useAPI("/api/test", {
             Login
           </Button>
         </div>
-        <div v-else class="flex items-center space-x-4">
+        <div
+          v-else
+          class="flex items-center space-x-4"
+        >
           <span class="text-gray-700 font-semibold">{{ user.user_metadata.full_name }}</span>
           <Button @click="navigateTo('auth/logout')">
             Logout
@@ -35,26 +39,42 @@ const { data: test } = await useAPI("/api/test", {
       </div>
 
       <div class="bg-gray-50 rounded-lg p-4 border-2 border-black">
-        <h1 class="text-xl font-semibold text-gray-800 mb-4">From Server message:</h1>
-        <div class="text-gray-700">{{ test }}</div>
+        <h1 class="text-xl font-semibold text-gray-800 mb-4">
+          From Server message:
+        </h1>
+        <div class="text-gray-700">
+          {{ test }}
+        </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Button @click="navigateTo('test_student_rental')" class="w-full">
+        <Button
+          class="w-full"
+          @click="navigateTo('test_student_rental')"
+        >
           要先確認身分組 Student 新增租屋點
         </Button>
-        <Button @click="navigateTo('map_teacher_student')" class="w-full">
+        <Button
+          class="w-full"
+          @click="navigateTo('map_teacher_student')"
+        >
           教授使用 map 學生 
         </Button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <NuxtLink to="/addRental" class="w-full sm:w-auto">
+        <NuxtLink
+          to="/addRental"
+          class="w-full sm:w-auto"
+        >
           <Button class="w-full">
             Add Rental page
           </Button>
         </NuxtLink>
-        <NuxtLink to="/test_student_rental" class="w-full sm:w-auto">
+        <NuxtLink
+          to="/test_student_rental"
+          class="w-full sm:w-auto"
+        >
           <Button class="w-full">
             test_student_rental page
           </Button>

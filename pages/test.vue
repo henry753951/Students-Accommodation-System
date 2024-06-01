@@ -43,13 +43,11 @@ onMounted(() => {
 
 const n = ref(0);
 </script>
-
 <template>
   <div>
     <h1>學院管理</h1>
     <Input v-model="input.department_name" />
     <Input v-model="input.department_code" />
-
     {{ input }}
     <Button @click="n++">
       新增
