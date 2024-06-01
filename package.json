@@ -9,7 +9,8 @@
     "preview": "nuxt preview --dotenv .env",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "db_gen":"supabase gen types typescript --project-id cxbuvmlyimilvflpwslv > database.types.ts"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
