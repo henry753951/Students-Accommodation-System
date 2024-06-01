@@ -4,7 +4,6 @@
     <NuxtPage />
   </NuxtLayout>
 </template>
-
 <script setup lang="ts">
 useHead({
   title: "校外租屋平台",
@@ -18,4 +17,6 @@ useHead({
     class: "theme-zinc",
   },
 });
+
+
 </script>

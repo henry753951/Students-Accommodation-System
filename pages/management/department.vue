@@ -122,6 +122,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+// 標題和META資料
+useHead({
+  title: "校外租屋平台 | 系所管理",
+  meta: [
+    {
+      name: "description",
+      content: "校外租屋平台",
+    },
+  ],
+});
+// 定義要使用的Layout，以及頁面名稱
 definePageMeta(
   {
     name: "系所管理",
@@ -132,7 +143,6 @@ const supabase = useSupabaseClient<Database>();
 
 // [Data] (useAsyncData 配合 supabase 是最完美的用法)
 // 裡面有三個變數，data , pending 是是否正在載入，refresh 是重新獲取資料的方法，加冒號可以改變變數名稱，不加冒號就是原本的名稱
-
 const { data: departments, pending: isLoading, refresh: refresh } = await useAsyncData('departments', async () => {
   const { data } = await supabase.from('school_department').select('*');
   return data;
@@ -146,6 +156,7 @@ const isAllSelected = computed(() => {
   return Object.values(selectedDepartments.value).every(Boolean) && Object.keys(selectedDepartments.value).length === departments.value.length;
 });
 
+// Dialog 狀態
 const isEditDialogOpen = ref(false);
 const isAddDialogOpen = ref(false);
 
@@ -183,7 +194,7 @@ const OpenAddDepartmentDialog = () => {
 // Database operations
 const createDepartment = async () => {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('school_department')
       .insert({
         department_name: newDepartment.value.department_name || '',
@@ -191,6 +202,7 @@ const createDepartment = async () => {
       });
 
     if (error) throw error;
+    // 若成功新增，刷新資料
     refresh();
     newDepartment.value = { department_name: '', department_code: '' };
     isAddDialogOpen.value = false;
@@ -201,14 +213,15 @@ const createDepartment = async () => {
 
 const deleteSelected = async () => {
   try {
+    // 取得所有被選取的系所的id
     const selectedIds = Object.keys(selectedDepartments.value).filter(id => selectedDepartments.value[id]);
-
     const { error } = await supabase
       .from('school_department')
       .delete()
       .in('id', selectedIds);
 
     if (error) throw error;
+    // 若成功新增，刷新資料
     refresh();
     selectedDepartments.value = {};
   } catch (error) {
@@ -217,8 +230,9 @@ const deleteSelected = async () => {
 };
 
 const saveChanges = async () => {
+  // TypeScript 會檢查 currentDepartment.value 是否為空，所以這邊要加上檢查，避免紅紅
   if (!currentDepartment.value) return;
-
+  // 
   try {
     const { error } = await supabase
       .from('school_department')
@@ -229,7 +243,7 @@ const saveChanges = async () => {
       .eq('id', currentDepartment.value.id!);
 
     if (error) throw error;
-
+    // 若成功新增，刷新資料
     refresh();
     isEditDialogOpen.value = false;
   } catch (error) {
