@@ -36,11 +36,6 @@ const { data: test } = await useAPI("/api/test", {
     </div>
     <!--  -->
     <div>
-      <Button @click="navigateTo('test_student_rental')">
-        要先確認身分組 Student 新增租屋點
-      </Button>
-    </div>
-    <div>
       <Button @click="navigateTo('map_teacher_student')">
         教授使用 map 學生 
       </Button>
