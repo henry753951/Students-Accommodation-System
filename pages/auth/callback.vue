@@ -19,9 +19,14 @@
         </CardContent>
       </Card>
     </div>
-    <Button @click="nextStep">
-      下一步
-    </Button>
+    <div class="flex">
+      <Button @click="nextStep">
+        下一步
+      </Button>
+      <Button @click="navigateTo('auth/logout')">
+        Logout
+      </Button>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -39,10 +44,11 @@ const toggleSelection = (role: Role) => {
   role.selected = !role.selected;
 };
 
-const nextStep = () => {
+const nextStep = async () => {
   const selectedRoles = roles.value.filter((role) => role.selected);
   console.log("Selected Roles:", selectedRoles);
-  useAPI("/api/auth/user_init", { default: () => {}, method: "POST", body: { roles: selectedRoles } });
+  const data = await useAPI("/api/auth/user_init", { default: () => { }, method: "POST", body: { roles: selectedRoles } });
+  console.log("Data:", data);
 };
 onMounted(() => {
   if (!user.value) {
@@ -50,5 +56,4 @@ onMounted(() => {
   }
 });
 </script>
-
 <style></style>

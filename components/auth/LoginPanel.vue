@@ -63,11 +63,11 @@
         使用 Email 登入
       </Button>
       <p class="text-right text-gray-500">
-        還沒有帳號？
-        <a
+        還沒有帳號？ <a
           class="text-blue-500 cursor-pointer"
           @click="pageChange('signUp')"
-        > 點我註冊 </a>
+        >
+          點我註冊 </a>
       </p>
     </div>
   </div>
@@ -100,15 +100,13 @@
       登入
     </Button>
     <p class="text-right text-gray-500">
-      忘記密碼？
-      <a
+      忘記密碼？ <a
         class="text-blue-500 cursor-pointer"
         @click="pageChange('forget-password')"
       > 點我重設 </a>
     </p>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { startViewTransition } from "vue-view-transitions";
 import { useToast } from "../ui/toast/use-toast";
@@ -175,5 +173,4 @@ const pageChange = (newPage: string) => {
   });
 };
 </script>
-
 <style></style>

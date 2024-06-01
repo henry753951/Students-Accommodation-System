@@ -4,7 +4,7 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET || "");
 
 export default defineEventHandler(async (event) => {
   const data = await useAuth(event, ["students"]);
-  if (!data.Verified) {
+  if (!data) {
     return {
       status: 401,
       body: "Unauthorized",
@@ -12,6 +12,6 @@ export default defineEventHandler(async (event) => {
   }
   return {
     status: 200,
-    body: `Hello  ${data.payload.user_metadata.full_name}!`,
+    body: `Hello  ${data.user.user_metadata.full_name}!`,
   };
 });
