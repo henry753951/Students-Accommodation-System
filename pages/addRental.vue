@@ -1,26 +1,40 @@
 <template>
   <div class="space-y-10">
     <section>
-      <h2 class="text-xl font-bold mb-4">Property Form</h2>
-      <RentalAddrForm v-model:address="address" v-model:landlordName="landlordName" />
-    </section>
-
-    <section>
-      <h2 class="text-xl font-bold mb-4">Property Form</h2>
-      <RentalPropertyForm 
-      v-model:price="price" 
-      v-model:description="description" 
-      v-model:is_public="isPublic" 
-      v-model:propertyAttributesType="propertyAttributesType" 
-      v-model:propertyAttributesSex="propertyAttributesSex" 
-      v-model:propertyAttributesSubsidy="propertyAttributesSubsidy" 
+      <h2 class="text-xl font-bold mb-4">
+        Property Form
+      </h2>
+      <RentalAddrForm
+        v-model:address="address"
+        v-model:landlordName="landlordName"
       />
     </section>
 
-    <Button type="submit" @click="handleSubmit">Submit</Button>
+    <section>
+      <h2 class="text-xl font-bold mb-4">
+        Property Form
+      </h2>
+      <RentalPropertyForm 
+        v-model:price="price" 
+        v-model:description="description" 
+        v-model:is_public="isPublic" 
+        v-model:propertyAttributesType="propertyAttributesType" 
+        v-model:propertyAttributesSex="propertyAttributesSex" 
+        v-model:propertyAttributesSubsidy="propertyAttributesSubsidy" 
+      />
+    </section>
+
+    <Button
+      type="submit"
+      @click="handleSubmit"
+    >
+      Submit
+    </Button>
 
     <section>
-      <h2 class="text-xl font-bold mb-4">表單內容統整</h2>
+      <h2 class="text-xl font-bold mb-4">
+        表單內容統整
+      </h2>
       <p>addr: {{ address }}</p>
       <p>landlordname: {{ landlordName }}</p>
       <p>Price: {{ price }}</p>
@@ -35,7 +49,9 @@
 import type { Database, Tables, Enums } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
 import { useModel } from 'vue';
-
+definePageMeta({
+  name: "新增租屋點",
+});
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 
@@ -61,7 +77,7 @@ const SubmitToRentalprop = async (time:string): Promise<string> => {
       "updated_at":time,
       }
     ])
-    .select("*")
+    .select("*");
   if (error) {
     toast.toast({
       title: "Error",
@@ -117,9 +133,9 @@ const handleSubmit = async() => {
   if (confirmation) {
     //提交表單的邏輯
     //送出到supabase
-    let time=new Date().toISOString()
-    let rental_id=await SubmitToRentalprop(time)
-    SubmitToRentalinfo(rental_id,time)
+    const time=new Date().toISOString();
+    const rental_id=await SubmitToRentalprop(time);
+    SubmitToRentalinfo(rental_id,time);
     
     console.log(rental_id,time);
   } else {

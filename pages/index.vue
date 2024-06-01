@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
+  name: "首頁",
   layout: "dashboard",
 });
 const route = useRoute();

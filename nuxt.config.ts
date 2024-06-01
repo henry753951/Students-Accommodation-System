@@ -85,7 +85,7 @@ export default defineNuxtConfig({
     "vue-view-transitions/nuxt",
     "@vee-validate/nuxt",
   ],
-  experimental: {
-    viewTransition: true,
-  },
+  // experimental: {
+  //   viewTransition: true,
+  // },
 });
