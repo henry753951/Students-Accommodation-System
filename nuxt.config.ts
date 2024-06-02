@@ -37,6 +37,7 @@ export default defineNuxtConfig({
 
   },
   routeRules: {
+    "/auth/callback": {ssr: false},
     // "/api/*": {
     //   csurf: {
     //     https: false,
