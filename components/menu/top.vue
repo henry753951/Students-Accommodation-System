@@ -15,6 +15,8 @@
           <div class="font-mono text-xl">
             {{ $route.name }}
           </div>
+
+          <MenuLinkNav/>
         </div>
         <div class="flex items-center">
           <MenuAvatarDropdown />
