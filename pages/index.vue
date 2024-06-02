@@ -75,6 +75,24 @@ const { data: test } = await useAPI("/api/test", {
           </Button>
         </NuxtLink>
       </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <NuxtLink
+          to="/addRental"
+          class="w-full sm:w-auto"
+        >
+          <Button class="w-full">
+            目前空的
+          </Button>
+        </NuxtLink>
+        <NuxtLink
+          to="/advertise"
+          class="w-full sm:w-auto"
+        >
+          <Button class="w-full">
+            廣告頁面
+          </Button>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
