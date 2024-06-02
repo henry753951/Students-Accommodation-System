@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import type { Database, Tables, Enums } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
-import { useModel } from 'vue';
+
 definePageMeta({
   name: "新增租屋點",
 });
