@@ -62,7 +62,6 @@
         </TableBody>
       </Table>
     </div>
-
     <!-- Dialog -->
     <Dialog v-model:open="isAddDialogOpen">
       <DialogContent>
@@ -144,11 +143,12 @@ definePageMeta(
     layout: "dashboard",
   }
 );
+
 const supabase = useSupabaseClient<Database>();
 
 // [Data] (useAsyncData 配合 supabase 是最完美的用法)
 // 裡面有三個變數，data , pending 是是否正在載入，refresh 是重新獲取資料的方法，加冒號可以改變變數名稱，不加冒號就是原本的名稱
-const { data: departments, pending: isLoading, refresh: refresh } = await useAsyncData('departments', async () => {
+const { data: departments, pending: isLoading, refresh: refresh } = useAsyncData('departments', async () => {
   const { data } = await supabase.from('school_department').select('*');
   return data;
 });
