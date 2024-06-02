@@ -35,30 +35,49 @@
                   <MenubarSubTrigger>身份組編輯</MenubarSubTrigger>
                   <MenubarSubContent>
                     <MenubarSub>
-                      <MenubarSubTrigger>新增</MenubarSubTrigger>
+                      <MenubarSubTrigger>
+                        <Icon
+                          name="ri:add-line"
+                          class="mr-1"
+                        /> 新增
+                      </MenubarSubTrigger>
                       <MenubarSubContent>
-                        <MenubarItem>學生</MenubarItem>
-                        <MenubarItem>教師</MenubarItem>
-                        <MenubarItem>房東</MenubarItem>
+                        <MenubarItem @click="updateSingleRoleForSelections('學生', 'add')">
+                          學生
+                        </MenubarItem>
+                        <MenubarItem @click="updateSingleRoleForSelections('教師', 'add')">
+                          教師
+                        </MenubarItem>
+                        <MenubarItem @click="updateSingleRoleForSelections('房東', 'add')">
+                          房東
+                        </MenubarItem>
                       </MenubarSubContent>
                     </MenubarSub>
                     <MenubarSub>
-                      <MenubarSubTrigger>刪除</MenubarSubTrigger>
+                      <MenubarSubTrigger>
+                        <Icon
+                          name="ri:delete-bin-line"
+                          class="mr-1"
+                        /> 刪除
+                      </MenubarSubTrigger>
                       <MenubarSubContent>
-                        <MenubarItem>學生</MenubarItem>
-                        <MenubarItem>教師</MenubarItem>
-                        <MenubarItem>房東</MenubarItem>
+                        <MenubarItem @click="updateSingleRoleForSelections('學生', 'remove')">
+                          學生
+                        </MenubarItem>
+                        <MenubarItem @click="updateSingleRoleForSelections('教師', 'remove')">
+                          教師
+                        </MenubarItem>
+                        <MenubarItem @click="updateSingleRoleForSelections('房東', 'remove')">
+                          房東
+                        </MenubarItem>
                       </MenubarSubContent>
                     </MenubarSub>
                   </MenubarSubContent>
                 </MenubarSub>
               </MenubarContent>
             </MenubarMenu>
-            
             <div class="flex gap-2 items-center ml-2">
-              <span class="text-sm">
-                搜尋 :
-              </span>
+              <span class="text-sm"> 搜尋 : </span>
               <input
                 v-model="searchText"
                 class="focus-visible:outline-0 rounded-md p-1 px-2 bg-gray-100 dark:bg-opacity-30 dark:bg-gray-800"
@@ -82,7 +101,6 @@
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
-
           <div class="rounded-md border">
             <Table>
               <TableHeader>
@@ -169,6 +187,7 @@
 <script lang="ts" setup>
 import type { Database, Tables, Enums } from "~/database.types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Check } from 'lucide-vue-next';
 import {
   Table,
   TableBody,
@@ -224,13 +243,13 @@ const selectedUsers = ref<Record<string, boolean>>({});
 // 是否全選 (用來控制全選的checkbox的狀態)
 const isAllSelected = computed(() => {
   if (!users.value) return false;
-  return Object.values(selectedUsers.value).every(Boolean) && Object.keys(selectedUsers.value).length === users.value.length;
+  return Object.values(selectedUsers.value).every(Boolean) && Object.keys(selectedUsers.value).length === usersSearched.value.length;
 });
 
 // 全選
 const toggleSelectAll = (checked: boolean) => {
-  if (!users.value) return;
-  users.value.forEach((user) => {
+  if (!usersSearched.value) return;
+  usersSearched.value.forEach((user) => {
     selectedUsers.value[user.id] = checked;
   });
 };
@@ -244,18 +263,77 @@ const userSync = async () => {
         "message": "同步使用者資料不成功",
       };
     },
-    });
+  });
 
-    if (error.value) {
+  if (error.value) {
+    console.error(error);
+    return;
+  }
+  await refresh();
+};
+
+// Database operation
+const deleteUser = async (singleUser: Tables<'app_user'> | null = null) => {
+  if (singleUser) {
+    const selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
+    const { error } = await supabase.from('app_user').delete().eq('id', singleUser.id);
+    if (error) {
       console.error(error);
       return;
     }
-    await refresh();
+  } else {
+    const selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
+    const { error } = await supabase.from('app_user').delete().in('id', selectedUserIds);
+    if (error) {
+      console.error(error);
+      return;
+    }
+  }
+  await refresh();
+};
+
+
+
+const updateSingleRoleForSelections = async (role: "學生" | "教師" | "房東", action: "add" | "remove") => {
+  const selectedUserIds = Object.keys(selectedUsers.value).filter(userId => selectedUsers.value[userId]);
+  const data = selectedUserIds.map(userId => ({ user_id: userId }));
+  let error: string | null = null;
+
+  if (action === "add") {
+    if (role === "學生") {
+      const { error: studentAddError } = await supabase.from('student').upsert(data);
+      error = studentAddError?.message || null;
+    } else if (role === "教師") {
+      const { error: teacherAddError } = await supabase.from('teacher').upsert(data);
+      error = teacherAddError?.message || null;
+    } else if (role === "房東") {
+      const { error: landlordAddError } = await supabase.from('landlord').upsert(data);
+      error = landlordAddError?.message || null;
+    }
+  } else {
+    if (role === "學生") {
+      const { error: studentRemoveError } = await supabase.from('student').delete().in('user_id', selectedUserIds);
+      error = studentRemoveError?.message || null;
+    } else if (role === "教師") {
+      const { error: teacherRemoveError } = await supabase.from('teacher').delete().in('user_id', selectedUserIds);
+      error = teacherRemoveError?.message || null;
+    } else if (role === "房東") {
+      const { error: landlordRemoveError } = await supabase.from('landlord').delete().in('user_id', selectedUserIds);
+      error = landlordRemoveError?.message || null;
+    }
+  }
+
+  await refresh();
+
+  if (error) {
+    console.error('Errors updating role:', error);
+  }
 };
 
 // [Watch]
 watch(searchText, () => {
   currentPage.value = 1;
+
 });
 
 </script>
