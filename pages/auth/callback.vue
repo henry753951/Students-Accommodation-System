@@ -23,7 +23,7 @@
       <Button @click="nextStep">
         下一步
       </Button>
-      <Button @click="navigateTo('auth/logout')">
+      <Button @click="navigateTo('/auth/logout')">
         Logout
       </Button>
     </div>
