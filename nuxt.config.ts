@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
-  ssr: false,
+  ssr: true,
   shadcn: {
     prefix: "",
   },
@@ -37,6 +37,7 @@ export default defineNuxtConfig({
 
   },
   routeRules: {
+    "/auth/callback": {ssr: false},
     // "/api/*": {
     //   csurf: {
     //     https: false,

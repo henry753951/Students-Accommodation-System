@@ -552,6 +552,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow: overlay;
   }
   button {
     user-select: none;
@@ -559,4 +560,6 @@
   * {
     transition: background-color 0.4s;
   }
+
+  
 }

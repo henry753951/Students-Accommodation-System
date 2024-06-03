@@ -15,6 +15,8 @@
           <div class="font-mono text-xl">
             {{ $route.name }}
           </div>
+
+          <MenuLinkNav/>
         </div>
         <div class="flex items-center">
           <MenuAvatarDropdown />
@@ -26,9 +28,9 @@
 <script lang="ts" setup>
 const user = useSupabaseUser();
 
+const router = useRouter();
 // [Methods]
 const back = () => {
-  const router = useRouter();
   if(router.getRoutes().length > 1) {
     router.back();
   } else {

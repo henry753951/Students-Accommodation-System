@@ -14,7 +14,7 @@ const { data: test } = await useAPI("/api/test", {
 </script>
 <template>
   <!-- {{ user }} -->
-  <div class="min-h-screen flex flex-col items-center justify-center p-10">
+  <div class="flex flex-col items-center justify-center p-10">
     <div class="w-full max-w-4xl bg-white rounded-lg shadow-md p-6 space-y-6">
       <div class="flex justify-between items-center">
         <div v-if="!user">
@@ -72,6 +72,24 @@ const { data: test } = await useAPI("/api/test", {
         >
           <Button class="w-full">
             test_student_rental page
+          </Button>
+        </NuxtLink>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <NuxtLink
+          to="/addRental"
+          class="w-full sm:w-auto"
+        >
+          <Button class="w-full">
+            目前空的
+          </Button>
+        </NuxtLink>
+        <NuxtLink
+          to="/advertisement"
+          class="w-full sm:w-auto"
+        >
+          <Button class="w-full">
+            廣告頁面
           </Button>
         </NuxtLink>
       </div>
