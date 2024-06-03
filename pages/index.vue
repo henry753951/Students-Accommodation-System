@@ -85,7 +85,7 @@ const { data: test } = await useAPI("/api/test", {
           </Button>
         </NuxtLink>
         <NuxtLink
-          to="/advertise"
+          to="/advertisement"
           class="w-full sm:w-auto"
         >
           <Button class="w-full">
