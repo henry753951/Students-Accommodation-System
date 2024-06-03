@@ -47,6 +47,71 @@ export type Database = {
           },
         ]
       }
+      interview_record: {
+        Row: {
+          landlord_id: string | null
+          landlord_name: string | null
+          landlord_number: string | null
+          property_id: string | null
+          record_link: string
+          reocrd_time: string
+          response: Json | null
+          student_id: string
+          teacher_id: string
+        }
+        Insert: {
+          landlord_id?: string | null
+          landlord_name?: string | null
+          landlord_number?: string | null
+          property_id?: string | null
+          record_link?: string
+          reocrd_time?: string
+          response?: Json | null
+          student_id?: string
+          teacher_id?: string
+        }
+        Update: {
+          landlord_id?: string | null
+          landlord_name?: string | null
+          landlord_number?: string | null
+          property_id?: string | null
+          record_link?: string
+          reocrd_time?: string
+          response?: Json | null
+          student_id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_record_landlord_id_fkey"
+            columns: ["landlord_id"]
+            isOneToOne: false
+            referencedRelation: "landlord"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "interview_record_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_record_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "interview_record_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teacher"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       landlord: {
         Row: {
           created_at: string | null
@@ -160,23 +225,29 @@ export type Database = {
       rental_property: {
         Row: {
           address: string
+          comment: string | null
           created_at: string | null
           id: string
           landlord_id: string | null
+          score: string | null
           updated_at: string | null
         }
         Insert: {
           address: string
+          comment?: string | null
           created_at?: string | null
           id?: string
           landlord_id?: string | null
+          score?: string | null
           updated_at?: string | null
         }
         Update: {
           address?: string
+          comment?: string | null
           created_at?: string | null
           id?: string
           landlord_id?: string | null
+          score?: string | null
           updated_at?: string | null
         }
         Relationships: [

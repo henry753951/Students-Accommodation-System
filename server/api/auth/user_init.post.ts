@@ -9,17 +9,15 @@ export default defineEventHandler(async (event) => {
     學生: async (data: Session) => {
       const email = data.user.email;
       const isNUKStudent = email?.endsWith("@mail.nuk.edu.tw");
-      if (isNUKStudent) {
-        await supabase.from("student").upsert({
-          user_id: data.user.id,
-          // department_id: "",
-        });
-      }
+      await supabase.from("student").upsert({
+        user_id: data.user.id,
+        student_number: isNUKStudent ? email?.split("@")[0] : undefined,
+      });
       return isNUKStudent;
     },
     教師: async (data: Session) => {
       const email = data.user.email;
-      const isNUKTeacher = email?.endsWith("@nuk.edu.tw");
+      const isNUKTeacher = true;
       if (isNUKTeacher) {
         await supabase.from("teacher").upsert({
           user_id: data.user.id,
@@ -33,10 +31,7 @@ export default defineEventHandler(async (event) => {
         user_id: data.user.id,
       });
       return true;
-    },
-    一般使用者: async (data: Session) => {
-      return true;
-    },
+    }
   };
   type Body = {
     roles: [
