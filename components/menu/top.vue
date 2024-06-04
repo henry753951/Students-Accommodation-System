@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class=" rounded-2xl shadow-[0_0px_8px_0px_rgba(0,0,0,0.1)] bg-background">
-      <div class="flex p-4 items-center gap-5">
+    <div class="p-4 flex flex-col gap-2 rounded-2xl shadow-[0_0px_8px_0px_rgba(0,0,0,0.1)] bg-background">
+      <div class="flex items-center gap-5">
         <div class="font-mono text-xl">
           <NuxtLink
             to="/"
@@ -18,14 +18,16 @@
       <div class="flex items-center">
         <Button
           variant="ghost"
+          size="sm"
+          class="mr-2"
           @click="back"
         >
           <Icon
-            size="20px"
+            size="10px"
             name="tabler:arrow-left"
           />
         </Button>
-        <div class="font-mono text-xl">
+        <div class="font-mono">
           {{ $route.name }}
         </div>
       </div>
