@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 
 // 定義選單項目
