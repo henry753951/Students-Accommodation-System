@@ -1,15 +1,31 @@
 <script setup lang="ts">
+import type { Database } from '~/database.types';
+
 definePageMeta({
   name: "首頁",
 });
 const route = useRoute();
 const router = useRouter();
 const user = useSupabaseUser();
+const supabase = useSupabaseClient<Database>();
 const { $csrfFetch } = useNuxtApp();
 const { data: test } = await useAPI("/api/test", {
   default: () => {
     return [];
   },
+});
+
+
+const {data: students,refresh} = useAsyncData(async () => {
+  const { data, error } = await supabase.from("app_user")
+    .select("*,student(*)")
+    .not('student', 'is', null)
+    .eq("student.student_number", "a1105534"); // eq 在join中的用法
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  return data;
 });
 </script>
 <template>
@@ -92,6 +108,26 @@ const { data: test } = await useAPI("/api/test", {
             廣告頁面
           </Button>
         </NuxtLink>
+      </div>
+
+      <div>
+        <code class="text-sm">
+          const { data, error } = await supabase.from("app_user")
+          .select("*,student(*)")
+          .not('student', 'is', null);
+        </code>
+        <Button @click="refresh">
+          Refresh
+        </Button>
+        <p>Result:</p>
+        <div class="flex gap-2 flex-wrap">
+          <span
+            v-for="student in students"
+            :key="student.id"
+          >
+            {{ student.name }}[{{ student.student!.student_number }}]
+          </span>
+        </div>
       </div>
     </div>
   </div>
