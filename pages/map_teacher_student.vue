@@ -257,16 +257,46 @@ const new_student = async () => {
       description: "找不到此學生，請確認學號是否正確，開頭字母為小寫",
       variant: "destructive",
     });
+    window.location.reload();
     return;
   }
-  console.log("dada",data);
   if (data.length == 0) {
-    confirm("找不到此學生，請確認學號是否正確，開頭字母為小寫");
+    toast.toast({
+      title: "Error",
+      description: "找不到此學生之學號。開頭字母為小寫",
+      variant: "destructive",
+    });
     return;
   }
   new_student_step2(data[0].user_id);
+  
 };
+
 const new_student_step2 = async (USER_ID: String) => {
+  console.log("1",new_student_create_email.value)
+  const { data, error } = await supabase
+    .from("app_user")
+    .select('student_id')
+    // .eq("name", new_student_create_name.value)
+    .eq("email", new_student_create_email.value);
+  if (error) {
+    toast.toast({
+      title: "Error",
+      description: "找不到學生姓名或者信箱，請確認姓名信箱是否正確",
+      variant: "destructive",
+    });
+    // window.location.reload();
+    return;
+  }
+  if (data.length == 0) {
+    confirm("找不到此學生姓名或者信箱，請確認姓名或者信箱是否正確");
+    return;
+  }
+  new_student_step3(USER_ID);
+};
+
+
+const new_student_step3 = async (USER_ID: String) => {
   const now_time = new Date().toISOString();
   const { data, error } = await supabase
     .from("map_teacher_student")
