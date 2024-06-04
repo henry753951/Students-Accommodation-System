@@ -62,7 +62,7 @@
             <Label html-for="email">信箱</Label>
             <Input id="email" type="email" v-model=new_student_create_email />
           </div>
-          <Button @click="new_student()">
+          <Button   @click="new_student()">
             Create
           </Button>
         </div>
@@ -70,7 +70,7 @@
 
       <Dialog v-if="isDesktop" v-model:open="isOpen">
         <DialogTrigger as-child>
-          <Button variant="outline"
+          <Button variant="outline" :disabled = "isreadytodelete"
             class="m-2 w-20 bg-black text-white hover  hover:text-black hover:bg hover:shadow-lg ">
             New
           </Button>
@@ -85,9 +85,9 @@
           <GridForm />
         </DialogContent>
       </Dialog>
-      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg"
+      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg":disabled = "isreadytodelete"
         @click="Delete_student()">delete</Button>
-      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg">Submit</Button>
+      <Button  @click = "submit()"class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg" :disabled=" canuse_submit_btn">Submit</Button>
     </div>
     <!-- {{ All_Student[0] }} -->
   </div>
@@ -146,7 +146,8 @@ let new_student_create_email = ref("a1105500@mail.nuk.edu.tw");
 let isRed = ref(false);
 const user = useSupabaseUser();
 let teacher_id = "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4";
-
+let isreadytodelete = ref(false);
+let canuse_submit_btn = ref(true);
 onMounted(() => {
   // console.log("1");
   teacher_login();
@@ -195,7 +196,7 @@ const ListmapStudent = async () => {
       student_number: "",
       name: "",
       email: "",
-      isChecked: true,
+      isChecked: false,
     });
   }
  
@@ -221,7 +222,7 @@ const ListmapStudent_step2 = async () => {
     All_student_init.value[i].name = data[0].name ?? "";
     All_student_init.value[i].email = data[0].email ?? "";
   }
-  console.log("121",All_student_init.value);
+  // console.log("121",All_student_init.value);
   ListmapStudent_step3();
 };
 
@@ -258,14 +259,9 @@ const new_student = async () => {
     });
     return;
   }
-  console.log(data[0].user_id);
+  console.log("dada",data);
   if (data.length == 0) {
     confirm("找不到此學生，請確認學號是否正確，開頭字母為小寫");
-    toast.toast({
-      title: "Error",
-      description: "找不到此學生，請確認學號是否正確，開頭字母為小寫",
-      variant: "destructive",
-    });
     return;
   }
   new_student_step2(data[0].user_id);
@@ -290,17 +286,23 @@ const new_student_step2 = async (USER_ID: String) => {
     });
     return;
   }
-  confirm("Success");
-  console.log("Success");
+  confirm("新增成功搂");
+  window.location.reload();
 };
 
 const Delete_student = async () => {
+  isRed.value = true;
+  isreadytodelete.value = true;
+  canuse_submit_btn.value = false;
+};
 
+const submit = async () => {
   for (let i = 0; i < All_student_init.value.length; i++) {
     if (All_student_init.value[i].isChecked) {
       const { data, error } = await supabase
         .from("map_teacher_student")
         .delete()
+        .eq("teacher_id", teacher_id)
         .eq("student_id", All_student_init.value[i].student_id);
       if (error) {
         toast.toast({
@@ -312,18 +314,10 @@ const Delete_student = async () => {
       }
     }
   }
-  ListmapStudent();
+  confirm("更新成功搂");
+  window.location.reload();
 };
 
-let handleSubmit = async (event: any) => {
-  event.preventDefault();
-
-  // 延遲 3 秒
-  await new Promise(resolve => setTimeout(resolve, 3000));
-
-  // 顯示錯誤提示
-  window.alert('錯誤！');
-};
 </script>
 <style scoped>
 .table-container {
