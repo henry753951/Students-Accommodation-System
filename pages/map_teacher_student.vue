@@ -22,7 +22,7 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(data, index) in All_student_init" :key="index" class="">
+        <TableRow v-for="(data, index) in All_student_init_2" :key="index" class="">
           <TableCell class="">
             {{ data.name }}
           </TableCell>
@@ -140,6 +140,7 @@ type Student = {
 
 let All_student_init = ref<Student[]>([]);
 
+let All_student_init_2 = ref<Student[]>([]);
 let new_student_create_name = ref("王曉明");
 let new_student_create_student_number = ref("a1105500");
 let new_student_create_email = ref("a1105500@mail.nuk.edu.tw");
@@ -209,8 +210,9 @@ const ListmapStudent_step2 = async () => {
     // console.log("22",All_student_init.value[i].student_id);
     const { data, error } = await supabase
       .from("app_user")
-      .select('name,email')
-      .eq("id", All_student_init.value[i].student_id);
+      .select('name,email,student(department_id,student_number)')
+      .eq("id", All_student_init.value[i].student_id)
+      .eq("student.user_id", All_student_init.value[i].student_id);
     if (error) {
       toast.toast({
         title: "Error",
@@ -221,9 +223,12 @@ const ListmapStudent_step2 = async () => {
     }
     All_student_init.value[i].name = data[0].name ?? "";
     All_student_init.value[i].email = data[0].email ?? "";
+    All_student_init.value[i].department_id = data[0].student?.department_id ?? "";
+    All_student_init.value[i].student_number = data[0].student?.student_number ?? "";
   }
   // console.log("121",All_student_init.value);
-  ListmapStudent_step3();
+  // ListmapStudent_step3();
+  All_student_init_2.value = All_student_init.value;
 };
 
 const ListmapStudent_step3 = async () => {
