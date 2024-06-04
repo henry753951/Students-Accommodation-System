@@ -12,6 +12,23 @@
         </div>
         <MenuLinkNav class="mr-auto" />
         <div class="flex items-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            class="mr-2"
+            @click="toggleDarkMode"
+          >
+            <Icon
+              v-if="isDarkMode"
+              size="10px"
+              name="tabler:moon"
+            />
+            <Icon
+              v-else
+              size="10px"
+              name="tabler:sun"
+            />
+          </Button>
           <MenuAvatarDropdown />
         </div>
       </div>
@@ -46,5 +63,13 @@ const back = () => {
     router.push("/");
   }
 };
+const colorMode = useColorMode();
+
+const toggleDarkMode = () => {
+  colorMode.value = colorMode.value === "dark" ? "light" : "dark";
+
+};
+const isDarkMode = computed(() => colorMode.value === "dark");
+
 </script>
 <style></style>
