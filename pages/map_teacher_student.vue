@@ -49,7 +49,7 @@
     </Table>
     <div class=" flex justify-end">
       <UseTemplate>
-        <form class="grid items-start gap-4 px-4">
+        <div class="grid items-start gap-4 px-4">
           <div class="grid gap-2">
             <Label html-for="username">姓名</Label>
             <Input id="username" v-model=new_student_create_name />
@@ -62,15 +62,15 @@
             <Label html-for="email">信箱</Label>
             <Input id="email" type="email" v-model=new_student_create_email />
           </div>
-          <Button @click="new_student()">
+          <Button   @click="new_student()">
             Create
           </Button>
-        </form>
+        </div>
       </UseTemplate>
 
       <Dialog v-if="isDesktop" v-model:open="isOpen">
         <DialogTrigger as-child>
-          <Button variant="outline"
+          <Button variant="outline" :disabled = "isreadytodelete"
             class="m-2 w-20 bg-black text-white hover  hover:text-black hover:bg hover:shadow-lg ">
             New
           </Button>
@@ -85,9 +85,9 @@
           <GridForm />
         </DialogContent>
       </Dialog>
-      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg"
+      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg":disabled = "isreadytodelete"
         @click="Delete_student()">delete</Button>
-      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg">Submit</Button>
+      <Button  @click = "submit()"class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg" :disabled=" canuse_submit_btn">Submit</Button>
     </div>
     <!-- {{ All_Student[0] }} -->
   </div>
@@ -118,16 +118,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer'
+
 const isOpen = ref(false)
 // import type { Student } from "~/types";
 // import Student from "~/components/management/user/Student.vue";
@@ -139,22 +130,15 @@ const supabase = useSupabaseClient<Database>();
 
 type Student = {
   user_id: string;
-  department_id: string;
-  student_number: string;
+  department_id: string ;
+  student_number: string ;
   student_id: string;
-  name: string;
-  email: string;
+  name: string ;
+  email: string ;
   isChecked: boolean;
 };
 
-type New_Student = {
-  student_number: string;
-  name: string;
-  email: string;
-};
-
 let All_student_init = ref<Student[]>([]);
-let All_student_init_step2 = ref([]);
 
 let new_student_create_name = ref("王曉明");
 let new_student_create_student_number = ref("a1105500");
@@ -162,7 +146,8 @@ let new_student_create_email = ref("a1105500@mail.nuk.edu.tw");
 let isRed = ref(false);
 const user = useSupabaseUser();
 let teacher_id = "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4";
-
+let isreadytodelete = ref(false);
+let canuse_submit_btn = ref(true);
 onMounted(() => {
   // console.log("1");
   teacher_login();
@@ -203,6 +188,7 @@ const ListmapStudent = async () => {
   }
   // console.log(data);
   for (let i = 0; i < data.length; i++) {
+    // console.log("11",data[i].student_id);
     All_student_init.value.push({
       student_id: data[i].student_id,
       user_id: "",
@@ -210,15 +196,17 @@ const ListmapStudent = async () => {
       student_number: "",
       name: "",
       email: "",
-      isChecked: true,
+      isChecked: false,
     });
   }
+ 
   ListmapStudent_step2();
 };
 
 
 const ListmapStudent_step2 = async () => {
   for (let i = 0; i < All_student_init.value.length; i++) {
+    // console.log("22",All_student_init.value[i].student_id);
     const { data, error } = await supabase
       .from("app_user")
       .select('name,email')
@@ -231,11 +219,10 @@ const ListmapStudent_step2 = async () => {
       });
       return;
     }
-    for (let j = 0; j < data.length; j++) {
-      All_student_init.value[i].name = data[j].name;
-      All_student_init.value[i].email = data[j].email;
-    }
+    All_student_init.value[i].name = data[0].name ?? "";
+    All_student_init.value[i].email = data[0].email ?? "";
   }
+  // console.log("121",All_student_init.value);
   ListmapStudent_step3();
 };
 
@@ -253,16 +240,13 @@ const ListmapStudent_step3 = async () => {
       });
       return;
     }
-    for (let j = 0; j < data.length; j++) {
-      All_student_init.value[i].department_id = data[j].department_id;
-      All_student_init.value[i].student_number = data[j].student_number;
-    }
+    All_student_init.value[i].department_id = data[0].department_id ?? "";
+    All_student_init.value[i].student_number = data[0].student_number ?? "";
   }
 };
 
 let test = ref("");
 const new_student = async () => {
-  confirm("確定要新增此學生嗎？");
   const { data, error } = await supabase
     .from("student")
     .select('user_id')
@@ -273,31 +257,53 @@ const new_student = async () => {
       description: "找不到此學生，請確認學號是否正確，開頭字母為小寫",
       variant: "destructive",
     });
+    window.location.reload();
     return;
   }
-  if(data.length == 0){
-    confirm("確定要新增此學生嗎？");
+  if (data.length == 0) {
     toast.toast({
       title: "Error",
-      description: "找不到此學生，請確認學號是否正確，開頭字母為小寫",
+      description: "找不到此學生之學號。開頭字母為小寫",
       variant: "destructive",
     });
     return;
   }
-  test.value = data[0].user_id;
-  new_student_step2(test.value);
+  new_student_step2(data[0].user_id);
+  
 };
+
 const new_student_step2 = async (USER_ID: String) => {
-  if(USER_ID.length == 0){
-    confirm("555555555");
+  console.log("1",new_student_create_email.value)
+  const { data, error } = await supabase
+    .from("app_user")
+    .select('student_id')
+    // .eq("name", new_student_create_name.value)
+    .eq("email", new_student_create_email.value);
+  if (error) {
+    toast.toast({
+      title: "Error",
+      description: "找不到學生姓名或者信箱，請確認姓名信箱是否正確",
+      variant: "destructive",
+    });
+    // window.location.reload();
+    return;
   }
+  if (data.length == 0) {
+    confirm("找不到此學生姓名或者信箱，請確認姓名或者信箱是否正確");
+    return;
+  }
+  new_student_step3(USER_ID);
+};
+
+
+const new_student_step3 = async (USER_ID: String) => {
   const now_time = new Date().toISOString();
   const { data, error } = await supabase
     .from("map_teacher_student")
     .insert(
       {
         "teacher_id": "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4",
-        "student_id": USER_ID,
+        "student_id": USER_ID as string,
         "created_at": now_time,
         "updated_at": now_time,
       }
@@ -310,17 +316,23 @@ const new_student_step2 = async (USER_ID: String) => {
     });
     return;
   }
-  confirm("Success");
-  console.log("Success");
+  confirm("新增成功搂");
+  window.location.reload();
 };
 
 const Delete_student = async () => {
+  isRed.value = true;
+  isreadytodelete.value = true;
+  canuse_submit_btn.value = false;
+};
 
+const submit = async () => {
   for (let i = 0; i < All_student_init.value.length; i++) {
     if (All_student_init.value[i].isChecked) {
       const { data, error } = await supabase
         .from("map_teacher_student")
         .delete()
+        .eq("teacher_id", teacher_id)
         .eq("student_id", All_student_init.value[i].student_id);
       if (error) {
         toast.toast({
@@ -332,18 +344,10 @@ const Delete_student = async () => {
       }
     }
   }
-  ListmapStudent();
+  confirm("更新成功搂");
+  window.location.reload();
 };
 
-let handleSubmit = async (event: any) => {
-  event.preventDefault();
-
-  // 延遲 3 秒
-  await new Promise(resolve => setTimeout(resolve, 3000));
-
-  // 顯示錯誤提示
-  window.alert('錯誤！');
-};
 </script>
 <style scoped>
 .table-container {
