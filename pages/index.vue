@@ -15,12 +15,12 @@ const { data: test } = await useAPI("/api/test", {
   },
 });
 
-
+const query_school_number = ref("a1105534");
 const {data: students,refresh} = useAsyncData(async () => {
   const { data, error } = await supabase.from("app_user")
     .select("*,student(*)")
     .not('student', 'is', null)
-    .eq("student.student_number", "a1105534"); // eq 在join中的用法
+    .eq("student.student_number", query_school_number.value); // eq 在join中的用法
   if (error) {
     console.error(error);
     return [];
@@ -111,11 +111,11 @@ const {data: students,refresh} = useAsyncData(async () => {
       </div>
 
       <div>
-        <code class="text-sm">
-          const { data, error } = await supabase.from("app_user")
-          .select("*,student(*)")
-          .not('student', 'is', null);
-        </code>
+        <!-- JOIN 範例 -->
+        <h1 class="text-xl font-semibold mb-4">
+          JOIN 範例
+        </h1>
+        <Input v-model="query_school_number" />
         <Button @click="refresh">
           Refresh
         </Button>
