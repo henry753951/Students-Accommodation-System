@@ -1,207 +1,85 @@
 <template>
-  <div class="space-y-10">
-    <section>
-      <h2 class="text-xl font-bold mb-4">
-        Property Form
-      </h2>
-      <RentalAddrForm
-        v-model:address="address"
-        v-model:landlordName="landlordName"
-      />
-    </section>
-
-    <section>
-      <h2 class="text-xl font-bold mb-4">
-        Property Form
-      </h2>
-      <RentalPropertyForm 
-        v-model:price="price" 
-        v-model:description="description" 
-        v-model:is_public="isPublic" 
-        v-model:propertyAttributesType="propertyAttributesType" 
-        v-model:propertyAttributesSex="propertyAttributesSex" 
-        v-model:propertyAttributesSubsidy="propertyAttributesSubsidy" 
-      />
-    </section>
-
-    <Button
-      type="submit"
-      @click="handleSubmit"
-    >
+  <form class="p-5 w-11/12 mx-auto bg-slate-100 mt-6 table-container rounded-lg shadow-lg" @submit="onSubmit">
+    <FormField v-slot="{ componentField }" name="username">
+      <FormItem v-auto-animate>
+        <FormLabel>Username</FormLabel>
+        <FormControl>
+          <Input type="text" placeholder="shadcn" v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+        <FormLabel>Username</FormLabel>
+        <FormControl>
+          <Input type="text" placeholder="shadcn" v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+        <FormLabel>Username</FormLabel>
+        <FormControl>
+          <Input type="text" placeholder="shadcn" v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+    <Button type="submit">
       Submit
     </Button>
-
-    <section>
-      <h2 class="text-xl font-bold mb-4">
-        表單內容統整
-      </h2>
-      <p>addr: {{ address }}</p>
-      <p>landlordname: {{ landlordName }}</p>
-      <p>Price: {{ price }}</p>
-      <p>Description: {{ description }}</p>
-      <p>Is Public: {{ isPublic }}</p>
-      <p>Property Attributes: [{{ propertyAttributesType }},{{ propertyAttributesSex }},{{ propertyAttributesSubsidy }}]</p>
-    </section>
-    <section>
-      <h2 class="text-xl font-bold mb-4">
-        Import Link
-      </h2>
-      <input
-        v-model="idtntity"
-        type="radio"
-        value="teacher"
-      > Teacher
-      <input
-        v-model="idtntity"
-        type="radio"
-        value="student"
-      > Student
-      <div v-if="idtntity === 'student'">
-        <button>
-          Import Link
-        </button>
-        <p>Link: {{ link }}</p>
-      </div>
-    </section>
-  </div>
+  </form>
+  {{ all }}
+  <!-- {{ rental_property_id }} -->
 </template>
-
-
 <script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/zod';
-import { ref } from 'vue';
-import * as z from 'zod';
-import { useToast } from '@/components/ui/toast/use-toast';
-import type { DropdownMenuCheckboxItemProps } from 'radix-vue';
+import { h } from 'vue'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import * as z from 'zod'
+import { vAutoAnimate } from '@formkit/auto-animate/vue'
 import type { Database, Tables, Enums } from "~/database.types";
+import { useToast } from "~/components/ui/toast/use-toast";
+import { Button } from '@/components/ui/button'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { toast } from '@/components/ui/toast'
 
+const formSchema = toTypedSchema(z.object({
+  username: z.string().min(2).max(50),
+}))
 
-import { Button } from '@/components/ui/button';
-const { toast } = useToast();
-const supabase = useSupabaseClient<Database>();
-
-const address = ref('');
-const landlordName = ref('');
-const price = ref(0);
-const description = ref('');
-const isPublic = ref(false);
-const propertyAttributesType = ref('');
-const propertyAttributesSex = ref('無');
-const propertyAttributesSubsidy = ref(false);
-
-// 看有那些問題
-
-const idtntity = ref("");
-const link = ref("");
-const all_interview = ref({});
-onMounted(async () => {
-  if (idtntity.value == "teacher") {
-
-  } else if (idtntity.value == "student") {
-    // 直接匯入
-    link.value = await get_student_information(idtntity.value);
-    all_interview.value = await get_all_interview(link.value) ?? {};
-  }
-});
-
-const get_student_information = async (student_id: string) => {
-  const { data, error } = await supabase
-    .from('interview_record')
-    .select("*")
-    .eq('student_id', student_id);
-  if (error) {
-    console.error(error);
-    return;
-  }
-  return data[0]["get_interview_link"];
-};
-
-const get_all_interview = async (link: string) => {
-  const { data, error } = await supabase
-    .from('interview_problem')
-    .select("*")
-    .eq('get_interview_link', link);
-  if (error) {
-    console.error(error);
-    return;
-  }
-  return data;
-};
-
-
-const SubmitToInterview = async (time: string) => {
-  const { data, error } = await supabase
-    .from("interview_problem")
-    .insert([
-      {
-        // all problem
-      }
-    ]);
-  if (error) {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-    return 'error';
-  }
-};
-
-const formSchema = toTypedSchema(
-  z.object({
-    address: z.string().min(5, 'Address must be at least 5 characters long'),
-    landlordName: z.string().min(2, 'Landlord name must be at least 2 characters long'),
-  })
-);
-
-const form = useForm({
+const { handleSubmit } = useForm({
   validationSchema: formSchema,
+})
+
+const onSubmit = handleSubmit((values) => {
+  toast({
+    title: 'You submitted the following values:',
+    description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
+  })
+})
+
+onMounted(() => {
+  initial_get_information();
 });
+const supabase = useSupabaseClient<Database>();
+const user = useSupabaseUser();
+type property_id = {
+  address: string,
+  landlord_id: string,
+  comments: string | null,
+  school_id: string | null,
+}
+let all = ref({});
+let rental_property_id = ref<property_id[]>([]);;
 
-
-const SubmitToRentalprop = async (time: string): Promise<string> => {
+const initial_get_information = async () => {
   const { data, error } = await supabase
-    .from("rental_property")
-    .insert([
-      {
-        "address": address.value,
-        "landlord_id": 'cc7c9e40-af78-45d5-907f-66bcf550d2ad',
-        "created_at": time,
-        "updated_at": time,
-      }
-    ])
-    .select("*");
-  if (error) {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-    return 'error';
-  }
-  return data[0]['id'];
-};
-
-const SubmitToRentalinfo = async (rental_id: string, time: string) => {
-  console.log("BINHAN SO SMALL");
-  const { data, error } = await supabase
-    .from("rental_property_info")
-    .insert([
-      {
-        "rental_property_id": rental_id,
-        "price": price.value,
-        "is_public": false,
-        "description": description.value,
-        "property_attributes": JSON.stringify({
-          type: propertyAttributesType.value,
-          sex: propertyAttributesSex.value,
-          subsidy: propertyAttributesSubsidy.value
-        }),
-        "created_at": time,
-        "updated_at": time,
-      }
-    ])
-    .select("*");
+    .from("map_rental_property_student")
+    .select("rental_property_id,name")
+    .eq("student_id", "77bfd169-c679-473c-9c93-fc26679d7216")
   if (error) {
     toast({
       title: "Error",
@@ -210,35 +88,21 @@ const SubmitToRentalinfo = async (rental_id: string, time: string) => {
     });
     return;
   }
-};
-
-const handleSubmit = async () => {
-  const confirmation = confirm(`
-    Address: ${address.value}
-    Landlord Name: ${landlordName.value}
-    Price: ${price.value}
-    Description: ${description.value}
-    Is Public: ${isPublic.value}
-    Property Attributes: ${propertyAttributesType.value}, ${propertyAttributesSex.value}, ${propertyAttributesSubsidy.value}
-    
-    確定要送出嗎?
-  `);
-
-  if (confirmation) {
-    //提交表單的邏輯
-    //送出到supabase
-    const time = new Date().toISOString();
-    const rental_id = await SubmitToRentalprop(time);
-    SubmitToRentalinfo(rental_id, time);
-    SubmitToInterview(time);
-    console.log(rental_id, time);
-  } else {
-    console.log(confirmation);
+  const { data: rental_property_id, error: error2 } = await supabase
+    .from("rental_property")
+    .select("*,rental_property_info(*)")
+    .eq("id", data[0].rental_property_id)
+  if (error2) {
+    toast({
+      title: "Error",
+      description: error2.message,
+      variant: "destructive",
+    });
+    return;
   }
+  all.value = rental_property_id;
+  
 };
 
 </script>
-
-<style scoped>
-/* Add any additional styling here */
-</style>
+ 
