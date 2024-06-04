@@ -11,119 +11,53 @@
       v-if="currentStep === 1"
       name=""
     >
-      <FormField
-        v-slot="{ componentField }"
-        name="StudentID"
-      >
-        <FormItem>
-          <FormLabel>Student ID</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="Enter your Student ID"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+      <InterviewFormInput
+        field-name="StudentID"
+        lable-value="Student ID"
+        place-holder-value="Enter your Student ID"
+      />
 
-      <FormField
-        v-slot="{ componentField }"
-        name="TeacherID"
-      >
-        <FormItem>
-          <FormLabel>Teacher ID</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="Enter your Teacher ID"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+      <InterviewFormInput
+        field-name="TeacherID"
+        lable-value="Teacher ID"
+        place-holder-value="Enter your Teacher ID"
+      />
     </FormField>  
 
     <FormField
       v-if="currentStep === 2"
       name=""
     >
-      <FormField
-        v-slot="{ componentField }"
-        name="LandLordID"
-      >
-        <FormItem>
-          <FormLabel>LandLord ID</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="Enter your LandLord ID"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+      <InterviewFormInput
+        field-name="LandLordID"
+        lable-value="LandLord ID"
+        place-holder-value="Enter your LandLord ID"
+      />
 
-
-      <FormField
-        v-slot="{ componentField }"
-        name="LandLordName"
-      >
-        <FormItem>
-          <FormLabel>LandLord Name</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="Enter your LandLord Name"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        name="LandLordNumber"
-      >
-        <FormItem>
-          <FormLabel>LandLord Number</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="Enter your LandLord Number"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>    
-      </FormField>
+      <InterviewFormInput
+        field-name="LandLordName"
+        lable-value="LandLord Name"
+        place-holder-value="Enter your LandLord Name"
+      />
+      
+      <InterviewFormInput
+        field-name="LandLordNumber"
+        lable-value="LandLord Number"
+        place-holder-value="Enter your LandLord Number"
+      />
     </FormField>
 
     <FormField
       v-if="currentStep === 3"
       name=""
-    >
-      <FormField
-        v-slot="{ componentField }"
-        name="PropertyID"
-      >
-        <FormItem>
-          <FormLabel>Property ID</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="Enter your Property ID"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+    > 
+      <InterviewFormInput
+        field-name="PropertyID"
+        lable-value="Property ID"
+        place-holder-value="Enter your Property ID"
+      />
     </FormField>
+
     <Button
       v-if="currentStep < 4"
       :disabled="currentStep === 1"
@@ -148,633 +82,169 @@
     keep-values
     @submit="nextStep"
   >
+    {{ values }}
     <FormField 
       v-if="currentStep === 4"
       name=""
     >
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="rental_type"
+      <h2>校外賃居資料</h2>
+      <InterviewFormRadio
+        field-name="rental_type"
+        lable-value="租屋型態"
       >
-        <h2>校外賃居資料</h2>
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>租屋型態</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="獨棟透天" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  獨棟透天
-                </FormLabel>
-
-                <FormControl>
-                  <RadioGroupItem value="公寓" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  公寓(五樓以下)
-                </FormLabel>
-
-                <FormControl>
-                  <RadioGroupItem value="大樓" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  大樓(六樓以上)
-                </FormLabel>
-              
-                <FormControl>
-                  <RadioGroupItem value="宿舍" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  宿舍
-                </FormLabel>
-
-                <FormControl>
-                  <RadioGroupItem value="其他" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  其他
-                </FormLabel>
-
-                <FormControl>
-                  <Input
-                    v-if="values.rental_type === '其他'"
-                    v-bind="componentField"
-                    type="text"
-                    placeholder="請輸入其他"
-                  />
-                </FormControl>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="room_type"
+        <InterviewFormRadioControl
+          value="獨棟透天"
+          lable-value="獨棟透天"
+        />
+        <InterviewFormRadioControl 
+          value="公寓"
+          lable-value="公寓(五樓以下)"
+        />
+        <InterviewFormRadioControl 
+          value="大樓"
+          lable-value="大樓(六樓以上)"  
+        />
+        <InterviewFormRadioControl 
+          value="宿舍"
+          lable-value="宿舍"
+        />
+        <InterviewFormRadioControl 
+          value="其他"
+          lable-value="其他"
+        />
+      </InterviewFormRadio>
+      
+      <InterviewFormRadio
+        field-name="room_type"
+        lable-value="房間型態"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>房間型態</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="雅房" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  雅房
-                </FormLabel>
+        <InterviewFormRadioControl
+          value="雅房"
+          lable-value="雅房"
+        />
+        <InterviewFormRadioControl 
+          value="套房"
+          lable-value="套房"
+        />
+      </InterviewFormRadio>
 
-                <FormControl>
-                  <RadioGroupItem value="套房" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  套房
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+      <InterviewFormInput
+        field-name="rent"
+        lable-value="租金"
+        place-holder-value="請輸入一個月的租金"
+      />
 
-      <FormField
-        v-slot="{ componentField }"
-        name="rent"
+      <InterviewFormInput
+        field-name="deposit"
+        lable-value="押金"
+        place-holder-value="請輸入押金"
+      />
+
+      <InterviewFormRadio
+        field-name="recommend"
+        lable-value="是否值得推薦其他同學租賃?"
       >
-        <FormItem>
-          <FormLabel>租金</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="請輸入一個月的租金"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        name="deposit"
-      >
-        <FormItem>
-          <FormLabel>押金</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              type="text"
-              placeholder="請輸入押金"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="recommend"
-      >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>是否值得推薦其他同學租賃?</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField> 
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
     </FormField>
-    
+
     <FormField
       v-if="currentStep === 5"
       name=""
     >
       <h2>賃居安全自主管理檢視資料</h2>
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="rooftop_dwellings"
+
+      <InterviewFormRadio
+        field-name="rooftop_dwellings"
+        lable-value="木造隔間或鐵皮加蓋"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>木造隔間或鐵皮加蓋</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="fire_alarm"
+      <InterviewFormRadio
+        field-name="fire_alarm"
+        lable-value="有火警警報器或偵煙器"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>有火警警報器或偵煙器</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="emergency_exit"
+      <InterviewFormRadio
+        field-name="emergency_exit"
+        lable-value="逃生通道暢通且標示清楚"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>逃生通道暢通且標示清楚</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="locker"
+      <InterviewFormRadio
+        field-name="locker"
+        lable-value="門禁及鎖具良好管理"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>門禁及鎖具良好管理</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="illumination"
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
+      
+      <InterviewFormRadio
+        field-name="illumination"
+        lable-value="有安裝照明設備(停車場及周邊)"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>有安裝照明設備(停車場及周邊)</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="escape_essentials"
+      <InterviewFormRadio
+        field-name="escape_essentials"
+        lable-value="瞭解熟悉電路安全及逃生要領"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>瞭解熟悉電路安全及逃生要領</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>      
-      </FormField>
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
+      
+      <InterviewFormRadio
+        field-name="safety_phone_number"
+        lable-value="熟悉派出所、醫療、消防隊、學校校安專線電話"
+      >
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
+ 
+      <InterviewFormRadio
+        field-name="electrical_safety"
+        lable-value="使用多種電器(高耗能)，是否同時插在同一條延長線"
+      >
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="safety_phone_number"
+      <InterviewFormRadio
+        field-name="fire_extinguisher"
+        lable-value="有滅火器且功能正常"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>熟悉派出所、醫療、消防隊、學校校安專線電話</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="electrical_safety"
+      <InterviewFormRadio
+        field-name="water_heater"
+        lable-value="熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>
-            使用多種電器(高耗能)，是否同時插在同一條延長線
-          </FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+        <InterviewFormTFControl />
+      </InterviewFormRadio> 
+      
+      <InterviewFormRadio
+        field-name="multi_room_bed"
+        lable-value="分開6個以上房間或10個以上床位"
+      >
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="fire_extinguisher"
+      <InterviewFormRadio
+        field-name="camera"
+        lable-value="有安裝監視器設備"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>有滅火器且功能正常</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
 
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="water_heater"
+      <InterviewFormRadio
+        field-name="contract"
+        lable-value="使用<內政部定型化租賃契約>"
       >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="multi_room_bed"
-      >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>分開6個以上房間或10個以上床位</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="camera"
-      >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>有安裝監視器設備</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField
-        v-slot="{ componentField }"
-        type="radio"
-        name="contract"
-      >
-        <FormItem
-          class="space-y-3"
-        >
-          <FormLabel>使用"內政部定型化租賃契約"</FormLabel>
-          <FormControl>
-            <RadioGroup
-              class="flex flex-col space-y-1"
-              v-bind="componentField"
-            >
-              <FormItem class="flex items-center space-y-0 gap-x-3">
-                <FormControl>
-                  <RadioGroupItem value="true" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  是
-                </FormLabel>
-                <FormControl>
-                  <RadioGroupItem value="false" />
-                </FormControl>
-                <FormLabel class="font-normal">
-                  否
-                </FormLabel>
-              </FormItem>
-            </RadioGroup>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-    </FormField> 
+        <InterviewFormTFControl />
+      </InterviewFormRadio>
+    </FormField>
 
     <Button
       v-if="currentStep >= 4"
@@ -805,6 +275,8 @@ import { Form } from 'vee-validate';
 import * as yup from 'yup';
 import { toast } from '@/components/ui/toast';
 
+const default_required_error = '此為必填問題!';
+
 const schemas = [
   yup.object({
     StudentID: yup.string().min(8,'學號應至少包含八位!').required('請輸入學號!'),
@@ -823,22 +295,22 @@ const schemas = [
     room_type: yup.string().required('請選擇房間型態!'),
     rent: yup.string().required('請輸入租金!'),
     deposit: yup.string().required('請輸入押金!'),
-    recommend: yup.boolean().required('此為必填問題!'),
+    recommend: yup.boolean().required(default_required_error),
   }),
   yup.object({
-    rooftop_dwellings: yup.boolean().required('此為必填問題!'),
-    fire_alarm: yup.boolean().required('此為必填問題!'),
-    emergency_exit: yup.boolean().required('此為必填問題!'),
-    locker: yup.boolean().required('此為必填問題!'),
-    illumination: yup.boolean().required('此為必填問題!'),
-    escape_essentials: yup.boolean().required('此為必填問題!'),
-    safety_phone_number: yup.boolean().required('此為必填問題!'),
-    electrical_safety: yup.boolean().required('此為必填問題!'),
-    fire_extinguisher: yup.boolean().required('此為必填問題!'),
-    water_heater: yup.boolean().required('此為必填問題!'),
-    multi_room_bed: yup.boolean().required('此為必填問題!'),
-    camera: yup.boolean().required('此為必填問題!'),
-    contract: yup.boolean().required('此為必填問題!'),
+    rooftop_dwellings: yup.boolean().required(default_required_error),
+    fire_alarm: yup.boolean().required(default_required_error),
+    emergency_exit: yup.boolean().required(default_required_error),
+    locker: yup.boolean().required(default_required_error),
+    illumination: yup.boolean().required(default_required_error),
+    escape_essentials: yup.boolean().required(default_required_error),
+    safety_phone_number: yup.boolean().required(default_required_error),
+    electrical_safety: yup.boolean().required(default_required_error),
+    fire_extinguisher: yup.boolean().required(default_required_error),
+    water_heater: yup.boolean().required(default_required_error),
+    multi_room_bed: yup.boolean().required(default_required_error),
+    camera: yup.boolean().required(default_required_error),
+    contract: yup.boolean().required(default_required_error),
   }),
 ];
 
