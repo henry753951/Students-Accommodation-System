@@ -35,7 +35,8 @@
               <p class="text-gray-700 mb-4 truncate">{{ property.rental_property_info.length ? property.rental_property_info[0].description : 'No description available' }}</p>
               <div class="flex justify-between items-center mb-4">
                 <div class="text-lg font-semibold text-green-600">{{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : 'Price not available' }}</div>
-                <Button class="bg-green-500 text-white px-4 py-2 rounded">預約</Button>
+                <NuxtLink to="./reserve" class="text-blue-500">預約看屋
+                </NuxtLink>
               </div>
             </div>
           </Card>
