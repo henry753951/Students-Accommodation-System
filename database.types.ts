@@ -47,6 +47,45 @@ export type Database = {
           },
         ]
       }
+      comment: {
+        Row: {
+          comment: string | null
+          creared: string | null
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          creared?: string | null
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Update: {
+          comment?: string | null
+          creared?: string | null
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interview_record: {
         Row: {
           landlord_id: string | null
@@ -54,7 +93,7 @@ export type Database = {
           landlord_number: string | null
           property_id: string | null
           record_link: string
-          reocrd_time: string
+          record_time: string
           response: Json | null
           student_id: string
           teacher_id: string
@@ -65,7 +104,7 @@ export type Database = {
           landlord_number?: string | null
           property_id?: string | null
           record_link?: string
-          reocrd_time?: string
+          record_time?: string
           response?: Json | null
           student_id?: string
           teacher_id?: string
@@ -76,7 +115,7 @@ export type Database = {
           landlord_number?: string | null
           property_id?: string | null
           record_link?: string
-          reocrd_time?: string
+          record_time?: string
           response?: Json | null
           student_id?: string
           teacher_id?: string
@@ -219,6 +258,48 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "teacher"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          content: string | null
+          created: string | null
+          id: string
+          location_id: string
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created?: string | null
+          id?: string
+          location_id?: string
+          title?: string | null
+          user_id?: string
+        }
+        Update: {
+          content?: string | null
+          created?: string | null
+          id?: string
+          location_id?: string
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
           },
         ]
       }
