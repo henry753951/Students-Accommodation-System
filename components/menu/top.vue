@@ -36,6 +36,7 @@
           </Button>
           <MenuAvatarDropdown />
         </div>
+        <ReservationDrawer />
       </div>
       <div class="flex items-center">
         <Button
