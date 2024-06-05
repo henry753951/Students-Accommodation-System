@@ -25,7 +25,6 @@ defineProps<{
   placeHolderValue: string
 }>();
 
-
 </script>
 
 <style>
