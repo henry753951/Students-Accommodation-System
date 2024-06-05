@@ -25,10 +25,10 @@
       </div>
       <Card v-for="post in posts" :key="post.id" class="post p-4 mb-4 border rounded-md">
         <h2 class="text-xl font-semibold">{{ post.title }}</h2>
-        <p class="text-sm text-gray-500 mb-2">發布者: {{ post.user_id }}</p>
+        <p class="text-sm text-gray-500 mb-2">發布者: {{ post.app_user?.name }}</p>
         <p class="text-sm text-gray-500 mb-2">發布時間: {{ post.created }}</p>
         <p class="mb-2">{{ post.content }}</p>
-        <p class="text-sm text-gray-500">租屋地點: {{ post.location_id }}</p>
+        <p class="text-sm text-gray-500">租屋地點: {{ post.rental_property?.address }}</p>
         <div class="comments mt-4">
           <h3 class="text-lg font-semibold">留言</h3>
           <div v-for="comment in post.comments" :key="comment.id" class="comment p-2 border-t">
@@ -96,19 +96,6 @@ const publishPost = async () => {
   refreshPosts();
 };
 
-const { data: posts, pending: isLoading, refresh: refreshPosts } = useAsyncData('posts', async () => {
-  const { data, error } = await supabase
-    .from('posts')
-    .select(`
-      *,
-      comments (*)
-    `);
-  if (error) {
-    console.error(error);
-  }
-  return data;
-});
-
 const newComment = ref('');
 
 const addComment = async (postId: string) => {
@@ -130,7 +117,33 @@ const addComment = async (postId: string) => {
   }
 
   newComment.value = '';
+
+  window.alert('發布成功！');
+  refreshPosts();
 };
+
+const { data: posts, pending: isLoading, refresh: refreshPosts } = useAsyncData('posts', async () => {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+    *,
+      app_user (name),
+      rental_property (address),
+      comments (
+        id,
+        comment,
+        user_id,
+        post_id,
+        created
+      )
+    `)
+    .order('created', { ascending: false });
+  if (error) {
+    console.error(error);
+  }
+  return data;
+});
+
 </script>
 
 <style scoped>
