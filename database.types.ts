@@ -47,24 +47,24 @@ export type Database = {
           },
         ]
       }
-      comment: {
+      comments: {
         Row: {
-          comment: string | null
-          creared: string | null
+          comment: string
+          created: string
           id: string
           post_id: string
           user_id: string
         }
         Insert: {
-          comment?: string | null
-          creared?: string | null
+          comment: string
+          created: string
           id?: string
           post_id?: string
           user_id?: string
         }
         Update: {
-          comment?: string | null
-          creared?: string | null
+          comment?: string
+          created?: string
           id?: string
           post_id?: string
           user_id?: string
@@ -78,7 +78,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "comment_user_id_fkey"
+            foreignKeyName: "comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "app_user"
@@ -263,27 +263,30 @@ export type Database = {
       }
       posts: {
         Row: {
-          content: string | null
+          content: string
           created: string | null
           id: string
           location_id: string
-          title: string | null
+          score: number | null
+          title: string
           user_id: string
         }
         Insert: {
-          content?: string | null
+          content: string
           created?: string | null
           id?: string
           location_id?: string
-          title?: string | null
+          score?: number | null
+          title: string
           user_id?: string
         }
         Update: {
-          content?: string | null
+          content?: string
           created?: string | null
           id?: string
           location_id?: string
-          title?: string | null
+          score?: number | null
+          title?: string
           user_id?: string
         }
         Relationships: [
@@ -378,6 +381,55 @@ export type Database = {
             columns: ["rental_property_id"]
             isOneToOne: false
             referencedRelation: "rental_property"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report: {
+        Row: {
+          comment_id: string
+          created: string | null
+          id: string
+          post_id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          comment_id?: string
+          created?: string | null
+          id?: string
+          post_id?: string
+          reason: string
+          user_id?: string
+        }
+        Update: {
+          comment_id?: string
+          created?: string | null
+          id?: string
+          post_id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
             referencedColumns: ["id"]
           },
         ]
