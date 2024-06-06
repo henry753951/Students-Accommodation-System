@@ -83,7 +83,7 @@ const {data: students,refresh} = useAsyncData(async () => {
           </Button>
         </NuxtLink>
         <NuxtLink
-          to="/test_student_rental"
+          to="/student_rental/Rental_student"
           class="w-full sm:w-auto"
         >
           <Button class="w-full">
