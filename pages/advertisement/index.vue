@@ -59,7 +59,12 @@
                   {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : 'Price not available' }}
                 </div>
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
-                  <NuxtLink to="./reserve" class="text-white">預約看屋</NuxtLink>
+                  <NuxtLink
+                    to="./reserve"
+                    class="text-white"
+                  >
+                    預約看屋
+                  </NuxtLink>
                 </Button>
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
                   <NuxtLink :to="'/advertisement/info-'+property.id">
