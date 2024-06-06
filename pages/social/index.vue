@@ -1,10 +1,7 @@
 <template>
   <div class="bg-gray-50 min-h-screen p-6">
     <Card class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300">
-      <Button @click="showPostForm = true" v-if="!showPostForm">
-        發布貼文
-      </Button>
-      <div v-if="showPostForm">
+      <div>
         <input v-model="newPostTitle" class="w-full p-2 border rounded-md mb-4" placeholder="輸入標題">
         <textarea v-model="newPostContent" class="w-full p-2 border rounded-md mb-4" placeholder="輸入你的貼文內容"></textarea>
         <Select v-model="newRating" class="w-48 border border-gray-300 rounded">
@@ -19,27 +16,37 @@
           </SelectContent>
         </Select>
         <br>
-        <Button @click="publishPost" class="bg-green-500 text-white px-4 py-2 rounded">
-          發布
-        </Button>
+        <div class="flex justify-end">
+          <Button @click="publishPost" class="bg-green-500 text-white px-4 py-2 rounded-md">
+            發布貼文
+          </Button>
+        </div>
       </div>
+      <h1>其他人的貼文</h1>
       <Card v-for="post in posts" :key="post.id" class="post p-4 mb-4 border rounded-md">
+        <Button @click="reportPost(post.id)" class="report-button absolute bg-red-500 text-white px-2 py-2 rounded">
+          檢舉貼文
+        </Button>
         <h2 class="text-xl font-semibold">{{ post.title }}</h2>
         <p class="text-sm text-gray-500 mb-2">發布者: {{ post.app_user?.name }}</p>
         <p class="text-sm text-gray-500 mb-2">發布時間: {{ post.created }}</p>
         <p class="mb-2">{{ post.content }}</p>
         <p class="text-sm text-gray-500">租屋地點: {{ post.rental_property?.address }}</p>
         <div class="comments mt-4">
-          <h3 class="text-lg font-semibold">留言</h3>
-          <div v-for="comment in post.comments" :key="comment.id" class="comment p-2 border-t">
-            <p class="text-gray-500">留言者: {{ comment.user_id }}</p>
-            <p class="text-gray-500">留言時間: {{ new Date(comment.created).toLocaleString() }}</p>
-            <p>{{ comment.comment }}</p>
+          <div class="comments mt-4" v-if="post.comments && post.comments.length > 0">
+            <div v-for="comment in post.comments" :key="comment.id" class="comment p-2 border-t">
+              <p class="text-gray-500">留言者: {{ comment.user_id }}</p>
+              <p class="text-gray-500">留言時間: {{ new Date(comment.created).toLocaleString() }}</p>
+              <p>{{ comment.comment }}</p>
+              <Button @click="reportComment(comment.id)" class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded">
+                檢舉留言
+              </Button>
+            </div>
           </div>
         </div>
         <form @submit.prevent="addComment(post.id)" class="mt-4 flex gap-2">
           <input v-model="newComment" class="flex-grow p-2 border rounded-md" placeholder="添加評論"/>
-          <Button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">提交</Button>
+          <Button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">發布</Button>
         </form>
       </Card>
     </Card>
@@ -48,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Database, Tables, Enums } from "~/database.types";
+import type { Database } from "~/database.types";
 const supabase = useSupabaseClient<Database>();
 const user = useSupabaseUser();
 
@@ -73,14 +80,13 @@ const publishPost = async () => {
   }
 
   const { data, error } = await supabase.from('posts').insert({
-  user_id: user.value.id,
-  title: newPostTitle.value,
-  content: newPostContent.value,
-  location_id: '租屋地點',
-  created: new Date().toISOString(), // 轉換為 ISO 字符串格式
-  score: Number(newRating.value), // 確保 score 是數字類型
-});
-
+    user_id: user.value.id,
+    title: newPostTitle.value,
+    content: newPostContent.value,
+    location_id: '租屋地點',
+    created: new Date().toISOString(),
+    score: Number(newRating.value),
+  });
 
   if (error) {
     console.error(error);
@@ -99,17 +105,16 @@ const publishPost = async () => {
 const newComment = ref('');
 
 const addComment = async (postId: string) => {
-  if ((!user.value) || !(posts.value)) return;
+  if (!user.value || !posts.value) return;
 
   if (!newComment.value.trim()) return;
 
   const { data, error } = await supabase.from('comments').insert({
-  post_id: postId,
-  comment: newComment.value,
-  user_id: user.value.id,
-  created: new Date().toISOString(), // 轉換為 ISO 字符串格式
-});
-
+    post_id: postId,
+    comment: newComment.value,
+    user_id: user.value.id,
+    created: new Date().toISOString(),
+  });
 
   const post = posts.value.find(p => p.id === postId);
   if (post && data) {
@@ -122,35 +127,77 @@ const addComment = async (postId: string) => {
   refreshPosts();
 };
 
-const { data: posts, pending: isLoading, refresh: refreshPosts } = useAsyncData('posts', async () => {
-  const { data, error } = await supabase
-    .from('posts')
-    .select(`
-    *,
-      app_user (name),
-      rental_property (address),
-      comments (
-        id,
-        comment,
-        user_id,
-        post_id,
-        created
-      )
-    `)
-    .order('created', { ascending: false });
+const reportComment = async (commentId: string) => {
+  if (!user.value) return;
+  const { error } = await supabase.from('report').insert({
+    user_id: user.value.id,
+    post_id: null,
+    comment_id: commentId,
+    created: new Date().toISOString(),
+  });
   if (error) {
     console.error(error);
+    window.alert('檢舉失敗');
+  } else {
+    window.alert('檢舉成功');
   }
-  return data;
+}
+
+const reportPost = async (postId: string) => {
+  if (!user.value) return;
+  const { error } = await supabase.from('report').insert({
+    user_id: user.value.id,
+    post_id: postId,
+    comment_id: null,
+    created: new Date().toISOString(),
+  });
+  if (error) {
+    console.error(error);
+    window.alert('檢舉失敗');
+  } else {
+    window.alert('檢舉成功');
+  }
+};
+
+const { data: posts, pending: isLoading, refresh: refreshPosts } = useAsyncData('posts', async () => {
+  const { data: postData, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      app_user (name),
+      rental_property (address),
+      comments (*)
+    `)
+    .order('created', { ascending: false });
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  const postsWithComments = postData.map(post => ({
+    ...post,
+    comments: post.comments || [],
+  }));
+
+  return postsWithComments;
 });
+
+
 
 </script>
 
 <style scoped>
 .post {
   border: 1px solid #ccc;
+  position: relative;
 }
 .comment {
   border-top: 1px solid #eee;
+  position: relative;
+}
+.report-button {
+  top: 0.5rem;
+  right: 0.5rem;
 }
 </style>
