@@ -419,13 +419,13 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
     .eq("name", firstForm.value.LandLordName);
   
   console.log(check_landlord_user);
-  const landlord_user_id = null;
+  let landlord_user_id = null;
   if(check_landlord_user?.length !== 0){
     const { data } = await supabase
     .from("landlord")
     .select("*")
     .eq("user_id", check_landlord_user![0].id);
-    id = data?.length !== 0 ? data![0].user_id : null;
+    landlord_user_id = data?.length !== 0 ? data![0].user_id : null;
   }
 
   const {data: property_id} = await supabase
