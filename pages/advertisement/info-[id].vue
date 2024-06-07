@@ -13,12 +13,39 @@
           >
           <div class="text-center bg-opacity-80 p-10 ">
             <h3 className="text-lg font-bold mb-2">
-              留言區
+              留言
+            </h3>       
+            <p className="text-gray-500">
+              <Input
+                v-model="comment"
+                placeholder="Comment"
+              />
+            </p>
+            <h3 className="text-lg font-bold mb-2">
+              評分
             </h3>
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <p className="text-gray-500">
-                <Input placeholder="Comment" />
-              </p>
+            <p className="text-gray-500 mb-2">
+              <Input
+                v-model="score"
+                placeholder="Rating "
+              />
+            </p>
+            <Button
+              class="bg-green-500 text-white px-4 py-2 rounded mb-2"
+              @click="sendComment"
+            >
+              發送
+            </Button>
+            <h3 className="text-lg font-bold mb-2">
+              評論區
+            </h3>     
+            <div
+              v-for="items in comment_data"
+              class="mb-4"
+            >     
+              <Card>
+                {{ items }}
+              </Card>
             </div>
           </div>
         </div>
@@ -72,15 +99,13 @@
                 {{ rental_property[0].created_at ? rental_property[0].created_at : 'Nothing' }}
               </p>
             </div>
-          </div>
-          <div className="mt-8">
-            <h3 className="text-lg font-bold mb-4">
-              評分
-            </h3>
-            <div className="bg-gray-100 p-4 rounded-lg">
+            <div>
+              <h3 className="text-lg font-bold mb-2">
+                平均評分
+              </h3>          
               <p className="text-gray-500">
-                star
-              </p>
+                ...
+              </p>         
             </div>
           </div>
         </div>
@@ -94,6 +119,7 @@
 import { ref } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
 const supabase = useSupabaseClient<Database>();
+const user = useSupabaseUser();
 
 definePageMeta({
   name: '詳細資訊',
@@ -113,6 +139,41 @@ const { data: rental_property, error } = useAsyncData( async () => {
   `).eq('id', department_id.value);
   return data;
 });
+
+const { data: comment_data, error: error2 } = useAsyncData( async () => {
+  const { data } = await supabase.from('advertise_comment').select(`
+    comment,
+    score,
+    app_user (
+      name
+    )
+  `).eq('rental_property_id', department_id.value);
+  return data;
+});
+
+const comment = ref('');
+const score = ref(0);
+
+const sendComment = async () => {
+  const { data, error } = await supabase.from('advertise_comment').insert(
+    {
+      rental_property_id: department_id.value,
+      user_id: user.value?.id,
+      comment: comment.value,
+      score: score.value,
+    }
+  );
+  if (error) {
+    window.alert('Error sending comment');
+    return;
+  }
+  comment.value = '';
+  score.value = 0;
+  window.alert('Comment sent!');
+  return;
+
+};
+
 
 function parsePropertyAttributes(attr) {
   try {
