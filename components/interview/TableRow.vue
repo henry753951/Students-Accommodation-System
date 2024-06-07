@@ -8,7 +8,7 @@
     
     <TableCell>
       <NuxtLink
-        to="/advertisement"
+        :to="'/advertisement/info-'+link"
       >
         {{ location }}
       </NuxtLink>
@@ -36,6 +36,7 @@ defineProps({
   studentName: {type: String, required: false, default: '無資料'},
   createdTime: {type: String, required: false, default: '無資料'},
   location: {type: String, required: false, default: '無資料'},
+  link: {type: String, required: false, default: '無資料'},
 });
 </script>
 

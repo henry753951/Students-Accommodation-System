@@ -296,6 +296,8 @@ import * as yup from 'yup';
 import { toast } from '@/components/ui/toast';
 
 import type { Database, Tables, Enums } from "~/database.types";
+
+
 const supabase = useSupabaseClient<Database>();
 
 const default_required_error = '此為必填問題!';
@@ -415,11 +417,16 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
     .from("app_user")
     .select("*")
     .eq("name", firstForm.value.LandLordName);
-
-  const {data: landlord_user_id} = await supabase
+  
+  console.log(check_landlord_user);
+  let landlord_user_id = null;
+  if(check_landlord_user?.length !== 0){
+    const { data } = await supabase
     .from("landlord")
     .select("*")
     .eq("user_id", check_landlord_user![0].id);
+    landlord_user_id = data?.length !== 0 ? data![0].user_id : null;
+  }
 
   const {data: property_id} = await supabase
     .from("rental_property")
@@ -431,7 +438,7 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
   .insert([{
     "student_id": student_user_id![0].user_id,
     "teacher_id": teacher_user_id![0].id,
-    "landlord_id": (landlord_user_id?.length !== 0) ? landlord_user_id![0].user_id : null,
+    "landlord_id": landlord_user_id,
     "landlord_name": firstForm.value.LandLordName,
     "landlord_number": firstForm.value.LandLordNumber,
     "property_id":property_id![0].id,
