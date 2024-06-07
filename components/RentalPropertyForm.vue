@@ -1,6 +1,6 @@
 <template>
   <form
-    class="space-y-6 border-2 border-black p-4 w-1/2"
+    class="space-y-6 border-2 shadow-lg p-4 w-1/2"
     @submit="onSubmit"
   >
     <FormField
@@ -48,7 +48,7 @@
           <Button
             v-model="isPublic"
             type="submit"
-            class="ml-4"
+            class="ml-4 bg-white text-black border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-100 transition duration-300"
           >
             確認是否已刊登?
           </Button>

@@ -1,21 +1,40 @@
 <template>
-  <form @submit="onSubmit" class="space-y-6 border-2 border-black p-4 w-1/2">
-    <FormField v-slot="{ componentField }" name="address">
+  <form
+    class="space-y-6 border-2 shadow-lg  p-4 w-1/2"
+    @submit="onSubmit"
+  >
+    <FormField  
+      v-slot="{ componentField }"
+      name="address"
+    >
       <FormItem>
         <FormLabel>Address</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="Enter your address" v-bind="componentField" v-model="address"/>
-          {{address}}
+          <Input
+            v-bind="componentField"
+            v-model="address"
+            type="text"
+            placeholder="Enter your address"
+          />
+          {{ address }}
         </FormControl>
         <FormMessage />
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="landlordName">
+    <FormField
+      v-slot="{ componentField }"
+      name="landlordName"
+    >
       <FormItem>
         <FormLabel>LandlordID</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="Enter LandlordID" v-bind="componentField" v-model="landlordName"/>
+          <Input
+            v-bind="componentField"
+            v-model="landlordName"
+            type="text"
+            placeholder="Enter LandlordID"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
