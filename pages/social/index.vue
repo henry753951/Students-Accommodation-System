@@ -63,8 +63,7 @@ definePageMeta({
   name: "租屋資訊交流平台",
 });
 
-const newPostTitle = ref('')
-const showPostForm = ref(false);
+const newPostTitle = ref('');
 const newPostContent = ref('');
 const newRating = ref('');
 
@@ -79,28 +78,55 @@ const publishPost = async () => {
     return;
   }
 
-  const { data, error } = await supabase.from('posts').insert({
-    user_id: user.value.id,
-    title: newPostTitle.value,
-    content: newPostContent.value,
-    location_id: '租屋地點',
-    created: new Date().toISOString(),
-    score: Number(newRating.value),
-  });
+  let location_id = null;
+  try{
+    const { data: mapData, error: mapError } = await supabase
+      .from('map_rental_property_student')
+      .select('rental_property_id')
+      .eq('student_id', user.value.id)
+      .single();
 
-  if (error) {
-    console.error(error);
-    return;
+    if (mapError) {
+      console.error(mapError);
+    }
+    
+    if (mapData && mapData.rental_property_id) {
+      const { data: locationData, error: locationError } = await supabase
+        .from('rental_property')
+        .select('address')
+        .eq('id', mapData.rental_property_id)
+        .single();
+
+      if (locationError) {
+        console.error(locationError);
+      } else {
+        location_id = mapData.rental_property_id;
+      }
+    }
   }
+  catch{}
+    const { data, error } = await supabase.from('posts').insert({
+      user_id: user.value.id,
+      title: newPostTitle.value,
+      content: newPostContent.value,
+      location_id: location_id??undefined,
+      created: new Date().toISOString(),
+      score: Number(newRating.value),
+    });
 
-  newPostTitle.value = '';
-  newPostContent.value = '';
-  newRating.value = '';
-  showPostForm.value = false;
+    if (error) {
+      console.error(error);
+      return;
+    }
 
-  window.alert('貼文發布成功！');
-  refreshPosts();
+    newPostTitle.value = '';
+    newPostContent.value = '';
+    newRating.value = '';
+
+    window.alert('貼文發布成功！');
+    refreshPosts();
 };
+
 
 const newComment = ref('');
 
@@ -131,8 +157,9 @@ const reportComment = async (commentId: string) => {
   if (!user.value) return;
   const { error } = await supabase.from('report').insert({
     user_id: user.value.id,
-    post_id: null,
+    post_id: undefined,
     comment_id: commentId,
+    reason:"GG",
     created: new Date().toISOString(),
   });
   if (error) {
@@ -141,14 +168,15 @@ const reportComment = async (commentId: string) => {
   } else {
     window.alert('檢舉成功');
   }
-}
+};
 
 const reportPost = async (postId: string) => {
   if (!user.value) return;
   const { error } = await supabase.from('report').insert({
     user_id: user.value.id,
     post_id: postId,
-    comment_id: null,
+    comment_id: undefined,
+    reason:"GG",
     created: new Date().toISOString(),
   });
   if (error) {
@@ -175,15 +203,24 @@ const { data: posts, pending: isLoading, refresh: refreshPosts } = useAsyncData(
     return [];
   }
 
-  const postsWithComments = postData.map(post => ({
-    ...post,
-    comments: post.comments || [],
+  const postsWithComments = await Promise.all(postData.map(async post => {
+    const { data: comments, error: commentsError } = await supabase
+      .from('comments')
+      .select('*')
+      .eq('post_id', post.id);
+
+    if (commentsError) {
+      console.error(commentsError);
+      post.comments = [];
+    } else {
+      post.comments = comments || [];
+    }
+
+    return post;
   }));
 
   return postsWithComments;
 });
-
-
 
 </script>
 
