@@ -46,37 +46,25 @@
               <TableHead class="w-1/5">
                 居住地
               </TableHead>
-              <TableHead class="w-1/6">
+              <TableHead class="w-1/6 text-center">
                 編輯/刪除
               </TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            <TableRow>
-              <TableCell class="font-medium">
-                殷堂凱
-              </TableCell>
-              <TableCell>莊印哲</TableCell>
-              <TableCell>20240606</TableCell>
-              <TableCell>
-                綜合宿舍
-              </TableCell>
-              <TableCell class="grid grid-cols-2 g-5">
-                <NuxtLink
-                  to="/interview/record/id"
-                  class="place-self-center"
-                >
-                  <Button>編輯</Button>
-                </NuxtLink>
-                <Button
-                  variant="destructive"
-                  class="place-self-center"
-                >
-                  刪除
-                </Button>
-              </TableCell>
-            </TableRow>
+            <InterviewTableRow 
+              teacher-name="殷堂凱"
+              student-name="莊印哲"
+              created-time="20240606"
+              location="綜合宿舍"
+            />
+            <InterviewTableRow 
+              teacher-name="林文揚"
+              student-name="江東庭"
+              created-time="20240531"
+              location="高雄市"
+            />
           </TableBody>
         </Table>
       </div>

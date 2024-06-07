@@ -20,14 +20,13 @@
           <CardContent class="grid gap-4 ">
             <InterviewFormInput
               field-name="StudentID"
-              lable-value="Student ID"
-              place-holder-value="Enter your Student ID"
+              lable-value="學生學號"
+              place-holder-value="請輸入學生學號"
             />
-
             <InterviewFormInput
-              field-name="TeacherID"
-              lable-value="Teacher ID"
-              place-holder-value="Enter your Teacher ID"
+              field-name="TeacherName"
+              lable-value="老師名字"
+              place-holder-value="請輸入指導老師的名字"
             />
           </CardContent>
         </FormField>  
@@ -42,21 +41,15 @@
           </CardHeader>
           <CardContent class="grid gap-4">
             <InterviewFormInput
-              field-name="LandLordID"
-              lable-value="LandLord ID"
-              place-holder-value="Enter your LandLord ID"
-            />
-
-            <InterviewFormInput
               field-name="LandLordName"
-              lable-value="LandLord Name"
-              place-holder-value="Enter your LandLord Name"
+              lable-value="房東名字"
+              place-holder-value="請輸入房東名字"
             />
       
             <InterviewFormInput
               field-name="LandLordNumber"
-              lable-value="LandLord Number"
-              place-holder-value="Enter your LandLord Number"
+              lable-value="房東電話"
+              place-holder-value="請輸入房東電話"
             />
           </CardContent> 
         </FormField>
@@ -66,18 +59,16 @@
           name=""
         > 
           <CardHeader>
-            <CardTitle>確認租屋點資料</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
+            <CardTitle>選擇租屋點資料</CardTitle>
+            <CardDescription>請選擇您的租屋點</CardDescription>
           </CardHeader>
           <CardContent>
-            <InterviewFormInput
-              field-name="PropertyID"
-              lable-value="Property ID"
-              place-holder-value="Enter your Property ID"
+            <InterviewFormSelectProperty 
+              :rental-property="rental_property!"
             />
           </CardContent>
         </FormField>
-        <CardFooter v-if="currentStep<4">
+        <CardFooter v-if="currentStep < 4">
           <Button
             :disabled="currentStep === 1"
             type="button"
@@ -304,20 +295,35 @@ import { Form } from 'vee-validate';
 import * as yup from 'yup';
 import { toast } from '@/components/ui/toast';
 
+import type { Database, Tables, Enums } from "~/database.types";
+const supabase = useSupabaseClient<Database>();
+
 const default_required_error = '此為必填問題!';
 
 const schemas = [
   yup.object({
-    StudentID: yup.string().min(8,'學號應至少包含八位!').required('請輸入學號!'),
-    TeacherID: yup.string().min(8,'老師ID應至少包含八位!').required('請輸入老師ID!'),
+    StudentID: yup.string()
+      .min(8, '學號應為八位!')
+      .max(8, '學號應為八位!')
+      .required('請輸入學號!')
+      .test("studentID_async_validation","${value} 不是學號或無此學生!", function(value):Promise<boolean>{
+        return isValidStudent(value);
+      }),
+    TeacherName: yup.string()
+      .required('請輸入老師名字!')
+      .test("teacherName_async_validation","沒有 ${value} 這個老師!", function(value):Promise<boolean>{
+        return isValidTeacher(value);
+      }),
   }),
   yup.object({
-    LandLordID: yup.string().min(8,'房東ID應至少包含八位!').required('請輸入房東ID!'),
     LandLordName: yup.string().required('請輸入房東名字!'),
-    LandLordNumber:yup.string().min(10,'房東電話應為10位!').max(10,'房東電話應為10位!').required('請輸入房東電話!'),
+    LandLordNumber:yup.string()
+      .min(10,'房東電話應為10位!')
+      .max(10,'房東電話應為10位!')
+      .required('請輸入房東電話!'),
   }),
   yup.object({
-    PropertyID: yup.string().required('請輸入租屋點ID!'),
+    PropertyAddress: yup.string().required('請選擇租屋點!'),
   }), 
   yup.object({
     rental_type: yup.string().required('請選擇租屋型態!'),
@@ -343,12 +349,23 @@ const schemas = [
   }),
 ];
 
-const currentStep = ref(1);
-const indentifyValues = ref(JSON);
-
 const currentSchema = computed(() => {
   return schemas[currentStep.value - 1];
 });
+
+const currentStep = ref(1);
+let firstFormValues = ref();
+
+function isLastStep(){
+  return currentStep.value === schemas.length;
+};
+
+function previousStep(){
+  if(currentStep.value <= 0)
+    return;
+  currentStep.value--;
+    
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function nextStep(values: any){
@@ -359,26 +376,134 @@ function nextStep(values: any){
     }); 
   
   if(currentStep.value === 3){
-    indentifyValues.value = values;
+    firstFormValues = ref(values);
+    console.log(JSON.stringify(values, null, 2));
   }
   if(isLastStep()){
     console.log('submit');
+    handleSubmit(firstFormValues, values);
     return;
   }
   currentStep.value++;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleSubmit = async (first: any, second: any) => {
+  const comfirmation = confirm('確認送出?');
+  if(comfirmation){
+  const time = new Date().toISOString();
+  SubmitToInterviewRecord(first, second, time);
+  }
+  else{
+    console.log(comfirmation);
+  }
+};
 
-function previousStep(){
-  if(currentStep.value <= 0)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:string) => {
+  const {data: student_user_id} = await supabase
+    .from("student")
+    .select("*")
+    .eq("student_number", firstForm.value.StudentID.toLowerCase());
+
+  const {data: teacher_user_id} = await supabase
+    .from("app_user")
+    .select("*")
+    .eq("name", firstForm.value.TeacherName);
+
+  const {data: check_landlord_user} = await supabase
+    .from("app_user")
+    .select("*")
+    .eq("name", firstForm.value.LandLordName);
+
+  const {data: landlord_user_id} = await supabase
+    .from("landlord")
+    .select("*")
+    .eq("user_id", check_landlord_user![0].id);
+
+  const {data: property_id} = await supabase
+    .from("rental_property")
+    .select("*")
+    .eq("address", firstForm.value.PropertyAddress);
+  
+  const { data , error } = await supabase
+  .from("interview_record")
+  .insert([{
+    "student_id": student_user_id![0].user_id,
+    "teacher_id": teacher_user_id![0].id,
+    "landlord_id": (landlord_user_id?.length !== 0) ? landlord_user_id![0].user_id : null,
+    "landlord_name": firstForm.value.LandLordName,
+    "landlord_number": firstForm.value.LandLordNumber,
+    "property_id":property_id![0].id,
+    "response": secondForm,
+    "record_time":time,
+  }
+  ])
+  .select("*");
+  if (error) {
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
     return;
-  currentStep.value--;
-    
+  }
 };
 
-function isLastStep(){
-  return currentStep.value === schemas.length;
+const isValidStudent = async (value: string): Promise<boolean> => {
+  if(value.length < 8 || value.length > 8){
+    return true;
+  }
+  const {data, error}= await supabase
+  .from("student")
+  .select("*")
+  .eq("student_number", value.toLowerCase());
+  console.log(data);
+  if(data?.length === 0){
+    return false;
+  }
+  if(error){
+    console.log(error);
+    return false;
+  }
+  return true;
 };
+
+const isValidTeacher = async (value: string): Promise<boolean> => {
+  if(value.length < 2){
+    return false;
+  }
+  const {data: app_user_row, error} = await supabase
+  .from("app_user")
+  .select("*")
+  .eq("name", value);
+
+  if(app_user_row?.length === 0){
+    return false;
+  }
+  else{
+    const {data, error}= await supabase
+    .from("teacher")
+    .select("*")
+    .eq("user_id", app_user_row![0].id);
+    console.log(data);
+    if(data?.length === 0){
+      return false;
+    }
+    if(error){
+      console.log(error);
+      return false;
+    }
+    return true;
+  }
+};
+
+const { data: rental_property, pending: isLoading, refresh: refresh } = useAsyncData('rental_property', async () => {
+  const { data } = await supabase.from('rental_property').select(`
+    *
+  `);
+  return data;
+});
 </script>
 
 <style>
