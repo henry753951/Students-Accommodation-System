@@ -31,9 +31,9 @@
         <p class="text-sm text-gray-500 mb-2">發布者: {{ post.app_user?.name }}</p>
         <p class="text-sm text-gray-500 mb-2">發布時間: {{ post.created }}</p>
         <p class="mb-2">{{ post.content }}</p>
-        <p class="text-sm text-gray-500">租屋地點: {{ post.rental_property?.address }}</p>
+        <p class="text-sm text-gray-500 ">租屋地點: {{ post.rental_property?.address }}</p>
         <div class="comments mt-4">
-          <div class="comments mt-4" v-if="post.comments && post.comments.length > 0">
+          <div v-if="post.comments && post.comments.length > 0">
             <div v-for="comment in post.comments" :key="comment.id" class="comment p-2 border-t">
               <p class="text-gray-500">留言者: {{ comment.user_id }}</p>
               <p class="text-gray-500">留言時間: {{ new Date(comment.created).toLocaleString() }}</p>
@@ -68,6 +68,7 @@ const newPostContent = ref('');
 const newRating = ref('');
 
 const publishPost = async () => {
+  let newPostId = crypto.randomUUID();
   if (!user.value) {
     console.error('User is not logged in.');
     return;
@@ -79,37 +80,29 @@ const publishPost = async () => {
   }
 
   let location_id = null;
-  try{
+
+  try {
     const { data: mapData, error: mapError } = await supabase
       .from('map_rental_property_student')
       .select('rental_property_id')
       .eq('student_id', user.value.id)
+      .eq('is_currently_renting', true)
       .single();
 
-    if (mapError) {
-      console.error(mapError);
-    }
-    
     if (mapData && mapData.rental_property_id) {
-      const { data: locationData, error: locationError } = await supabase
-        .from('rental_property')
-        .select('address')
-        .eq('id', mapData.rental_property_id)
-        .single();
-
-      if (locationError) {
-        console.error(locationError);
-      } else {
-        location_id = mapData.rental_property_id;
-      }
+      location_id = mapData.rental_property_id;
     }
+  } catch (error) {
+    console.error('Error fetching location:', error);
   }
-  catch{}
+
+  try {
     const { data, error } = await supabase.from('posts').insert({
+      id: newPostId,
       user_id: user.value.id,
       title: newPostTitle.value,
       content: newPostContent.value,
-      location_id: location_id??undefined,
+      location_id: location_id ||undefined,
       created: new Date().toISOString(),
       score: Number(newRating.value),
     });
@@ -125,25 +118,39 @@ const publishPost = async () => {
 
     window.alert('貼文發布成功！');
     refreshPosts();
+  } catch (error) {
+    console.error('Error publishing post:', error);
+  }
 };
-
 
 const newComment = ref('');
 
+
 const addComment = async (postId: string) => {
+  let newCommentId = crypto.randomUUID();
   if (!user.value || !posts.value) return;
 
   if (!newComment.value.trim()) return;
 
   const { data, error } = await supabase.from('comments').insert({
+    id: newCommentId,
     post_id: postId,
     comment: newComment.value,
     user_id: user.value.id,
     created: new Date().toISOString(),
   });
 
+  if (error) {
+    console.error(error);
+    window.alert('評論失敗');
+    return;
+  }
+
   const post = posts.value.find(p => p.id === postId);
   if (post && data) {
+    if (!post.comments) {
+      post.comments = [];
+    }
     post.comments.push(data[0]);
   }
 
@@ -159,7 +166,7 @@ const reportComment = async (commentId: string) => {
     user_id: user.value.id,
     post_id: undefined,
     comment_id: commentId,
-    reason:"GG",
+    reason: "GG",
     created: new Date().toISOString(),
   });
   if (error) {
@@ -176,7 +183,7 @@ const reportPost = async (postId: string) => {
     user_id: user.value.id,
     post_id: postId,
     comment_id: undefined,
-    reason:"GG",
+    reason: "GG",
     created: new Date().toISOString(),
   });
   if (error) {
@@ -212,16 +219,12 @@ const { data: posts, pending: isLoading, refresh: refreshPosts } = useAsyncData(
     if (commentsError) {
       console.error(commentsError);
       post.comments = [];
-    } else {
-      post.comments = comments || [];
-    }
-
+    } 
     return post;
   }));
 
   return postsWithComments;
 });
-
 </script>
 
 <style scoped>
