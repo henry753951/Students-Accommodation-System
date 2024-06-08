@@ -50,6 +50,7 @@ export type Database = {
       }
       app_user: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           email: string | null
           first_time: boolean
@@ -59,6 +60,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           first_time?: boolean
@@ -68,6 +70,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           first_time?: boolean
