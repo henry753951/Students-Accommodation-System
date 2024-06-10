@@ -7,7 +7,7 @@
     <FormItem
       class="space-y-3"
     >
-      <FormLabel>{{ lableValue }}</FormLabel>
+      <FormLabel>{{ fieldName }}</FormLabel>
       <FormControl>
         <RadioGroup
           class="flex flex-col space-y-1"
@@ -26,7 +26,6 @@
 <script lang="ts" setup>
 defineProps<{
   fieldName: string,
-  lableValue: string,
 }>();
 </script>
 

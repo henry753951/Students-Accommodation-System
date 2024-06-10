@@ -42,11 +42,14 @@
                       </div>
                       <div class="grid grid-cols-2 p-3 gap-5">
                         <DialogClose as-child>
-                          <Button class=" px-4 py-2 rounded">
-                            <NuxtLink :to="'/advertisement/info-'+property.id">
+                          <NuxtLink :to="'/advertisement/info-'+property.id">
+                            <Button
+                              class="w-full"
+                              variant="outline"
+                            >
                               到該租屋點頁面
-                            </NuxtLink>
-                          </Button>
+                            </Button>
+                          </NuxtLink>
                         </DialogClose>
                         <DialogClose as-child>
                           <Button

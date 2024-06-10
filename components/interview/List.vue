@@ -1,76 +1,144 @@
 <template>
   <div class="flex justify-center">
     <div class="grid grid-cols-1 gap-5 w-2/3">
-      <div class="grid grid-cols-2 g-5">
+      <div class="flex">
         <NuxtLink
-          to="/interview/record/id"
-          class="place-self-start"
+          to="/interview/record/new"
+          class="flex-none w-1/2"
         >
-          <Button> 新增 </Button>
+          <Button 
+            class="bg-green-600 text-white px-4 py-2 rounded"
+          >
+            新增
+          </Button>
         </NuxtLink>
-        <Select
-          class="w-48 border border-gray-300 rounded"
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="選擇篩選條件" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="all">
-                全部
-              </SelectItem>
-              <SelectItem value="time_low_to_high">
-                時間：最近
-              </SelectItem>
-              <SelectItem value="time_high_to_low">
-                時間：最遠
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <Label class="flex-none w-[40px] place-content-center text-sm">搜尋</Label>
+        <div class="flex-strech w-1/2">
+          <Input
+            v-model="searchText"
+            class=""
+            placeholder="老師/學生/居住地址"
+          />
+        </div>
       </div>
       <div class="place-self-strech">
         <Skeleton
-          v-if="doneValue.length === 0"
+          v-if="records?.length === 0"
           class="h-[50px]"
         />
-        <Table v-if="doneValue.length !== 0">
+        <Table v-if="records?.length !== 0">
           <TableCaption>以上為與你相關的訪視記錄</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead class="w-1/5">
+              <TableHead class="w-1/12">
                 老師名稱
               </TableHead>
-              <TableHead class="w-1/5">
+              <TableHead class="w-1/12">
                 學生名稱
               </TableHead>
-              <TableHead class="w-1/5">
-                建立時間
+              <TableHead class="w-2/12">
+                最後編輯時間
               </TableHead>
-              <TableHead class="w-1/5">
-                居住地
+              <TableHead class="w-7/12">
+                居住地址
               </TableHead>
-              <TableHead class="w-1/6 text-center">
-                編輯/刪除
+              <TableHead class="w-1/12 text-right">
+                操作
               </TableHead>
             </TableRow>
           </TableHeader>
-          
           <TableBody>
             <template
-              v-for="record in doneValue"
-              :key="record"
+              v-for="row in paginatedRows"
+              :key="row"
             >
-              <InterviewTableRow 
-                :teacher-name="record.teacherName"
-                :student-name="record.studentName"
-                :created-time="record.recordTime"
-                :location="record.location"
-                :link="record.link"
-              />
+              <TableRow>
+                <InterviewTableRow 
+                  :teacher-name="row.teacher?.app_user?.name!"
+                  :student-name="row.student?.app_user?.name!"
+                  :created-time="handleTime(row.record_time)"
+                  :location="row.rental_property?.address!"
+                  :property-link="row.property_id!"
+                  :record-link="row.record_link"
+                />
+                <TableCell class="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                      <Button
+                        size="xs"
+                        variant="ghost"
+                      >
+                        <Icon name="ri:more-fill" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <NuxtLink :to="'/interview/record/info-' + row.record_link">
+                        <DropdownMenuItem class="cursor-pointer">
+                          確認資料
+                        </DropdownMenuItem>
+                      </NuxtLink>
+                      <NuxtLink :to="'/interview/record/' + row.record_link">
+                        <DropdownMenuItem class="cursor-pointer">
+                          編輯
+                        </DropdownMenuItem>
+                      </NuxtLink>
+                      <DropdownMenuItem
+                        class="cursor-pointer focus:bg-red-500 focus:text-white"
+                        @click="deleteRecord(row.record_link);"
+                      >
+                        刪除
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
             </template>
           </TableBody>
         </Table>
+      </div>
+      <div class="place-self-center">
+        <Pagination
+          v-slot="{ page }"
+          :items-per-page="rowsPerPage"
+          :total="usersSearched.length"
+          :sibling-count="1"
+          show-edges
+        >
+          <PaginationList
+            v-slot="{ items }"
+            class="flex items-center gap-1"
+          >
+            <PaginationFirst @click="currentPage = 1" />
+            <PaginationPrev @click="currentPage -=1" />
+
+            <template v-for="(item, index) in items">
+              <PaginationListItem
+                v-if="item.type === 'page'"
+                :key="index"
+                v-model="currentPage"
+                :value="item.value"
+                as-child
+              >
+                <Button
+                  :id="'button' + item.value"
+                  class="w-10 h-10 p-0"
+                  :variant="item.value === page ? 'default' : 'outline'"
+                  @click="currentPage = item.value"
+                >
+                  {{ item.value }}
+                </Button>
+              </PaginationListItem>
+              <PaginationEllipsis
+                v-else
+                :key="item.type"
+                :index="index"
+              />
+            </template>
+
+            <PaginationNext @click="currentPage +=1" />
+            <PaginationLast @click="currentPage = Math.ceil(usersSearched.length / rowsPerPage)" />
+          </PaginationList>
+        </Pagination>
       </div>
     </div>
   </div>
@@ -78,65 +146,80 @@
 
 <script lang="ts" setup>
 import type { Database, Tables, Enums } from "~/database.types";
-import { toast } from '@/components/ui/toast';
 import Table from "../ui/table/Table.vue";
-
-onMounted(() => {
-  get_intervirew_record();
-});
+import { toast } from '@/components/ui/toast';
 
 const supabase = useSupabaseClient<Database>();
 
-type ListValue = {
-  teacherName: string,
-  studentName: string,
-  recordTime: string,
-  location: string,
-  link: string,
-};
-// eslint-disable-next-line prefer-const
-let undoneValue = ref<ListValue[]>([]);
-const doneValue = ref<ListValue[]>([]);
-const get_intervirew_record = async () => {
-  const { data , error } = await supabase
+const { data: records, error , refresh } =  useAsyncData('get_record' , async() => {
+  const { data } = await supabase
   .from('interview_record')
-  .select('*');
-  if(error){
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-    return;
+  .select('*, student(app_user(*)), teacher(app_user(*)), rental_property(*)');
+  console.log(data);
+  return data;
+});
+
+const handleTime = (time: string) => {
+  const hour: number = +time.slice(11, 13);
+  if(hour < 12){
+    return time.slice(0, 10) + " / AM" + time.slice(11, 16);
   }
-  for (let i = 0; i< data.length; i++){
-    await get_all_name(data[i].teacher_id, data[i].student_id, data[i].record_time, data[i].property_id!);
+  else{
+    return time.slice(0, 10) + " / PM" + time.slice(11, 16);
   }
-  doneValue.value = undoneValue.value;
 };
 
-const get_all_name = async (teacher_id: string, student_id :string, record_time :string, property_id :string) => {
-  const { data: teacher_data } = await supabase
-  .from("app_user")
-  .select("*")
-  .eq('id', teacher_id);
+const currentPage= ref(1);
+const rowsPerPage = 8;
+const searchText = ref("");
 
-  const { data: student_data } = await supabase
-  .from("app_user")
-  .select("*")
-  .eq('id', student_id);
-
-  const { data: property_data } = await supabase
-  .from("rental_property")
-  .select("*")
-  .eq('id', property_id);
-  undoneValue.value.push({
-    teacherName: teacher_data![0].name!,
-    studentName: student_data![0].name!,
-    recordTime: record_time,
-    location: property_data![0].address,
-    link: property_id,
+// 搜尋後的使用者列表
+const usersSearched = computed(() => {
+  if (!records.value) return [];
+  const userSearched = records.value.filter((record) => {
+    if (searchText.value === "") 
+      return true;
+    if (!record.student?.app_user?.name || !record.teacher?.app_user?.name || !record.rental_property?.address) 
+      return false;
+    return record.student?.app_user?.name.includes(searchText.value) || record.teacher?.app_user.name.includes(searchText.value) || record.rental_property?.address.includes(searchText.value);
   });
+  return userSearched;
+});
+
+const paginatedRows = computed(() => {
+    if (!usersSearched.value) return [];
+    const start = (currentPage.value - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+  return usersSearched.value.slice(start, end);
+});
+
+watch(searchText, async() =>{
+  const button = document.getElementById('button1');
+  button?.click();
+});
+
+const deleteRecord = async (recordLink: string) => {
+  console.log(recordLink);
+  const {data , error} = await supabase
+    .from('interview_record')
+    .delete()
+    .eq("record_link", recordLink);
+
+    if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+    return;
+    }
+    else{
+      toast({
+        title: "Success",
+        description: "刪除成功",
+      });
+    }
+  await refresh();
 };
 </script>
 

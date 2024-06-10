@@ -1,10 +1,9 @@
-
 <template>
-  <h2>Step: {{ currentStep }}</h2>
   <div class="flex justify-center">
     <Card class="w-1/2">
       <Form
         class="w-full"
+        :initial-values="modelValue"
         :validation-schema="currentSchema"
         keep-values
         @submit="nextStep"
@@ -68,16 +67,24 @@
             />
           </CardContent>
         </FormField>
-        <CardFooter v-if="currentStep < 4">
+        <CardFooter
+          v-if="currentStep < 4"
+          class="flex gap-5 place-content-end"
+        >
+          <InterviewFormShare 
+            :link="modelValue?.RecordLink!"
+          />
           <Button
             :disabled="currentStep === 1"
             type="button"
+            variant="outline"
             @click="previousStep()"
           >
             上一步
           </Button>
           <Button
             type="submit"
+            variant="outline"
           >
             下一步
           </Button>
@@ -87,6 +94,7 @@
       <!-- Question Form -->
       <Form
         class="w-full"
+        :initial-values="modelValue?.Response"
         :validation-schema="currentSchema"
         keep-values
         @submit="nextStep"
@@ -101,60 +109,50 @@
           </CardHeader>
           <CardContent class="grid gap-4 ">
             <InterviewFormRadio
-              field-name="rental_type"
-              lable-value="租屋型態"
+              field-name="租屋型態"
             >
               <InterviewFormRadioControl
                 value="獨棟透天"
-                lable-value="獨棟透天"
               />
               <InterviewFormRadioControl 
-                value="公寓"
-                lable-value="公寓(五樓以下)"
+                value="公寓(五樓以下)"
               />
               <InterviewFormRadioControl 
-                value="大樓"
-                lable-value="大樓(六樓以上)"  
+                value="大樓(六樓以上)"
               />
               <InterviewFormRadioControl 
-                value="宿舍"
-                lable-value="宿舍"
+                value="大型學舍(為學生建設的宿舍)"
               />
               <InterviewFormRadioControl 
                 value="其他"
-                lable-value="其他"
               />
             </InterviewFormRadio>
       
             <InterviewFormRadio
-              field-name="room_type"
-              lable-value="房間型態"
+              field-name="房間型態"
             >
               <InterviewFormRadioControl
                 value="雅房"
-                lable-value="雅房"
               />
               <InterviewFormRadioControl 
                 value="套房"
-                lable-value="套房"
               />
             </InterviewFormRadio>
 
             <InterviewFormInput
-              field-name="rent"
+              field-name="租金"
               lable-value="租金"
               place-holder-value="請輸入一個月的租金"
             />
 
             <InterviewFormInput
-              field-name="deposit"
+              field-name="押金"
               lable-value="押金"
               place-holder-value="請輸入押金"
             />
 
             <InterviewFormRadio
-              field-name="recommend"
-              lable-value="是否值得推薦其他同學租賃?"
+              field-name="是否值得推薦其他同學租賃"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
@@ -171,101 +169,246 @@
           </CardHeader>
           <CardContent class="grid gap-4 ">
             <InterviewFormRadio
-              field-name="rooftop_dwellings"
-              lable-value="木造隔間或鐵皮加蓋"
+              field-name="木造隔間或鐵皮加蓋"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
 
             <InterviewFormRadio
-              field-name="fire_alarm"
-              lable-value="有火警警報器或偵煙器"
+              field-name="有火警警報器或偵煙器"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
 
             <InterviewFormRadio
-              field-name="emergency_exit"
-              lable-value="逃生通道暢通且標示清楚"
+              field-name="逃生通道暢通且標示清楚"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
 
             <InterviewFormRadio
-              field-name="locker"
-              lable-value="門禁及鎖具良好管理"
+              field-name="門禁及鎖具良好管理"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
       
             <InterviewFormRadio
-              field-name="illumination"
-              lable-value="有安裝照明設備(停車場及周邊)"
+              field-name="有安裝照明設備(停車場及周邊)"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
 
             <InterviewFormRadio
-              field-name="escape_essentials"
-              lable-value="瞭解熟悉電路安全及逃生要領"
+              field-name="瞭解熟悉電路安全及逃生要領"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
       
             <InterviewFormRadio
-              field-name="safety_phone_number"
-              lable-value="熟悉派出所、醫療、消防隊、學校校安專線電話"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
- 
-            <InterviewFormRadio
-              field-name="electrical_safety"
-              lable-value="使用多種電器(高耗能)，是否同時插在同一條延長線"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
-
-            <InterviewFormRadio
-              field-name="fire_extinguisher"
-              lable-value="有滅火器且功能正常"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
-
-            <InterviewFormRadio
-              field-name="water_heater"
-              lable-value="熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio> 
-      
-            <InterviewFormRadio
-              field-name="multi_room_bed"
-              lable-value="分開6個以上房間或10個以上床位"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
-
-            <InterviewFormRadio
-              field-name="camera"
-              lable-value="有安裝監視器設備"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
-
-            <InterviewFormRadio
-              field-name="contract"
-              lable-value="使用<內政部定型化租賃契約>"
+              field-name="熟悉派出所、醫療、消防隊、學校校安專線電話"
             >
               <InterviewFormTFControl />
             </InterviewFormRadio>
           </CardContent>
         </FormField>
 
-        <CardFooter v-if="currentStep >= 4">
+        <FormField
+          v-if="currentStep === 6"
+          name=""
+        >
+          <CardHeader>
+            <CardTitle>校外賃居安全資料</CardTitle>
+            <CardDescription>請你先確認資料</CardDescription>
+          </CardHeader>
+          <CardContent class="grid gap-4 ">
+            <InterviewFormRadio
+              field-name="使用多種電器(高耗能)，是否同時插在同一條延長線"
+            >
+              <InterviewFormTFControl />
+            </InterviewFormRadio>
+
+            <InterviewFormRadio
+              field-name="有滅火器且功能正常"
+            >
+              <InterviewFormTFControl />
+            </InterviewFormRadio>
+
+            <InterviewFormRadio
+              field-name="熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮"
+            >
+              <InterviewFormTFControl />
+            </InterviewFormRadio> 
+      
+            <InterviewFormRadio
+              field-name="分開6個以上房間或10個以上床位"
+            >
+              <InterviewFormTFControl />
+            </InterviewFormRadio>
+
+            <InterviewFormRadio
+              field-name="有安裝監視器設備"
+            >
+              <InterviewFormTFControl />
+            </InterviewFormRadio>
+
+            <InterviewFormRadio
+              field-name="使用<內政部定型化租賃契約>"
+            >
+              <InterviewFormTFControl />
+            </InterviewFormRadio>
+          </CardContent>
+        </FormField>
+
+        <FormField 
+          v-if="currentStep === 7"
+          name=""
+        >
+          <CardHeader>
+            <CardTitle>環境及作息評估 ( 導師填寫 )</CardTitle>
+            <CardDescription>請你先確認資料</CardDescription>
+          </CardHeader>
+          <CardContent class="grid gap-4 ">
+            <InterviewFormRadio
+              field-name="押金要求"
+            >
+              <InterviewFormRadioControl
+                value="合理"
+              />
+              <InterviewFormRadioControl 
+                value="不合理(2個月以上之租金)"
+              />
+            </InterviewFormRadio>
+      
+            <InterviewFormRadio
+              field-name="水電費要求"
+            >
+              <InterviewFormRadioControl
+                value="合理"
+              />
+              <InterviewFormRadioControl 
+                value="不合理"
+              />
+            </InterviewFormRadio>
+
+            <InterviewFormRadio
+              field-name="居家環境"
+            >
+              <InterviewFormRadioControl
+                value="佳"
+              />
+              <InterviewFormRadioControl 
+                value="適中"
+              />
+              <InterviewFormRadioControl 
+                value="欠佳"
+              />
+            </InterviewFormRadio>
+
+            <InterviewFormInput
+              field-name="居家環境"
+              lable-value="居家環境: 其他(請說明)"
+              place-holder-value="請簡述居家環境情形"
+            />
+
+            <InterviewFormRadio
+              field-name="生活設施"
+            >
+              <InterviewFormRadioControl
+                value="佳"
+              />
+              <InterviewFormRadioControl 
+                value="適中"
+              />
+              <InterviewFormRadioControl 
+                value="欠佳"
+              />
+            </InterviewFormRadio>
+
+            <InterviewFormRadio
+              field-name="訪視現況"
+            >
+              <InterviewFormRadioControl
+                value="生活規律"
+              />
+              <InterviewFormRadioControl 
+                value="適中"
+              />
+              <InterviewFormRadioControl 
+                value="待加強"
+              />
+            </InterviewFormRadio>
+
+            <InterviewFormRadio
+              field-name="主客相處"
+            >
+              <InterviewFormRadioControl
+                value="和睦"
+              />
+              <InterviewFormRadioControl 
+                value="欠佳"
+              />
+            </InterviewFormRadio>
+          </CardContent>
+        </FormField>
+
+        <FormField
+          v-if="currentStep === 8"
+          name=""
+        >
+          <CardHeader>
+            <CardTitle>訪視結果 ( 導師填寫 )</CardTitle>
+            <CardDescription>請你先確認資料</CardDescription>
+          </CardHeader>
+          <CardContent class="grid gap-4 ">
+            <InterviewFormRadio
+              field-name="訪視結果"
+            >
+              <InterviewFormRadioControl
+                value="整體賃居狀況良好"
+              />
+              <InterviewFormRadioControl 
+                value="聯繫家長關注"
+              />
+              <InterviewFormRadioControl 
+                value="安全堪慮請協助"
+              />
+              <InterviewFormRadioControl 
+                value="其他"
+              />
+            </InterviewFormRadio>
+            <InterviewFormInput
+              field-name="訪視結果說明"
+              lable-value="訪視結果說明(若沒有請填無)"
+              place-holder-value="請簡述訪視結果"
+            />
+            <InterviewFormInput
+              field-name="其他記載或建議事項"
+              lable-value="其他記載或建議事項(若沒有請填無)"
+              place-holder-value="請輸入建議事項"
+            />
+          </CardContent>
+        </FormField> 
+
+        <FormField 
+          v-if="currentStep === 9"
+          name=""
+        >
+          <CardHeader>
+            <CardTitle>填寫完成!</CardTitle>
+            <CardDescription>感謝您的填寫</CardDescription>
+          </CardHeader>
+        </FormField>
+
+        <CardFooter
+          v-if="currentStep >= 4 && currentStep < 9"
+          class="flex gap-5 place-content-end"
+        >
+          <InterviewFormShare 
+            :link="modelValue?.RecordLink!"
+          />
           <Button
             type="button"
+            variant="outline"
             @click="previousStep()"
           >
             上一步
@@ -273,6 +416,7 @@
     
           <Button
             v-if="!isLastStep()"
+            variant="outline"
             type="submit"
           >
             下一步
@@ -280,10 +424,27 @@
 
           <Button
             v-if="isLastStep()"
+            variant="outline"
             type="submit"
           >
             完成
           </Button>
+        </CardFooter>
+
+        <CardFooter
+          v-if="currentStep === 9"
+          class="place-content-end"
+        >
+          <NuxtLink
+            to="/interview/record"
+          >
+            <Button
+              variant="outline"
+              type="button"
+            >
+              返回訪視紀錄清單
+            </Button>
+          </NuxtLink>
         </CardFooter>
       </Form>
     </Card>
@@ -297,7 +458,18 @@ import { toast } from '@/components/ui/toast';
 
 import type { Database, Tables, Enums } from "~/database.types";
 
+type record = Database['public']['Tables']['interview_record']['Row'];
+type initial = {
+  StudentID: string,
+  TeacherName: string,
+  LandLordName: string,
+  LandLordNumber: string,
+  PropertyAddress: string,
+  Response: JSON,
+  RecordLink: string,
+};
 
+const modelValue = defineModel<initial>();
 const supabase = useSupabaseClient<Database>();
 
 const default_required_error = '此為必填問題!';
@@ -311,6 +483,7 @@ const schemas = [
       .test("studentID_async_validation","${value} 不是學號或無此學生!", function(value):Promise<boolean>{
         return isValidStudent(value);
       }),
+      
     TeacherName: yup.string()
       .required('請輸入老師名字!')
       .test("teacherName_async_validation","沒有 ${value} 這個老師!", function(value):Promise<boolean>{
@@ -328,26 +501,41 @@ const schemas = [
     PropertyAddress: yup.string().required('請選擇租屋點!'),
   }), 
   yup.object({
-    rental_type: yup.string().required('請選擇租屋型態!'),
-    room_type: yup.string().required('請選擇房間型態!'),
-    rent: yup.string().required('請輸入租金!'),
-    deposit: yup.string().required('請輸入押金!'),
-    recommend: yup.boolean().required(default_required_error),
+    '租屋型態': yup.string().required('請選擇租屋型態!'),
+    '房間型態': yup.string().required('請選擇房間型態!'),
+    '租金': yup.string().required('請輸入租金!'),
+    '押金': yup.string().required('請輸入押金!'),
+    '是否值得推薦其他同學租賃': yup.string().required(default_required_error),
   }),
   yup.object({
-    rooftop_dwellings: yup.boolean().required(default_required_error),
-    fire_alarm: yup.boolean().required(default_required_error),
-    emergency_exit: yup.boolean().required(default_required_error),
-    locker: yup.boolean().required(default_required_error),
-    illumination: yup.boolean().required(default_required_error),
-    escape_essentials: yup.boolean().required(default_required_error),
-    safety_phone_number: yup.boolean().required(default_required_error),
-    electrical_safety: yup.boolean().required(default_required_error),
-    fire_extinguisher: yup.boolean().required(default_required_error),
-    water_heater: yup.boolean().required(default_required_error),
-    multi_room_bed: yup.boolean().required(default_required_error),
-    camera: yup.boolean().required(default_required_error),
-    contract: yup.boolean().required(default_required_error),
+    '木造隔間或鐵皮加蓋': yup.string().required(default_required_error),
+    '有火警警報器或偵煙器': yup.string().required(default_required_error),
+    '逃生通道暢通且標示清楚': yup.string().required(default_required_error),
+    '門禁及鎖具良好管理': yup.string().required(default_required_error),
+    '有安裝照明設備(停車場及周邊)': yup.string().required(default_required_error),
+    '瞭解熟悉電路安全及逃生要領': yup.string().required(default_required_error),
+    '熟悉派出所、醫療、消防隊、學校校安專線電話': yup.string().required(default_required_error),
+  }),
+  yup.object({
+    '使用多種電器(高耗能)，是否同時插在同一條延長線': yup.string().required(default_required_error),
+    '有滅火器且功能正常': yup.string().required(default_required_error),
+    '熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮': yup.string().required(default_required_error),
+    '分開6個以上房間或10個以上床位': yup.string().required(default_required_error),
+    '有安裝監視器設備': yup.string().required(default_required_error),
+    '使用<內政部定型化租賃契約>': yup.string().required(default_required_error),
+  }),
+  yup.object({
+    '押金要求': yup.string().required(default_required_error),
+    '水電費要求': yup.string().required(default_required_error),
+    '居家環境': yup.string().required(default_required_error),
+    '生活設施': yup.string().required(default_required_error),
+    '訪視現況': yup.string().required(default_required_error),
+    '主客相處': yup.string().required(default_required_error),
+  }),
+  yup.object({
+    '訪視結果': yup.string().required(default_required_error),
+    '訪視結果說明': yup.string().required(default_required_error),
+    '其他記載或建議事項': yup.string().required(default_required_error),
   }),
 ];
 
@@ -371,7 +559,6 @@ function previousStep(){
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function nextStep(values: any){
-  console.log(values);
   toast({
       title: 'You submitted the following values:',
       description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
@@ -379,7 +566,6 @@ function nextStep(values: any){
   
   if(currentStep.value === 3){
     firstFormValues = ref(values);
-    console.log(JSON.stringify(values, null, 2));
   }
   if(isLastStep()){
     console.log('submit');
@@ -433,28 +619,59 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
     .select("*")
     .eq("address", firstForm.value.PropertyAddress);
   
-  const { data , error } = await supabase
-  .from("interview_record")
-  .insert([{
-    "student_id": student_user_id![0].user_id,
-    "teacher_id": teacher_user_id![0].id,
-    "landlord_id": landlord_user_id,
-    "landlord_name": firstForm.value.LandLordName,
-    "landlord_number": firstForm.value.LandLordNumber,
-    "property_id":property_id![0].id,
-    "response": secondForm,
-    "record_time":time,
+  if(modelValue?.value?.RecordLink !== 'new'){
+    const { data , error } = await supabase
+      .from("interview_record")
+      .update({
+        "student_id": student_user_id![0].user_id,
+        "teacher_id": teacher_user_id![0].id,
+        "landlord_id": landlord_user_id,
+        "landlord_name": firstForm.value.LandLordName,
+        "landlord_number": firstForm.value.LandLordNumber,
+        "property_id":property_id![0].id,
+        "response": secondForm,
+        "record_time":time,
+      }
+      ) 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+      .eq("record_link", modelValue?.value?.RecordLink!)
+      .select("*");
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      currentStep.value++;
   }
-  ])
-  .select("*");
-  if (error) {
-    toast({
-      title: "Error",
-      description: error.message,
-      variant: "destructive",
-    });
-    return;
+  else{
+    const { data , error } = await supabase
+      .from("interview_record")
+      .insert({
+        "student_id": student_user_id![0].user_id,
+        "teacher_id": teacher_user_id![0].id,
+        "landlord_id": landlord_user_id,
+        "landlord_name": firstForm.value.LandLordName,
+        "landlord_number": firstForm.value.LandLordNumber,
+        "property_id":property_id![0].id,
+        "response": secondForm,
+        "record_time":time,
+      }
+      )
+      .select("*");
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      currentStep.value++;
   }
+  
 };
 
 const isValidStudent = async (value: string): Promise<boolean> => {
@@ -465,7 +682,6 @@ const isValidStudent = async (value: string): Promise<boolean> => {
   .from("student")
   .select("*")
   .eq("student_number", value.toLowerCase());
-  console.log(data);
   if(data?.length === 0){
     return false;
   }
@@ -493,7 +709,6 @@ const isValidTeacher = async (value: string): Promise<boolean> => {
     .from("teacher")
     .select("*")
     .eq("user_id", app_user_row![0].id);
-    console.log(data);
     if(data?.length === 0){
       return false;
     }

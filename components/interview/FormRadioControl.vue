@@ -6,7 +6,7 @@
       <RadioGroupItem :value="value" />
     </FormControl>
     <FormLabel class="font-normal">
-      {{ lableValue }}
+      {{ value }}
     </FormLabel>
   </Label>
 </template>
@@ -14,7 +14,6 @@
 <script lang="ts" setup>
 defineProps<{
   value: string,
-  lableValue: string,
 }>();
 </script>
 
