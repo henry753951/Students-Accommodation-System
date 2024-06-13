@@ -1,8 +1,12 @@
 <template>
   <p>
     {{ id }}
-    
   </p>
+  <div>
+    <p>Rental Property ID: {{ $route.params.id }}</p>
+    <p>Param1 : {{  route.query.param1 }}</p>
+    <p>Param2 : {{  route.query.param2 }}</p>
+  </div>
 </template>
 
 <script lang="ts" setup>
