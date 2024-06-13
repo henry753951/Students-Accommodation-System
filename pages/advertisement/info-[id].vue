@@ -77,7 +77,7 @@
                 補助
               </h3>
               <p className="text-gray-500">
-                {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].price ? parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).subsidy : 'Nothing' }}
+                {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].price ? (parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).subsidy ? '有' : '無') : 'Nothing' }}
               </p>
             </div>
             <div>
@@ -93,7 +93,7 @@
                 平均評分
               </h3>          
               <p className="text-gray-500">
-                {{ comment_data && comment_data.length > 0 ? comment_data.reduce((acc, cur) => acc + cur.score, 0) / comment_data.length : 'Nothing' }}
+                {{ averageScore }}
               </p>      
             </div>
           </div>
@@ -101,17 +101,21 @@
       </div>
     </div>
     <div
-      v-if="comment_data?.length !== 0"
+      v-if="comment_data?.length !== 0 && showUserCommentsOnly === false"
       class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
       <h3 className="text-lg font-bold mb-2">
         評論區
-        <Button
-          class="ml-5"
-          @click="switchStatus"
+        <div
+          v-if="user != null || user != undefined"
         >
-          {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
-        </Button>
+          <Button
+           
+            @click="switchStatus"
+          >
+            {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
+          </Button>
+        </div>
       </h3>   
       <div
         v-for="items in comment_data"
@@ -158,6 +162,88 @@
       </div>
     </div>
     <div
+      v-else-if="userComments.length !== 0 && showUserCommentsOnly === true"
+      class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
+    >
+      <h3 className="text-lg font-bold mb-2">
+        評論區
+        <div
+          v-if="user != null || user != undefined"
+        >
+          <Button
+           
+            @click="switchStatus"
+          >
+            {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
+          </Button>
+        </div>
+      </h3>   
+      <div
+        v-for="items in userComments"
+        class="mb-4"
+      >     
+        <Card>
+          <CardHeader class="border-b border-gray-200 dark:border-gray-700 pb-4">
+            <div class="flex items-center ">
+              <Avatar class="bg-slate-200 mr-3">        
+                <AvatarImage
+                  :src="items.app_user && items.app_user.avatar_url ? items.app_user.avatar_url : 'null'"
+                  alt="@radix-vue"
+                />
+                <AvatarFallback>name</AvatarFallback>
+              </Avatar>
+              <span class="font-semibold mr-5">{{ items.app_user ? items.app_user.name : '訪客' }}</span>
+              <div class="flex items-center ">
+                {{ items.score }}/10
+              </div>
+              <div class="ml-auto">
+                <Button
+                  class="bg-red-400 text-white px-4 py-2 rounded ml-auto"
+                  @click="deleteComment(items.id, items.user_id ? items.user_id : 'null')"
+                >
+                  刪除評論
+                </Button>
+              </div>  
+            </div>
+          </CardHeader>
+          <CardContent class="py-4">
+            <div class="mt-2 text-left">
+              <h3 class="font-semibold">
+                - 評論
+              </h3>
+              <p>
+                {{ items.comment }}
+              </p>
+            </div>
+            <div class="mt-4 text-left">             
+            <!-- Add more agenda items here -->
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+    <div
+      v-else-if="userComments.length == 0 && showUserCommentsOnly === true && comment_data?.length !== 0"
+      class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
+    >
+      <h3 className="text-lg font-bold mb-2">
+        評論區
+        <div
+          v-if="user != null || user != undefined"
+        >
+          <Button
+           
+            @click="switchStatus"
+          >
+            {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
+          </Button>
+        </div>
+        <div class="text-center">
+          <p>你目前沒有評論</p>
+        </div>
+      </h3>
+    </div>
+    <div
       v-else
       class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
@@ -197,7 +283,6 @@ const { data: rental_property, error ,refresh: refreshSite } = useAsyncData( asy
 });
 
 const { data: comment_data, error: error2 ,refresh: refreshSite2 } = useAsyncData( async () => {
-  if(!showUserCommentsOnly.value){
     const { data } = await supabase.from('advertise_comment').select(`
     id,
     user_id,
@@ -209,26 +294,26 @@ const { data: comment_data, error: error2 ,refresh: refreshSite2 } = useAsyncDat
     )
   `).eq('rental_property_id', department_id.value);
   return data;
-  }
-  else{
-    const { data } = await supabase.from('advertise_comment').select(`
-    id,
-    user_id,
-    comment,
-    score,
-    app_user (
-      name,
-      avatar_url
-    )
-  `).eq('rental_property_id', department_id.value).eq('user_id', user.value ? user.value.id : "訪客");
-  return data;
-  }
 });
 
+
+const userComments = computed(() => {
+  if (!comment_data.value || !user.value) return [];
+  return comment_data.value.filter(comment => comment.user_id === user.value.id);
+});
+const averageScore = computed(() => {
+  if (!comment_data.value) return 0;
+  return comment_data.value.reduce((acc, cur) => acc + cur.score, 0) / comment_data.value.length;
+});
 const comment = ref('');
 const score = ref();
 
 const sendComment = async () => {
+  if(user.value === null || user.value === undefined){
+    window.alert('請先登入');
+    return;
+  } 
+
   if(!comment.value || !score.value) {
     window.alert('Please fill in comment and score');
     return;
@@ -239,8 +324,8 @@ const sendComment = async () => {
   }
   const { data, error } = await supabase.from('advertise_comment').insert(
     {
-      rental_property_id: department_id.value,
-      user_id: user.value ? user.value.id : "訪客",
+      rental_property_id: (department_id.value).toString(),
+      user_id: user.value.id,
       comment: comment.value,
       score: score.value,
     }
@@ -259,6 +344,10 @@ const sendComment = async () => {
 
 
 const deleteComment = async (commentId: string, userId: string) => {
+  if(user.value === null || user.value === undefined){
+    window.alert('請先登入');
+    return;
+  } 
   if( userId == user.value.id ){
     if (!user.value) return;
     const { error } = await supabase.from('advertise_comment').delete().eq('id', commentId);
@@ -278,7 +367,6 @@ const deleteComment = async (commentId: string, userId: string) => {
 
 function switchStatus(){
   showUserCommentsOnly.value = !showUserCommentsOnly.value;
-  refreshSite2();
 }
 
 function parsePropertyAttributes(attr) {
