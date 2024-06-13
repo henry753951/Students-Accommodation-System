@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 
 // 定義選單項目
@@ -21,6 +20,18 @@ const menu = ref({
       title: '旗下學生管理', 
       href: '/map_teacher_student',
       description: '管理教師和學生之間的互動和分配。' 
+    },
+  ],
+  訪視系統:[
+    { 
+      title: '訪視記錄清單', 
+      href: '/interview/record',
+      description: '管理所有訪視記錄或新增記錄。' 
+    },
+    { 
+      title: '預約訪視行程', 
+      href: '/reserve-interview',
+      description: '進行校外訪視的預約。' 
     },
   ],
   我的租屋點: { 

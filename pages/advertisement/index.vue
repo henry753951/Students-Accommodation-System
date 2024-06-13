@@ -59,14 +59,20 @@
                   {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : 'Price not available' }}
                 </div>
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
-                  <NuxtLink to="./reserve" class="text-white">預約看屋</NuxtLink>
+                  <NuxtLink
+                    to="./reserve-property"
+                    class="text-white"
+                  >
+                    預約看屋
+                  </NuxtLink>
                 </Button>
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
-                  <NuxtLink :to="'/advertisement/info-'+property.id">
+                  <NuxtLink :to="'/advertisement/info-' + property.id">
                     詳細
                   </NuxtLink>
                 </Button>
               </div>
+              {{ getJson<property_attribute>(property.rental_property_info[0]?.property_attributes, defaultPropertyAttribute).sex }}
             </div>
           </Card>
         </div>
@@ -77,32 +83,30 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Database, Tables, Enums } from "~/database.types";
+import type { Database, Tables, Enums, Json } from "~/database.types";
 const supabase = useSupabaseClient<Database>();
 
 definePageMeta({
   name: "房屋廣告頁面",
 });
 
-const { data: rental_property, pending: isLoading, refresh: refresh } = useAsyncData('rental_property', async () => {
-  const { data } = await supabase.from('rental_property').select(`
-    *,
-    rental_property_info (
-      *
-    )
-  `);
+const { data: rental_property, pending: isLoading, refresh: refresh } = await useAsyncData('rental_property', async () => {
+  const { data } = await supabase.from('rental_property').select(`*,rental_property_info(*)`);
   return data;
 });
+function getJson<T>(data: Json, defaultValue: T): T {
+  if (!data) return defaultValue;
+  return data as T;
+}
 
 
 const selectedFilter = ref('all');
 
 const filteredProperties = computed(() => {
   if (!rental_property.value) return [];
-  
+
   if (selectedFilter.value === 'price_low_to_high') {
     return [...rental_property.value].sort((a, b) => {
       const priceA = a.rental_property_info[0]?.price ?? 0;
@@ -120,10 +124,18 @@ const filteredProperties = computed(() => {
   }
 });
 
-
+type property_attribute = {
+  type: string;
+  sex: string;
+  subsidy: boolean;
+};
+const defaultPropertyAttribute: property_attribute = {
+  type: "defaultType",
+  sex: "defaultSex",
+  subsidy: false,
+};
 
 </script>
-
 <style scoped>
 /* Add any additional styling here */
 </style>

@@ -22,9 +22,8 @@
 defineProps<{
   fieldName: string,
   lableValue: string,
-  placeHolderValue: string
+  placeHolderValue: string,
 }>();
-
 </script>
 
 <style>

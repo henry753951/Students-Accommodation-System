@@ -42,6 +42,7 @@ definePageMeta({
   layout: "account-no-nav",
 });
 const display = ref(false);
+
 const user = useSupabaseUser();
 const supabase = useSupabaseClient<Database>();
 type Role = { selected: boolean; name: string };
