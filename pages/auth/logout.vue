@@ -7,7 +7,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { useToast } from "@/components/ui/toast/use-toast";
 import { ToastAction } from "@/components/ui/toast";
@@ -19,7 +18,9 @@ const supabase = useSupabaseClient();
 
 // onMounted
 onMounted(async () => {
-  const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut({
+    scope: "local"
+  });
   if (!error) {
     setTimeout(() => {
       navigateTo("/");
@@ -50,5 +51,4 @@ onMounted(async () => {
   }
 });
 </script>
-
 <style></style>

@@ -42,14 +42,12 @@
                         /> 新增
                       </MenubarSubTrigger>
                       <MenubarSubContent>
-                        <MenubarItem @click="updateSingleRoleForSelections('學生', 'add')">
-                          學生
-                        </MenubarItem>
-                        <MenubarItem @click="updateSingleRoleForSelections('教師', 'add')">
-                          教師
-                        </MenubarItem>
-                        <MenubarItem @click="updateSingleRoleForSelections('房東', 'add')">
-                          房東
+                        <MenubarItem
+                          v-for="role in roles"
+                          :key="role"
+                          @click="updateSingleRoleForSelections(role, 'add')"
+                        >
+                          {{ role }}
                         </MenubarItem>
                       </MenubarSubContent>
                     </MenubarSub>
@@ -61,14 +59,12 @@
                         /> 刪除
                       </MenubarSubTrigger>
                       <MenubarSubContent>
-                        <MenubarItem @click="updateSingleRoleForSelections('學生', 'remove')">
-                          學生
-                        </MenubarItem>
-                        <MenubarItem @click="updateSingleRoleForSelections('教師', 'remove')">
-                          教師
-                        </MenubarItem>
-                        <MenubarItem @click="updateSingleRoleForSelections('房東', 'remove')">
-                          房東
+                        <MenubarItem
+                          v-for="role in roles"
+                          :key="role"
+                          @click="updateSingleRoleForSelections(role, 'remove')"
+                        >
+                          {{ role }}
                         </MenubarItem>
                       </MenubarSubContent>
                     </MenubarSub>
@@ -149,6 +145,14 @@
                     >
                       房東
                     </Badge>
+                    <Badge
+                      v-if="
+                        user.admin"
+                      variant="secondary"
+                      class="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 dark:bg-opacity-30"
+                    >
+                      管理員
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -207,12 +211,12 @@ definePageMeta(
   }
 );
 
-
+const roles = ["學生", "教師", "房東", "管理員"] as "學生" | "教師" | "房東" | "管理員"[];
 const supabase = useSupabaseClient<Database>();
 
 // [Data] 
 const { data: users, pending: isLoading, refresh: refresh } = useAsyncData('users', async () => {
-  const { data } = await supabase.from('app_user').select('*, student(*), teacher(*), landlord(*)');
+  const { data } = await supabase.from('app_user').select('*, student(*), teacher(*), landlord(*),admin(*)');
   return data;
 });
 
@@ -309,6 +313,9 @@ const updateSingleRoleForSelections = async (role: "學生" | "教師" | "房東
     } else if (role === "房東") {
       const { error: landlordAddError } = await supabase.from('landlord').upsert(data);
       error = landlordAddError?.message || null;
+    }else if (role === "管理員") {
+      const { error: adminAddError } = await supabase.from('admin').upsert(data);
+      error = adminAddError?.message || null;
     }
   } else {
     if (role === "學生") {
@@ -320,6 +327,9 @@ const updateSingleRoleForSelections = async (role: "學生" | "教師" | "房東
     } else if (role === "房東") {
       const { error: landlordRemoveError } = await supabase.from('landlord').delete().in('user_id', selectedUserIds);
       error = landlordRemoveError?.message || null;
+    }else if (role === "管理員") {
+      const { error: adminRemoveError } = await supabase.from('admin').delete().in('user_id', selectedUserIds);
+      error = adminRemoveError?.message || null;
     }
   }
 

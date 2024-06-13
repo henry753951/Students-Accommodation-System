@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 
 // 定義選單項目
@@ -31,7 +30,7 @@ const menu = ref({
     },
     { 
       title: '預約訪視行程', 
-      href: '/interview/reserve',
+      href: '/reserve-interview',
       description: '進行校外訪視的預約。' 
     },
   ],

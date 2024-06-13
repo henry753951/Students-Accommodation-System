@@ -9,6 +9,32 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin: {
+        Row: {
+          created_at: string
+          is_super_admin: boolean | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          is_super_admin?: boolean | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          is_super_admin?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       advertise_comment: {
         Row: {
           comment: string | null
@@ -42,6 +68,35 @@ export type Database = {
           {
             foreignKeyName: "advertise_comment_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcement: {
+        Row: {
+          context: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+        }
+        Insert: {
+          context?: string | null
+          created_at: string
+          created_by?: string | null
+          id?: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "app_user"
             referencedColumns: ["id"]
@@ -463,6 +518,48 @@ export type Database = {
           },
           {
             foreignKeyName: "report_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reservations: {
+        Row: {
+          reservation_id: string
+          reservation_time: string
+          reservation_type: string
+          status: string
+          student_id: string
+          user_id: string | null
+        }
+        Insert: {
+          reservation_id?: string
+          reservation_time?: string
+          reservation_type: string
+          status?: string
+          student_id?: string
+          user_id?: string | null
+        }
+        Update: {
+          reservation_id?: string
+          reservation_time?: string
+          reservation_type?: string
+          status?: string
+          student_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "reservations_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "app_user"
