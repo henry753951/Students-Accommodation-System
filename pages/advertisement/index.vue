@@ -60,7 +60,7 @@
                 </div>
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
                   <NuxtLink
-                    to="./reserve"
+                    to="./reserve-property"
                     class="text-white"
                   >
                     預約看屋

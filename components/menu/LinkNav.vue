@@ -30,7 +30,7 @@ const menu = ref({
     },
     { 
       title: '預約訪視行程', 
-      href: '/interview/reserve',
+      href: '/reserve-interview',
       description: '進行校外訪視的預約。' 
     },
   ],
