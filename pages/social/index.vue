@@ -1,243 +1,248 @@
 <template>
-  <div class="bg-gray-50 min-h-screen p-6">
-    <Card class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300">
-      <div>
-        <input v-model="newPostTitle" class="w-full p-2 border rounded-md mb-4" placeholder="輸入標題">
-        <textarea v-model="newPostContent" class="w-full p-2 border rounded-md mb-4" placeholder="輸入你的貼文內容"></textarea>
-        <Select v-model="newRating" class="w-48 border border-gray-300 rounded">
-          <SelectTrigger>
-            <SelectValue placeholder="選擇星數" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>星數</SelectLabel>
-              <SelectItem v-for="n in 5" :key="n" :value="String(n)">{{ n }} 星</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <br>
-        <div class="flex justify-end">
-          <Button @click="publishPost" class="bg-green-500 text-white px-4 py-2 rounded-md">
-            發布貼文
-          </Button>
-        </div>
-      </div>
-      <h1>其他人的貼文</h1>
-      <Card v-for="post in posts" :key="post.id" class="post p-4 mb-4 border rounded-md">
-        <Button @click="reportPost(post.id)" class="report-button absolute bg-red-500 text-white px-2 py-2 rounded">
-          檢舉貼文
-        </Button>
-        <h2 class="text-xl font-semibold">{{ post.title }}</h2>
-        <p class="text-sm text-gray-500 mb-2">發布者: {{ post.app_user?.name }}</p>
-        <p class="text-sm text-gray-500 mb-2">發布時間: {{ post.created }}</p>
-        <p class="mb-2">{{ post.content }}</p>
-        <p class="text-sm text-gray-500 ">租屋地點: {{ post.rental_property?.address }}</p>
-        <div class="comments mt-4">
-          <div v-if="post.comments && post.comments.length > 0">
-            <div v-for="comment in post.comments" :key="comment.id" class="comment p-2 border-t">
-              <p class="text-gray-500">留言者: {{ comment.user_id }}</p>
-              <p class="text-gray-500">留言時間: {{ new Date(comment.created).toLocaleString() }}</p>
-              <p>{{ comment.comment }}</p>
-              <Button @click="reportComment(comment.id)" class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded">
-                檢舉留言
-              </Button>
+  <div class="flex flex-col h-screen">
+    <header class="bg-white shadow-sm px-6 py-4 flex items-center justify-between">
+      <h1 class="text-2xl font-bold">{{ currentRentalProperty?.address }}</h1>
+    </header>
+    <div class="flex-1 grid grid-cols-12 gap-6 p-6">
+      <div class="col-span-9 space-y-6">
+        <div class="bg-white rounded-lg shadow-sm p-4">
+          <div class="relative w-full max-w-md mb-4">
+            <input
+              v-model="post"
+              type="text"
+              placeholder="Say something..."
+              class="pl-10 pr-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button @click="publishPost" class="absolute right-3 top-1/2 transform -translate-y-1/2">Post</button>
+          </div>
+          <h2 class="text-lg font-semibold mb-4">Announcements</h2>
+          <div class="space-y-4">
+            <div class="flex items-start space-x-4" v-for="post in post_data">
+              <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                {{ post.app_user.name.charAt(0) }}
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div class="font-semibold">{{ post.app_user.name }}</div>
+                  <div class="text-gray-500 text-sm">{{ new Date(post.created_at).toLocaleString() }}</div>
+                </div>
+                <p class="text-gray-700">{{ post.context }}</p>
+              </div>
             </div>
           </div>
         </div>
-        <form @submit.prevent="addComment(post.id)" class="mt-4 flex gap-2">
-          <input v-model="newComment" class="flex-grow p-2 border rounded-md" placeholder="添加評論"/>
-          <Button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">發布</Button>
-        </form>
-      </Card>
-    </Card>
+      </div>
+      <div class="col-span-3 space-y-6">
+        <div class="bg-white rounded-lg shadow-sm p-4">
+          <h2 class="text-lg font-semibold mb-4">Members</h2>
+          <div class="space-y-4">{{ currentRentalProperty?.landlord_id }}</div>
+          <div class="space-y-4" v-for="member in member_data" :key="member.student_id">
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                {{ member.app_user?.name.charAt(0) }}
+              </div>
+              <div>
+                <div class="font-semibold">{{ member.app_user.name }}</div>
+          </div>
+        </div>
+        <div v-if="isLandlord" class="bg-white rounded-lg shadow-sm p-4">
+          <h2 class="text-lg font-semibold mb-4">Your Properties</h2>
+          <div class="space-y-4" v-for="property in rental_property" :key="property.id" @click="selectProperty(property)">
+            <div class="flex items-center space-x-4 cursor-pointer">
+              <div class="flex-1">
+                <div class="font-semibold">{{ property.address }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
+</div>
 </template>
 
+
 <script setup lang="ts">
+
 import { ref } from 'vue';
-import type { Database } from "~/database.types";
+import type { Database, Tables, Enums } from "~/database.types";
 const supabase = useSupabaseClient<Database>();
 const user = useSupabaseUser();
 
 definePageMeta({
-  name: "租屋資訊交流平台",
+  name: "租屋點交流平台",
 });
 
-const newPostTitle = ref('');
-const newPostContent = ref('');
-const newRating = ref('');
+const currentRentalProperty = ref<RentalProperty | null>(null);
+  onMounted(async () => {
+  currentRentalProperty.value = await getCurrentRentalProperty(user.value.id);
+});
 
-const publishPost = async () => {
-  let newPostId = crypto.randomUUID();
-  if (!user.value) {
-    console.error('User is not logged in.');
-    return;
+//判別身分
+const isLandlord = ref(false); // 預設為 false
+const getUserIdentity = async (userId: string): Promise<{ isStudent: boolean; isLandlord: boolean }> => {
+  const { data: studentData } = await supabase
+    .from('student')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
+
+  if (studentData) {
+    return { isStudent: true, isLandlord: false };
   }
 
-  if (!newPostTitle.value.trim() || !newPostContent.value.trim() || !newRating.value) {
-    alert('請輸入標題、內容和評分');
-    return;
+  const { data: landlordData } = await supabase
+    .from('landlord')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
+
+  if (landlordData) {
+    return { isStudent: false, isLandlord: true };
   }
 
-  let location_id = null;
+  return { isStudent: false, isLandlord: false };
+};
 
+// 取得當前租屋點
+interface RentalProperty {
+  id: string;
+  address: string;
+  created_at: string | null;
+  updated_at: string | null;
+  landlord_id: string | null;
+}
+const getCurrentRentalProperty = async (userId: string): Promise<RentalProperty | null> => {
   try {
-    const { data: mapData, error: mapError } = await supabase
-      .from('map_rental_property_student')
-      .select('rental_property_id')
-      .eq('student_id', user.value.id)
-      .eq('is_currently_renting', true)
-      .single();
+    const identity = await getUserIdentity(userId);
 
-    if (mapData && mapData.rental_property_id) {
-      location_id = mapData.rental_property_id;
+    if (identity.isStudent) {
+      const { data: studentRentalProperty } = await supabase
+        .from('map_rental_property_student')
+        .select('rental_property_id, rental_property(*)')
+        .eq('student_id', userId)
+        .single();
+
+      return studentRentalProperty ? studentRentalProperty.rental_property : null;
+    } else if (identity.isLandlord) {
+      const { data: landlordRentalProperties } = await supabase
+        .from('rental_property')
+        .select('*')
+        .eq('landlord_id', userId)
+        .order('updated_at', { ascending: false })
+        .limit(1);
+
+      return landlordRentalProperties && landlordRentalProperties.length > 0 ? landlordRentalProperties[0] : null;
+    } else {
+      return null;
     }
   } catch (error) {
-    console.error('Error fetching location:', error);
-  }
-
-  try {
-    const { data, error } = await supabase.from('posts').insert({
-      id: newPostId,
-      user_id: user.value.id,
-      title: newPostTitle.value,
-      content: newPostContent.value,
-      location_id: location_id ||undefined,
-      created: new Date().toISOString(),
-      score: Number(newRating.value),
-    });
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    newPostTitle.value = '';
-    newPostContent.value = '';
-    newRating.value = '';
-
-    window.alert('貼文發布成功！');
-    refreshPosts();
-  } catch (error) {
-    console.error('Error publishing post:', error);
+    console.error('Error fetching current rental property');
+    throw error;
   }
 };
 
-const newComment = ref('');
-
-
-const addComment = async (postId: string) => {
-  let newCommentId = crypto.randomUUID();
-  if (!user.value || !posts.value) return;
-
-  if (!newComment.value.trim()) return;
-
-  const { data, error } = await supabase.from('comments').insert({
-    id: newCommentId,
-    post_id: postId,
-    comment: newComment.value,
-    user_id: user.value.id,
-    created: new Date().toISOString(),
-  });
-
-  if (error) {
-    console.error(error);
-    window.alert('評論失敗');
-    return;
-  }
-
-  const post = posts.value.find(p => p.id === postId);
-  if (post && data) {
-    if (!post.comments) {
-      post.comments = [];
-    }
-    post.comments.push(data[0]);
-  }
-
-  newComment.value = '';
-
-  window.alert('發布成功！');
-  refreshPosts();
+//房東選租屋點
+const selectProperty = (property: RentalProperty) => {
+  currentRentalProperty.value = property;
 };
 
-const reportComment = async (commentId: string) => {
-  if (!user.value) return;
-  const { error } = await supabase.from('report').insert({
-    user_id: user.value.id,
-    post_id: undefined,
-    comment_id: commentId,
-    reason: "GG",
-    created: new Date().toISOString(),
-  });
-  if (error) {
-    console.error(error);
-    window.alert('檢舉失敗');
-  } else {
-    window.alert('檢舉成功');
-  }
-};
+//租屋點資料
+const route = useRoute();
 
-const reportPost = async (postId: string) => {
-  if (!user.value) return;
-  const { error } = await supabase.from('report').insert({
-    user_id: user.value.id,
-    post_id: postId,
-    comment_id: undefined,
-    reason: "GG",
-    created: new Date().toISOString(),
-  });
-  if (error) {
-    console.error(error);
-    window.alert('檢舉失敗');
-  } else {
-    window.alert('檢舉成功');
-  }
-};
+const { data: rental_property, error ,refresh: refreshSite } = useAsyncData( async () => {
+  const { data } = await supabase.from('rental_property')
+  .select(`
+    *,
+    rental_property_info ("*")
+  `)
+  .eq('id', currentRentalProperty.value.id);
+  return data;
+});
 
-const { data: posts, pending: isLoading, refresh: refreshPosts } = useAsyncData('posts', async () => {
-  const { data: postData, error } = await supabase
-    .from('posts')
+//貼文資料
+const { data: post_data, error: error2 ,refresh: refreshSite2 } = useAsyncData( async () => {
+  const { data } = await supabase.from('announcement')
+  .select(`
+    *,
+    app_user(name, avatar_url)
+
+  `).eq('rental_property_id', currentRentalProperty)
+  return data;
+});
+
+//取得租屋點房東
+const { data: landlord_data, error: error3, refresh: refreshSite3 } = useAsyncData(async () => {
+  const { data } = await supabase
+    .from('landlord')
     .select(`
       *,
-      app_user (name),
-      rental_property (address),
-      comments (*)
+      app_user(name, avatar_url)
     `)
-    .order('created', { ascending: false });
+    .eq('user_id', currentRentalProperty.value?.landlord_id);
 
-  if (error) {
-    console.error(error);
-    return [];
+  return data;
+});
+
+//取得租屋點學生成員
+const { data: member_data, error: error4 ,refresh: refreshSite4 } = useAsyncData( async () => {
+  const { data } = await supabase.from('map_rental_property_student')
+  .select(`
+    student_id,
+    app_user(name, avatar_url)
+
+  `).eq('rental_property_id', currentRentalProperty.value.id)
+  return data;
+});
+
+//發文
+const post = ref('');
+const publishPost = async () => {
+  if(!post.value) {
+    window.alert('try to say something ~');
+    return;
   }
 
-  const postsWithComments = await Promise.all(postData.map(async post => {
-    const { data: comments, error: commentsError } = await supabase
-      .from('comments')
-      .select('*')
-      .eq('post_id', post.id);
+  const { data, error } = await supabase.from('announcement').insert(
+    {
+      rental_property_id: currentRentalProperty.value?.id,
+      created_by: user.value,
+      context: post.value,
+      created_at: new Date().toISOString(),
+      }
+  );
+  if (error) {
+    window.alert('發送失敗');
+    return;
+  }
+  post.value = '';
+  window.alert('發送成功！');
+  refreshSite();
+  refreshSite2();
+  return;
+};
 
-    if (commentsError) {
-      console.error(commentsError);
-      post.comments = [];
-    } 
-    return post;
-  }));
-
-  return postsWithComments;
+onMounted(async () => {
+  currentRentalProperty.value = await getCurrentRentalProperty(user.value.id);
+  const identity = await getUserIdentity(user.value.id);
+  isLandlord.value = identity.isLandlord;
 });
+
+
 </script>
 
 <style scoped>
-.post {
+input {
   border: 1px solid #ccc;
-  position: relative;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
 }
-.comment {
-  border-top: 1px solid #eee;
-  position: relative;
-}
-.report-button {
-  top: 0.5rem;
-  right: 0.5rem;
+button {
+  border: none;
+  background: gainsboro;
+  color: black;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0.1rem;
 }
 </style>
