@@ -18,7 +18,7 @@ const menu = ref({
   教師系統: [
     { 
       title: '旗下學生管理', 
-      href: '/map_teacher_student',
+      href: '/teacher/students',
       description: '管理教師和學生之間的互動和分配。' 
     },
   ],

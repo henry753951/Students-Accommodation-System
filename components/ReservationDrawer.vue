@@ -1,7 +1,12 @@
 <template>
   <Drawer>
     <DrawerTrigger>
-      <Button variant="outline" size="sm">預約清單</Button>
+      <Button
+        variant="outline"
+        size="sm"
+      >
+        預約清單
+      </Button>
     </DrawerTrigger>
     <DrawerContent>
       <DrawerHeader>
@@ -13,7 +18,9 @@
       </DrawerBody>
       <DrawerFooter>
         <DrawerClose>
-          <Button variant="outline">關閉</Button>
+          <Button variant="outline">
+            關閉
+          </Button>
         </DrawerClose>
       </DrawerFooter>
     </DrawerContent>

@@ -23,10 +23,10 @@ definePageMeta({
 });
 type rental = {
   address: string | null,
-}
+};
 const route = useRoute();
 const id = ref(route.params.id);
-let Rental = ref<rental>({
+const Rental = ref<rental>({
   address: null,
 });
 
@@ -43,24 +43,24 @@ type Rental_interface = {
   // property_attributes: string,
   comment: string | null,
   score: number | null,
-}
+};
 
-let all1 = ref({});
-let rental_property = ref<Rental_interface[]>([]);
+const all1 = ref({});
+const rental_property = ref<Rental_interface[]>([]);
 
 const generateLink = (id: string, params: Record<Rental_interface, any>) => {
   return {
     path: `/rentals/${id}`,
     query: params
-  }
-}
+  };
+};
 
 
 const initial_get_information = async () => {
   const { data, error } = await supabase
     .from("map_rental_property_student")
     .select("rental_property_id")
-    .eq("student_id", "77bfd169-c679-473c-9c93-fc26679d7216")
+    .eq("student_id", "77bfd169-c679-473c-9c93-fc26679d7216");
   if (error) {
     toast({
       title: "Error",
@@ -73,7 +73,7 @@ const initial_get_information = async () => {
     const { data: rental_property_id, error: error2 } = await supabase
       .from("rental_property")
       .select("*,rental_property_info(*)")
-      .eq("id", data[i].rental_property_id)
+      .eq("id", data[i].rental_property_id);
     if (error2) {
       toast({
         title: "Error",
