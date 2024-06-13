@@ -48,6 +48,14 @@ type Rental_interface = {
 let all1 = ref({});
 let rental_property = ref<Rental_interface[]>([]);
 
+const generateLink = (id: string, params: Record<Rental_interface, any>) => {
+  return {
+    path: `/rentals/${id}`,
+    query: params
+  }
+}
+
+
 const initial_get_information = async () => {
   const { data, error } = await supabase
     .from("map_rental_property_student")
