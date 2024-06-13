@@ -6,9 +6,8 @@ definePageMeta({
 });
 const route = useRoute();
 const router = useRouter();
-const user = useSupabaseUser();
 const supabase = useSupabaseClient<Database>();
-const { $csrfFetch } = useNuxtApp();
+const user = useUser();
 const { data: test } = await useAPI("/api/test", {
   default: () => {
     return [];
@@ -16,7 +15,7 @@ const { data: test } = await useAPI("/api/test", {
 });
 
 const query_school_number = ref("a1105534");
-const {data: students,refresh} = useAsyncData(async () => {
+const { data: students, refresh } = useAsyncData(async () => {
   const { data, error } = await supabase.from("app_user")
     .select("*,student(*)")
     .not('student', 'is', null)
@@ -42,7 +41,8 @@ const {data: students,refresh} = useAsyncData(async () => {
           v-else
           class="flex items-center space-x-4"
         >
-          <span class="text-gray-700 font-semibold">{{ user.user_metadata.full_name }}</span>
+          {{ user }}
+          <span class="text-gray-700 font-semibold">{{ user.name }}</span>
           <Button @click="navigateTo('auth/logout')">
             Logout
           </Button>
@@ -109,7 +109,6 @@ const {data: students,refresh} = useAsyncData(async () => {
           </Button>
         </NuxtLink>
       </div>
-
       <div>
         <!-- JOIN 範例 -->
         <h1 class="text-xl font-semibold mb-4">
@@ -125,8 +124,7 @@ const {data: students,refresh} = useAsyncData(async () => {
             v-for="student in students"
             :key="student.id"
           >
-            {{ student.name }}[{{ student.student!.student_number }}]
-          </span>
+            {{ student.name }}[{{ student.student!.student_number }}] </span>
         </div>
       </div>
     </div>
