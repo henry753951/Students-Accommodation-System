@@ -17,6 +17,62 @@
           />
         </div>
         <div class="mb-4">
+          <Label for="student_id">房屋選擇</Label>
+          {{house[0].address}}
+          <Input
+            id="student_id"
+            v-model=house[0].address
+            type="text"
+            class="w-full border border-gray-300 rounded mt-1"
+            readonly
+            required
+          />
+        </div>
+        <Popover v-model:open="open">
+          <PopoverTrigger as-child>
+            <Button
+              variant="outline"
+              role="combobox"
+              :aria-expanded="open"
+              class="w-[200px] justify-between"
+            >
+              {{ value
+                ? frameworks.find((framework) => framework.value === value)?.label
+                : "Select framework..." }}
+              <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-[200px] p-0">
+            <Command>
+              <CommandInput class="h-9" placeholder="Search framework..." />
+              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandList>
+                <CommandGroup>
+                  <CommandItem
+                    v-for="framework in frameworks"
+                    :key="framework.value"
+                    :value="framework.value"
+                    @select="(ev) => {
+                      if (typeof ev.detail.value === 'string') {
+                        value = ev.detail.value
+                      }
+                      open = false
+                    }"
+                  >
+                    {{ framework.label }}
+                    <Check
+                      :class="[
+                        'ml-auto h-4 w-4',
+                        value === framework.value ? 'opacity-100' : 'opacity-0',
+                      ]"
+                    />
+                  </CommandItem>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        <div class="mb-4">
           <Label for="phone">電話</Label>
           <Input
             id="phone"
@@ -87,10 +143,37 @@
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { Calendar as CalendarIcon } from 'lucide-vue-next';
-
+import type { Database } from '~/database.types';
+definePageMeta({
+  name: "首頁",
+});
+const supabase = useSupabaseClient<Database>();
 const route = useRoute();
 const type = ref(route.params.id);
 const user = useUser();
+
+
+const frameworks = [
+  { value: 'next.js', label: 'Next.js' },
+  { value: 'sveltekit', label: 'SvelteKit' },
+  { value: 'nuxt.js', label: 'Nuxt.js' },
+  { value: 'remix', label: 'Remix' },
+  { value: 'astro', label: 'Astro' },
+]
+
+const open = ref(false)
+const value = ref('')
+
+
+const { data: house, refresh } = useAsyncData(async () => {
+  const { data, error } = await supabase.from("rental_property")
+    .select("*")
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  return data;
+});
 
 const form = ref({
   student_id: computed(() => user.value?.id || ''), // 使用 computed 來動態獲取 user.id
