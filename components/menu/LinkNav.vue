@@ -22,6 +22,18 @@ const menu = ref({
       description: '管理教師和學生之間的互動和分配。' 
     },
   ],
+  訪視系統:[
+    { 
+      title: '訪視記錄清單', 
+      href: '/interview/record',
+      description: '管理所有訪視記錄或新增記錄。' 
+    },
+    { 
+      title: '預約訪視行程', 
+      href: '/interview/reserve',
+      description: '進行校外訪視的預約。' 
+    },
+  ],
   我的租屋點: { 
     title: '我的租屋點', 
     href: '/rentals',

@@ -22,7 +22,7 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(data, index) in All_student_init" :key="index" class="">
+        <TableRow v-for="(data, index) in All_student_init_2" :key="index" class="">
           <TableCell class="">
             {{ data.name }}
           </TableCell>
@@ -30,7 +30,7 @@
             {{ data.student_number }}
           </TableCell>
           <TableCell class="">
-            {{ data.department_id }}
+            {{ data.department_name }}
           </TableCell>
           <TableCell class="">
             {{ data.email }}
@@ -62,7 +62,7 @@
             <Label html-for="email">信箱</Label>
             <Input id="email" type="email" v-model=new_student_create_email />
           </div>
-          <Button   @click="new_student()">
+          <Button @click="new_student()">
             Create
           </Button>
         </div>
@@ -70,7 +70,7 @@
 
       <Dialog v-if="isDesktop" v-model:open="isOpen">
         <DialogTrigger as-child>
-          <Button variant="outline" :disabled = "isreadytodelete"
+          <Button variant="outline" :disabled="isreadytodelete"
             class="m-2 w-20 bg-black text-white hover  hover:text-black hover:bg hover:shadow-lg ">
             New
           </Button>
@@ -85,9 +85,10 @@
           <GridForm />
         </DialogContent>
       </Dialog>
-      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg":disabled = "isreadytodelete"
+      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg" :disabled="isreadytodelete"
         @click="Delete_student()">delete</Button>
-      <Button  @click = "submit()"class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg" :disabled=" canuse_submit_btn">Submit</Button>
+      <Button @click="submit()" class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg"
+        :disabled="canuse_submit_btn">Submit</Button>
     </div>
     <!-- {{ All_Student[0] }} -->
   </div>
@@ -130,16 +131,18 @@ const supabase = useSupabaseClient<Database>();
 
 type Student = {
   user_id: string;
-  department_id: string ;
-  student_number: string ;
+  department_id: string;
+  department_name: string;
+  student_number: string;
   student_id: string;
-  name: string ;
-  email: string ;
+  name: string;
+  email: string;
   isChecked: boolean;
 };
 
 let All_student_init = ref<Student[]>([]);
 
+let All_student_init_2 = ref<Student[]>([]);
 let new_student_create_name = ref("王曉明");
 let new_student_create_student_number = ref("a1105500");
 let new_student_create_email = ref("a1105500@mail.nuk.edu.tw");
@@ -196,54 +199,65 @@ const ListmapStudent = async () => {
       student_number: "",
       name: "",
       email: "",
+      department_name: "",
       isChecked: false,
     });
   }
- 
+
   ListmapStudent_step2();
 };
 
 
 const ListmapStudent_step2 = async () => {
   for (let i = 0; i < All_student_init.value.length; i++) {
-    // console.log("22",All_student_init.value[i].student_id);
+
     const { data, error } = await supabase
       .from("app_user")
-      .select('name,email')
+      .select('name, email, student:student(department_id, student_number)')
       .eq("id", All_student_init.value[i].student_id);
+
     if (error) {
       toast.toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
-      return;
+      continue;
     }
-    All_student_init.value[i].name = data[0].name ?? "";
-    All_student_init.value[i].email = data[0].email ?? "";
+
+    if (data && data.length > 0) {
+      console.log("app_user data:", data);
+      const studentData = data[0];
+      All_student_init.value[i].name = studentData.name || "";
+      All_student_init.value[i].email = studentData.email || "";
+      All_student_init.value[i].department_id = studentData.student?.department_id || "";
+      All_student_init.value[i].student_number = studentData.student?.student_number || "";
+    }
+
+    const { data: data2, error: error2 } = await supabase
+      .from("school_department")
+      .select('department_name')
+      .eq("id", All_student_init.value[i].department_id || "");
+
+    if (error2) {
+      toast.toast({
+        title: "Error",
+        description: error2.message+"1231123",
+        variant: "destructive",
+      });
+      continue;
+    }
+
+    if (data2 && data2.length > 0) {
+      console.log("school_department data:", data2);
+      All_student_init.value[i].department_name = data2[0].department_name || "";
+    } else {
+      continue;
+    }
   }
-  // console.log("121",All_student_init.value);
-  ListmapStudent_step3();
+  All_student_init_2.value = All_student_init.value;
 };
 
-const ListmapStudent_step3 = async () => {
-  for (let i = 0; i < All_student_init.value.length; i++) {
-    const { data, error } = await supabase
-      .from("student")
-      .select('department_id,student_number')
-      .eq("user_id", All_student_init.value[i].student_id);
-    if (error) {
-      toast.toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      return;
-    }
-    All_student_init.value[i].department_id = data[0].department_id ?? "";
-    All_student_init.value[i].student_number = data[0].student_number ?? "";
-  }
-};
 
 let test = ref("");
 const new_student = async () => {
@@ -269,15 +283,15 @@ const new_student = async () => {
     return;
   }
   new_student_step2(data[0].user_id);
-  
+
 };
 
 const new_student_step2 = async (USER_ID: String) => {
-  console.log("1",new_student_create_email.value)
+  console.log("1", new_student_create_email.value)
   const { data, error } = await supabase
     .from("app_user")
-    .select('student_id')
-    // .eq("name", new_student_create_name.value)
+    .select('id')
+    .eq("name", new_student_create_name.value)
     .eq("email", new_student_create_email.value);
   if (error) {
     toast.toast({
@@ -289,7 +303,11 @@ const new_student_step2 = async (USER_ID: String) => {
     return;
   }
   if (data.length == 0) {
-    confirm("找不到此學生姓名或者信箱，請確認姓名或者信箱是否正確");
+    toast.toast({
+      title: "Error",
+      description: "找不到學生姓名或者信箱，請確認姓名信箱是否正確",
+      variant: "destructive",
+    });
     return;
   }
   new_student_step3(USER_ID);

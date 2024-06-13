@@ -9,8 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      advertise_comment: {
+        Row: {
+          comment: string | null
+          id: string
+          rental_property_id: string | null
+          score: number | null
+          user_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          id?: string
+          rental_property_id?: string | null
+          score?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          id?: string
+          rental_property_id?: string | null
+          score?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advertise_comment_rental_property_id_fkey"
+            columns: ["rental_property_id"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advertise_comment_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_user: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           email: string | null
           first_time: boolean
@@ -20,6 +60,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           first_time?: boolean
@@ -29,6 +70,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           first_time?: boolean
@@ -47,6 +89,45 @@ export type Database = {
           },
         ]
       }
+      comments: {
+        Row: {
+          comment: string
+          created: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Update: {
+          comment?: string
+          created?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interview_record: {
         Row: {
           landlord_id: string | null
@@ -54,7 +135,7 @@ export type Database = {
           landlord_number: string | null
           property_id: string | null
           record_link: string
-          reocrd_time: string
+          record_time: string
           response: Json | null
           student_id: string
           teacher_id: string
@@ -65,7 +146,7 @@ export type Database = {
           landlord_number?: string | null
           property_id?: string | null
           record_link?: string
-          reocrd_time?: string
+          record_time?: string
           response?: Json | null
           student_id?: string
           teacher_id?: string
@@ -76,7 +157,7 @@ export type Database = {
           landlord_number?: string | null
           property_id?: string | null
           record_link?: string
-          reocrd_time?: string
+          record_time?: string
           response?: Json | null
           student_id?: string
           teacher_id?: string
@@ -222,32 +303,71 @@ export type Database = {
           },
         ]
       }
+      posts: {
+        Row: {
+          content: string
+          created: string | null
+          id: string
+          location_id: string
+          score: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created?: string | null
+          id?: string
+          location_id?: string
+          score?: number | null
+          title: string
+          user_id?: string
+        }
+        Update: {
+          content?: string
+          created?: string | null
+          id?: string
+          location_id?: string
+          score?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rental_property: {
         Row: {
           address: string
-          comment: string | null
           created_at: string | null
           id: string
           landlord_id: string | null
-          score: string | null
           updated_at: string | null
         }
         Insert: {
           address: string
-          comment?: string | null
           created_at?: string | null
           id?: string
           landlord_id?: string | null
-          score?: string | null
           updated_at?: string | null
         }
         Update: {
           address?: string
-          comment?: string | null
           created_at?: string | null
           id?: string
           landlord_id?: string | null
-          score?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -297,6 +417,55 @@ export type Database = {
             columns: ["rental_property_id"]
             isOneToOne: false
             referencedRelation: "rental_property"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report: {
+        Row: {
+          comment_id: string
+          created: string | null
+          id: string
+          post_id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          comment_id?: string
+          created?: string | null
+          id?: string
+          post_id?: string
+          reason: string
+          user_id?: string
+        }
+        Update: {
+          comment_id?: string
+          created?: string | null
+          id?: string
+          post_id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
             referencedColumns: ["id"]
           },
         ]

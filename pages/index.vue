@@ -83,7 +83,7 @@ const { data: students, refresh } = useAsyncData(async () => {
           </Button>
         </NuxtLink>
         <NuxtLink
-          to="/test_student_rental"
+          to="/student_rental/Rental_student"
           class="w-full sm:w-auto"
         >
           <Button class="w-full">
@@ -93,11 +93,11 @@ const { data: students, refresh } = useAsyncData(async () => {
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <NuxtLink
-          to="/addRental"
+          to="/social"
           class="w-full sm:w-auto"
         >
           <Button class="w-full">
-            目前空的
+            租屋資訊交流平台
           </Button>
         </NuxtLink>
         <NuxtLink
