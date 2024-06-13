@@ -20,6 +20,7 @@ export default () => {
         userStore.setUser(null);
         return;
       }
+      console.log("[User] user_data refresh", user_data);
       userStore.setUser({
         roles: [],
         id: user_data.id,

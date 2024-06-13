@@ -13,11 +13,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Check is route is protected
   if (route) {
     // Check if user is authenticated
-    const user = useSupabaseUser().value;
+    const user = useUser();
 
     // 若是沒有設定 role 就是有登入就放行
     if (!route.role) {
-      if (user) {
+      if (user.value) {
         return true;
       }
       return false;
@@ -28,13 +28,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return true;
     }
     // 已登入的使用者 role 符合就放行
-    if (user && user.role && route.role.includes(user.role)) {
+    if (user.value && user.value.roles && user.value.roles.some((role) => route.role.includes(role))) {
       return true;
     } else {
       if (route.role.includes("unauthenticated")) {
         return navigateTo("/");
       }
-      return navigateTo("/auth/login");
+      return navigateTo({ path: "/unauthorized", query: { to: to.path }});
     }
   }
   return true;
