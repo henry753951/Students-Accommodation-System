@@ -74,12 +74,17 @@ const switchAccount = () => {
       </template>
       <template v-else>
         <Button
-          class="bg-foreground"
           @click="navigateTo('/auth/login')"
         >
           登入
         </Button>
       </template>
+      <Button
+        variant="ghost"
+        @click="navigateTo(to)"
+      >
+        重試
+      </Button>
     </div>
   </div>
 </template>

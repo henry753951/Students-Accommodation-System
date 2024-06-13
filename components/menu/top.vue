@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="z-20 p-4 flex flex-col gap-2 rounded-2xl shadow-[0_0px_8px_0px_rgba(0,0,0,0.1)] bg-background">
+    <div class="p-4 flex flex-col gap-2 rounded-2xl shadow-[0_0px_8px_0px_rgba(0,0,0,0.1)] bg-background">
       <div class="flex items-center gap-5">
         <div class="flex flex-wrap mr-auto">
           <div class="font-mono text-xl">

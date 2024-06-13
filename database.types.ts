@@ -12,23 +12,23 @@ export type Database = {
       admin: {
         Row: {
           created_at: string
-          id: string
           is_super_admin: boolean | null
+          user_id: string
         }
         Insert: {
           created_at?: string
-          id?: string
           is_super_admin?: boolean | null
+          user_id?: string
         }
         Update: {
           created_at?: string
-          id?: string
           is_super_admin?: boolean | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "admin_id_fkey"
-            columns: ["id"]
+            foreignKeyName: "admin_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "app_user"
             referencedColumns: ["id"]

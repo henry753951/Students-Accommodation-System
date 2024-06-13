@@ -13,7 +13,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Check is route is protected
   if (route) {
     // Check if user is authenticated
-    const user = useUser();
+    const user = await useAsyncUser();
 
     // 若是沒有設定 role 就是有登入就放行
     if (!route.role) {
@@ -34,7 +34,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       if (route.role.includes("unauthenticated")) {
         return navigateTo("/");
       }
-      return navigateTo({ path: "/unauthorized", query: { to: to.path }});
+      return navigateTo({ path: "/unauthorized", query: { to: to.path } });
     }
   }
   return true;
