@@ -16,13 +16,20 @@
           <TableHead>
             email
           </TableHead>
-          <TableHead id="LLL" v-bind:style="{ color: isRed ? 'red' : 'black' }">
+          <TableHead
+            id="LLL"
+            :style="{ color: isRed ? 'red' : 'black' }"
+          >
             Is Checked
           </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(data, index) in All_student_init_2" :key="index" class="">
+        <TableRow
+          v-for="(data, index) in All_student_init_2"
+          :key="index"
+          class=""
+        >
           <TableCell class="">
             {{ data.name }}
           </TableCell>
@@ -36,31 +43,47 @@
             {{ data.email }}
           </TableCell>
           <TableCell class="">
-            <Checkbox :id="'terms-' + index" v-model:checked="data.isChecked" class="justify-items-center" />
-            <label :for="'terms-' + index" id="LLL" v-bind:style="{ color: isRed ? 'red' : 'black' }"
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pl-3">
+            <Checkbox
+              :id="'terms-' + index"
+              v-model:checked="data.isChecked"
+              class="justify-items-center"
+            />
+            <label
+              id="LLL"
+              :for="'terms-' + index"
+              :style="{ color: isRed ? 'red' : 'black' }"
+              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pl-3"
+            >
               {{ data.isChecked ? "Teacher_id" : '未被分發' }}
             </label>
           </TableCell>
         </TableRow>
-
       </TableBody>
-
     </Table>
     <div class=" flex justify-end">
       <UseTemplate>
         <div class="grid items-start gap-4 px-4">
           <div class="grid gap-2">
             <Label html-for="username">姓名</Label>
-            <Input id="username" v-model=new_student_create_name />
+            <Input
+              id="username"
+              v-model="new_student_create_name"
+            />
           </div>
           <div class="grid gap-2">
             <Label html-for="user_id">學號</Label>
-            <Input id="user_id" v-model=new_student_create_student_number />
+            <Input
+              id="user_id"
+              v-model="new_student_create_student_number"
+            />
           </div>
           <div class="grid gap-2">
             <Label html-for="email">信箱</Label>
-            <Input id="email" type="email" v-model=new_student_create_email />
+            <Input
+              id="email"
+              v-model="new_student_create_email"
+              type="email"
+            />
           </div>
           <Button @click="new_student()">
             Create
@@ -68,10 +91,16 @@
         </div>
       </UseTemplate>
 
-      <Dialog v-if="isDesktop" v-model:open="isOpen">
+      <Dialog
+        v-if="isDesktop"
+        v-model:open="isOpen"
+      >
         <DialogTrigger as-child>
-          <Button variant="outline" :disabled="isreadytodelete"
-            class="m-2 w-20 bg-black text-white hover  hover:text-black hover:bg hover:shadow-lg ">
+          <Button
+            variant="outline"
+            :disabled="isreadytodelete"
+            class="m-2 w-20 bg-black text-white hover  hover:text-black hover:bg hover:shadow-lg "
+          >
             New
           </Button>
         </DialogTrigger>
@@ -85,14 +114,23 @@
           <GridForm />
         </DialogContent>
       </Dialog>
-      <Button class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg" :disabled="isreadytodelete"
-        @click="Delete_student()">delete</Button>
-      <Button @click="submit()" class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg"
-        :disabled="canuse_submit_btn">Submit</Button>
+      <Button
+        class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg"
+        :disabled="isreadytodelete"
+        @click="Delete_student()"
+      >
+        delete
+      </Button>
+      <Button
+        class=" w-20 mr-2 mt-2 mb-2 hover:bg-white hover:text-black hover:shadow-lg"
+        :disabled="canuse_submit_btn"
+        @click="submit()"
+      >
+        Submit
+      </Button>
     </div>
     <!-- {{ All_Student[0] }} -->
   </div>
-
 </template>
 <script setup lang="ts">
 import type { Database, Tables, Enums } from "~/database.types";
@@ -100,8 +138,6 @@ import { useToast } from "~/components/ui/toast/use-toast";
 
 import * as z from 'zod';
 import { useModel } from 'vue';
-const [UseTemplate, GridForm] = createReusableTemplate()
-const isDesktop = useMediaQuery('(min-width: 768px)')
 import {
   Table,
   TableBody,
@@ -118,9 +154,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog';
+const [UseTemplate, GridForm] = createReusableTemplate();
+const isDesktop = useMediaQuery('(min-width: 768px)');
 
-const isOpen = ref(false)
+const isOpen = ref(false);
 // import type { Student } from "~/types";
 // import Student from "~/components/management/user/Student.vue";
 definePageMeta({
@@ -140,17 +178,17 @@ type Student = {
   isChecked: boolean;
 };
 
-let All_student_init = ref<Student[]>([]);
+const All_student_init = ref<Student[]>([]);
 
-let All_student_init_2 = ref<Student[]>([]);
-let new_student_create_name = ref("王曉明");
-let new_student_create_student_number = ref("a1105500");
-let new_student_create_email = ref("a1105500@mail.nuk.edu.tw");
-let isRed = ref(false);
+const All_student_init_2 = ref<Student[]>([]);
+const new_student_create_name = ref("王曉明");
+const new_student_create_student_number = ref("a1105500");
+const new_student_create_email = ref("a1105500@mail.nuk.edu.tw");
+const isRed = ref(false);
 const user = useSupabaseUser();
 let teacher_id = "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4";
-let isreadytodelete = ref(false);
-let canuse_submit_btn = ref(true);
+const isreadytodelete = ref(false);
+const canuse_submit_btn = ref(true);
 onMounted(() => {
   // console.log("1");
   teacher_login();
@@ -259,7 +297,7 @@ const ListmapStudent_step2 = async () => {
 };
 
 
-let test = ref("");
+const test = ref("");
 const new_student = async () => {
   const { data, error } = await supabase
     .from("student")
@@ -286,8 +324,8 @@ const new_student = async () => {
 
 };
 
-const new_student_step2 = async (USER_ID: String) => {
-  console.log("1", new_student_create_email.value)
+const new_student_step2 = async (USER_ID: string) => {
+  console.log("1", new_student_create_email.value);
   const { data, error } = await supabase
     .from("app_user")
     .select('id')
@@ -314,7 +352,7 @@ const new_student_step2 = async (USER_ID: String) => {
 };
 
 
-const new_student_step3 = async (USER_ID: String) => {
+const new_student_step3 = async (USER_ID: string) => {
   const now_time = new Date().toISOString();
   const { data, error } = await supabase
     .from("map_teacher_student")

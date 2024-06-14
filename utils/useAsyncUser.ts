@@ -1,6 +1,6 @@
 import type { Database, Tables, Enums } from "~/database.types";
 
-export default () => {
+export default async () => {
   const userStore = useUserStore();
 
   const supabase = useSupabaseClient<Database>();
@@ -10,7 +10,7 @@ export default () => {
     userStore.setUser(null);
     return a_user;
   }
-  supabase
+  await supabase
     .from("app_user")
     .select("*, student(*), teacher(*), landlord(*),admin(*)")
     .eq("id", user.value.id)

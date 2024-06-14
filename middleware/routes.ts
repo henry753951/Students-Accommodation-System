@@ -22,4 +22,9 @@ export default [
     name: "account",
     path: "/account/*",
   },
+  {
+    name: "management",
+    path: "/management/*",
+    role: ["admin"],
+  },
 ];
