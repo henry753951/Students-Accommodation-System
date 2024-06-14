@@ -16,29 +16,17 @@
             required
           />
         </div>
-        <div class="mb-4">
-          <Label for="student_id">房屋選擇</Label>
-          {{house[0].address}}
-          <Input
-            id="student_id"
-            v-model=house[0].address
-            type="text"
-            class="w-full border border-gray-300 rounded mt-1"
-            readonly
-            required
-          />
-        </div>
         <Popover v-model:open="open">
           <PopoverTrigger as-child>
             <Button
               variant="outline"
               role="combobox"
               :aria-expanded="open"
-              class="w-[200px] justify-between"
+              class="w-[200px] justify-between border-2 border-gray-300"
             >
               {{ value
-                ? frameworks.find((framework) => framework.value === value)?.label
-                : "Select framework..." }}
+                ? house?.find((house) => house.address === value)?.address
+                : "搜尋或選擇地址" }}
               <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -49,21 +37,24 @@
               <CommandList>
                 <CommandGroup>
                   <CommandItem
-                    v-for="framework in frameworks"
-                    :key="framework.value"
-                    :value="framework.value"
+                    v-for="property in house"
+                    :key="property.id"
+                    :value="property.address"
                     @select="(ev) => {
                       if (typeof ev.detail.value === 'string') {
                         value = ev.detail.value
+                        form.property_addr = ev.detail.value
+                        form.property_id = house?.find((house) => house.address === value)?.landlord_id ?? ''
+                        fetchAppUser()
                       }
                       open = false
                     }"
                   >
-                    {{ framework.label }}
+                    {{ property.address }}
                     <Check
                       :class="[
                         'ml-auto h-4 w-4',
-                        value === framework.value ? 'opacity-100' : 'opacity-0',
+                        value === property.address ? 'opacity-100' : 'opacity-0',
                       ]"
                     />
                   </CommandItem>
@@ -73,23 +64,24 @@
           </PopoverContent>
         </Popover>
         <div class="mb-4">
-          <Label for="phone">電話</Label>
+          <Label for="phone">房東名稱(自動抓取)</Label>
           <Input
-            id="phone"
-            v-model="form.phone"
+            id="property_name"
+            v-model="form.property_name"
             type="tel"
             class="w-full border border-gray-300 rounded mt-1"
             required
           />
         </div>
         <div class="mb-4">
-          <Label for="email">信箱</Label>
+          <Label for="status">狀態</Label>
           <Input
-            id="email"
-            v-model="form.email"
+            id="status"
+            v-model="form.status"
             type="email"
             class="w-full border border-gray-300 rounded mt-1"
             required
+            readonly
           />
         </div>
         <div class="mb-4">
@@ -134,6 +126,7 @@
             提交
           </Button>
         </div>
+        {{form}}
       </form>
     </div>
   </div>
@@ -144,25 +137,19 @@ import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { Calendar as CalendarIcon } from 'lucide-vue-next';
 import type { Database } from '~/database.types';
+import { useToast } from "~/components/ui/toast/use-toast";
+
 definePageMeta({
-  name: "首頁",
+  name: "新增預約",
 });
+const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 const route = useRoute();
 const type = ref(route.params.id);
 const user = useUser();
 
-
-const frameworks = [
-  { value: 'next.js', label: 'Next.js' },
-  { value: 'sveltekit', label: 'SvelteKit' },
-  { value: 'nuxt.js', label: 'Nuxt.js' },
-  { value: 'remix', label: 'Remix' },
-  { value: 'astro', label: 'Astro' },
-]
-
 const open = ref(false)
-const value = ref('')
+const value = ref('') //選擇表單的value
 
 
 const { data: house, refresh } = useAsyncData(async () => {
@@ -175,17 +162,87 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
+
 const form = ref({
   student_id: computed(() => user.value?.id || ''), // 使用 computed 來動態獲取 user.id
-  phone: '',
-  email: '',
+  property_addr: '',
+  property_id: '',
+  property_name: '',
+  property_phone: '',
+  status: '邀請中',
   message: '',
-  date: undefined as Date | undefined,
+  date: computed(() => {
+    const dateObj = {
+      calendar: { identifier: 'gregory' },
+      era: 'AD',
+      year: 2024,
+      month: 6,
+      day: 12
+    };
+    return new Date(dateObj.year, dateObj.month - 1, dateObj.day);
+  })
 });
 
-const handleSubmit = () => {
-  console.log('Form submitted:', form.value);
-  // 這裡可以添加提交表單的邏輯，例如發送到服務器
+const fetchAppUser = async () => {
+  try {
+    let { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', form.value.property_id);
+
+      form.value.property_name = app_user && app_user.length > 0 && app_user[0].name !== null ? app_user[0].name : '';
+      form.value.property_phone = app_user && app_user.length > 0 && app_user[0].phone !== null ? app_user[0].phone : '房東沒有留下電話';
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    form.value.property_name = '';
+  }
+};
+
+const SubmitToReserve = async () => {
+  console.log("BINHAN SO BIG");
+  const { data, error } = await supabase
+    .from("reservations")
+    .insert([
+      {
+        "student_id": form.value.student_id as string,
+        "user_id": form.value.property_id as string,
+        "status": form.value.status as string,
+        "reservation_time": form.value.date as unknown as string,
+        "reservation_type": route.params.id as string,
+      },
+    ])
+    .select("*");
+  if (error) {
+    toast.toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+    return 'error';
+  }
+};
+
+
+const handleSubmit = async () => {
+  const confirmation = confirm(`
+    student_id: ${form.value.student_id}
+    property_id: ${form.value.property_id}
+    status: ${form.value.status}
+    reservation_time: ${form.value.date}
+    reservation_type: ${route.params.id}
+    
+    確定要送出嗎?
+  `);
+
+  if (confirmation) {
+    //提交表單的邏輯
+    //送出到supabase
+    
+    SubmitToReserve();
+    //console.log(rental_id, time);
+  } else {
+    console.log(confirmation);
+  }
 };
 </script>
 

@@ -1,14 +1,12 @@
 <template>
   <div class="max-w-prose flex flex-col  justify-center ">
-    <div 
-      v-for="rental in rental_property" 
-      :key="rental.Rental_property_id" 
-      class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black "
-    >
-      <div>{{ rental.Rental_property_id }}</div>
-      <div>{{ rental.address }}</div>
-      <NuxtLink :to="'/rentals/' + rental.Rental_property_id">
-        詳細資訊
+    <div v-for="id in rental_id" class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black ">
+      <div v-bind:class="{ 'text-red-500': id.is_currently_renting }">
+        <span v-if="id.is_currently_renting">租賃中</span>
+        <span v-else>未租賃</span>
+      </div>
+      <NuxtLink :to="'/rentals/' + id.Rental_property_id">
+        {{ id.Rental_property_id }}
       </NuxtLink>
     </div>
   </div>
@@ -26,40 +24,25 @@ type rental = {
 }
 const route = useRoute();
 const id = ref(route.params.id);
-let Rental = ref<rental>({
-  address: null,
-});
+
 
 onMounted(() => {
   initial_get_information();
 });
 const supabase = useSupabaseClient<Database>();
 const user = useSupabaseUser();
-type Rental_interface = {
-  Rental_property_id: string,
-  address: string,
-  price: number,
-  description: string,
-  // property_attributes: string,
-  comment: string | null,
-  score: number | null,
+type Rental_info = {
+  Rental_property_id: string | null,
+  is_currently_renting: boolean | null,
 }
 
-let all1 = ref({});
-let rental_property = ref<Rental_interface[]>([]);
-
-const generateLink = (id: string, params: Record<Rental_interface, any>) => {
-  return {
-    path: `/rentals/${id}`,
-    query: params
-  }
-}
+let rental_id = ref<Rental_info[]>([]);
 
 
 const initial_get_information = async () => {
   const { data, error } = await supabase
     .from("map_rental_property_student")
-    .select("rental_property_id")
+    .select("rental_property_id,is_currently_renting")
     .eq("student_id", "77bfd169-c679-473c-9c93-fc26679d7216")
   if (error) {
     toast({
@@ -69,34 +52,45 @@ const initial_get_information = async () => {
     });
     return;
   }
-  for (let i = 0; i < data.length; i++) {
-    const { data: rental_property_id, error: error2 } = await supabase
-      .from("rental_property")
-      .select("*,rental_property_info(*)")
-      .eq("id", data[i].rental_property_id)
-    if (error2) {
-      toast({
-        title: "Error",
-        description: error2.message,
-        variant: "destructive",
-      });
-      return;
-    }
-    // console.log(rental_property_id,"544");
-    rental_property.value.push({
-      Rental_property_id: data[i].rental_property_id,
-      address: rental_property_id[0].address,
-      score: Number(rental_property_id[0].score) || 0,
-      comment: rental_property_id[0].comment,
-      price: Number(rental_property_id[0].rental_property_info[0].price) || 0,
-      description: rental_property_id[0].rental_property_info[0].description || "",
-      // property_attributes: rental_property_id[0].rental_property_info[0].property_attributes ||"",
-    });
+  // console.log(data, "data");
+  rental_id.value = data.map(item => ({
+    Rental_property_id: item.rental_property_id,
+    is_currently_renting: item.is_currently_renting,
+  }));
+  // for (let i = 0; i < data.length; i++) {
+  //   const { data: rental_property_id, error: error2 } = await supabase
+  //     .from("rental_property")
+  //     .select("*")
+  //     .eq("id", data[i].rental_property_id)
+  //   if (error2) {
+  //     toast({
+  //       title: "Error",
+  //       description: error2.message,
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
 
-  }
+  //   // console.log(rental_property_id,"544");
+  //   rental_property.value.push({
+  //     Rental_property_id: data[i].rental_property_id,
+  //     address: rental_property_id[0].address,
+  //     score: Number(rental_property_id[0].score) || 0,
+  //     comment: rental_property_id[0].comment,
+  //     price: Number(rental_property_id[0].rental_property_info[0].price) || 0,
+  //     description: rental_property_id[0].rental_property_info[0].description || "",
+  //     // property_attributes: rental_property_id[0].rental_property_info[0].property_attributes ||"",
+  //   });
+
+  // }
 
 };
 
+for (let i = 0; i < rental_id.value.length; i++) {
+  if (rental_id.value[i].is_currently_renting == true) {
+    rental_id.value.splice(i, 1)
+  }
+}
 </script>
 
 <style></style>
