@@ -97,7 +97,7 @@ const { data: students, refresh } = useAsyncData(async () => {
           class="w-full sm:w-auto"
         >
           <Button class="w-full">
-            租屋資訊交流平台
+            租屋點交流平台
           </Button>
         </NuxtLink>
         <NuxtLink
