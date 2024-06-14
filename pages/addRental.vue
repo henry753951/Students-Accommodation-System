@@ -71,16 +71,30 @@ const isPublic = ref(false);
 const propertyAttributesType = ref('');
 const propertyAttributesSex = ref('無');
 const propertyAttributesSubsidy = ref(false);
+const user_current_id = ref('');
+const fetchUser = async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error('Error getting user:', error);
+    toast.toast({ title: 'Error', description: 'Failed to get user', variant: 'destructive' });
+  } else if (user) {
+    user_current_id.value = user.id;
+  }
+};
 
+onMounted(() => {
+  fetchUser();
+});
 const data_for_view = ref<Tables<"rental_property">[]>([]);
-const SubmitToRentalprop = async (time: string) => {
+const SubmitToRentalprop = async (time: string ) => {
   console.log("BINHAN SO BIG");
   const { data, error } = await supabase
     .from("rental_property")
     .insert([
       {
         "address": address.value,
-        "landlord_id": 'cc7c9e40-af78-45d5-907f-66bcf550d2ad',
+        
+        "landlord_id":  user_current_id.value,
         "created_at": time,
         "updated_at": time,
       }
