@@ -125,7 +125,8 @@ const getCurrentRentalProperty = async (userId: string): Promise<RentalProperty 
         .single();
 
       return studentRentalProperty ? studentRentalProperty.rental_property : null;
-    } else if (identity.isLandlord) {
+    } 
+    else if (identity.isLandlord) {
       const { data: landlordRentalProperties } = await supabase
         .from('rental_property')
         .select('*')
@@ -149,8 +150,6 @@ const selectProperty = (property: RentalProperty) => {
 };
 
 //租屋點資料
-const route = useRoute();
-
 const { data: rental_property, error ,refresh: refreshSite } = useAsyncData( async () => {
   const { data } = await supabase.from('rental_property')
   .select(`
@@ -180,7 +179,7 @@ const { data: landlord_data, error: error3, refresh: refreshSite3 } = useAsyncDa
       *,
       app_user(name, avatar_url)
     `)
-    .eq('user_id', currentRentalProperty.value?.landlord_id);
+    .eq('user_id', currentRentalProperty.value.landlord_id);
 
   return data;
 });
@@ -206,8 +205,8 @@ const publishPost = async () => {
 
   const { data, error } = await supabase.from('announcement').insert(
     {
-      rental_property_id: currentRentalProperty.value?.id,
-      created_by: user.value,
+      rental_property_id: currentRentalProperty.value.id,
+      created_by: user.value.id,
       context: post.value,
       created_at: new Date().toISOString(),
       }
@@ -224,9 +223,15 @@ const publishPost = async () => {
 };
 
 onMounted(async () => {
-  currentRentalProperty.value = await getCurrentRentalProperty(user.value.id);
-  const identity = await getUserIdentity(user.value.id);
-  isLandlord.value = identity.isLandlord;
+  if (user.value){}
+    currentRentalProperty.value = await getCurrentRentalProperty(user.value.id);
+    const identity = await getUserIdentity(user.value.id);
+    isLandlord.value = identity.isLandlord;
+    if (currentRentalProperty.value) {
+      fetchPosts(currentRentalProperty.value.id);
+      fetchMembers(currentRentalProperty.value.id);
+    }
+  }
 });
 
 
