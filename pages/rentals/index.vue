@@ -8,6 +8,9 @@
       <NuxtLink :to="'/rentals/' + id.Rental_property_id">
         {{ id.Rental_property_id }}
       </NuxtLink>
+      <NuxtLink :to="'/rentals/edit/' + id.Rental_property_id" class="text-blue-500 ml-4" v-if="!id.is_currently_renting">
+        修改房屋資訊
+      </NuxtLink>
     </div>
   </div>
 </template>
