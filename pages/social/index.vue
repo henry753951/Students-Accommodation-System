@@ -227,11 +227,6 @@ onMounted(async () => {
     currentRentalProperty.value = await getCurrentRentalProperty(user.value.id);
     const identity = await getUserIdentity(user.value.id);
     isLandlord.value = identity.isLandlord;
-    if (currentRentalProperty.value) {
-      fetchPosts(currentRentalProperty.value.id);
-      fetchMembers(currentRentalProperty.value.id);
-    }
-  }
 });
 
 
