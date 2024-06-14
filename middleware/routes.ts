@@ -3,7 +3,7 @@ export default [
     // name of the route
     name: "example",
     // regex to match the route
-    path: "",
+    path: "/123456",
     // method to match the route (Optional if not provided it will match all methods)
     method: "GET",
     // role to match the route (Optional if not provided it will match all roles)
