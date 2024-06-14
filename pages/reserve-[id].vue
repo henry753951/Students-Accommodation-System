@@ -22,7 +22,7 @@
               variant="outline"
               role="combobox"
               :aria-expanded="open"
-              class="w-[200px] justify-between"
+              class="w-[200px] justify-between border-2 border-gray-300"
             >
               {{ value
                 ? house?.find((house) => house.address === value)?.address
@@ -137,15 +137,16 @@ import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { Calendar as CalendarIcon } from 'lucide-vue-next';
 import type { Database } from '~/database.types';
+import { useToast } from "~/components/ui/toast/use-toast";
+
 definePageMeta({
-  name: "首頁",
+  name: "新增預約",
 });
+const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 const route = useRoute();
 const type = ref(route.params.id);
 const user = useUser();
-
-
 
 const open = ref(false)
 const value = ref('') //選擇表單的value
@@ -168,9 +169,18 @@ const form = ref({
   property_id: '',
   property_name: '',
   property_phone: '',
-  status: '請求中',
+  status: '邀請中',
   message: '',
-  date: undefined as Date | undefined,
+  date: computed(() => {
+    const dateObj = {
+      calendar: { identifier: 'gregory' },
+      era: 'AD',
+      year: 2024,
+      month: 6,
+      day: 12
+    };
+    return new Date(dateObj.year, dateObj.month - 1, dateObj.day);
+  })
 });
 
 const fetchAppUser = async () => {
@@ -188,9 +198,51 @@ const fetchAppUser = async () => {
   }
 };
 
-const handleSubmit = () => {
-  console.log('Form submitted:', form.value);
-  // 這裡可以添加提交表單的邏輯，例如發送到服務器
+const SubmitToReserve = async () => {
+  console.log("BINHAN SO BIG");
+  const { data, error } = await supabase
+    .from("reservations")
+    .insert([
+      {
+        "student_id": form.value.student_id as string,
+        "user_id": form.value.property_id as string,
+        "status": form.value.status as string,
+        "reservation_time": form.value.date as unknown as string,
+        "reservation_type": route.params.id as string,
+      },
+    ])
+    .select("*");
+  if (error) {
+    toast.toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+    return 'error';
+  }
+};
+
+
+const handleSubmit = async () => {
+  const confirmation = confirm(`
+    student_id: ${form.value.student_id}
+    property_id: ${form.value.property_id}
+    status: ${form.value.status}
+    reservation_time: ${form.value.date}
+    reservation_type: ${route.params.id}
+    
+    確定要送出嗎?
+  `);
+
+  if (confirmation) {
+    //提交表單的邏輯
+    //送出到supabase
+    
+    SubmitToReserve();
+    //console.log(rental_id, time);
+  } else {
+    console.log(confirmation);
+  }
 };
 </script>
 
