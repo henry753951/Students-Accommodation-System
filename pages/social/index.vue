@@ -165,7 +165,8 @@ const { data: comments, pending: isLoading, refresh: refreshPosts} = useAsyncDat
   if (!currentRentalProperty.value) return null;
   const { data } = await supabase.from('announcement')
     .select(`*, app_user(name, avatar_url)`)
-    .eq('rental_property_id', currentRentalProperty.value.id);
+    .eq('rental_property_id', currentRentalProperty.value.id)
+    .order('created_at', { ascending: false });
   comments.value = data;
   return data;
 });
