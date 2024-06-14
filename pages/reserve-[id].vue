@@ -16,18 +16,6 @@
             required
           />
         </div>
-        <div class="mb-4">
-          <Label for="student_id">房屋選擇</Label>
-          {{house[0].address}}
-          <Input
-            id="student_id"
-            v-model=house[0].address
-            type="text"
-            class="w-full border border-gray-300 rounded mt-1"
-            readonly
-            required
-          />
-        </div>
         <Popover v-model:open="open">
           <PopoverTrigger as-child>
             <Button
@@ -37,8 +25,8 @@
               class="w-[200px] justify-between"
             >
               {{ value
-                ? frameworks.find((framework) => framework.value === value)?.label
-                : "Select framework..." }}
+                ? house?.find((house) => house.address === value)?.address
+                : "搜尋或選擇地址" }}
               <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -49,21 +37,22 @@
               <CommandList>
                 <CommandGroup>
                   <CommandItem
-                    v-for="framework in frameworks"
-                    :key="framework.value"
-                    :value="framework.value"
+                    v-for="property in house"
+                    :key="property.id"
+                    :value="property.address"
                     @select="(ev) => {
                       if (typeof ev.detail.value === 'string') {
                         value = ev.detail.value
+                        form.property_addr = ev.detail.value
                       }
                       open = false
                     }"
                   >
-                    {{ framework.label }}
+                    {{ property.address }}
                     <Check
                       :class="[
                         'ml-auto h-4 w-4',
-                        value === framework.value ? 'opacity-100' : 'opacity-0',
+                        value === property.address ? 'opacity-100' : 'opacity-0',
                       ]"
                     />
                   </CommandItem>
@@ -134,6 +123,7 @@
             提交
           </Button>
         </div>
+        {{form}}
       </form>
     </div>
   </div>
@@ -177,6 +167,7 @@ const { data: house, refresh } = useAsyncData(async () => {
 
 const form = ref({
   student_id: computed(() => user.value?.id || ''), // 使用 computed 來動態獲取 user.id
+  property_addr: '',
   phone: '',
   email: '',
   message: '',
