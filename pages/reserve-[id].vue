@@ -44,6 +44,8 @@
                       if (typeof ev.detail.value === 'string') {
                         value = ev.detail.value
                         form.property_addr = ev.detail.value
+                        form.property_id = house?.find((house) => house.address === value)?.landlord_id ?? ''
+                        fetchAppUser()
                       }
                       open = false
                     }"
@@ -62,23 +64,24 @@
           </PopoverContent>
         </Popover>
         <div class="mb-4">
-          <Label for="phone">電話</Label>
+          <Label for="phone">房東名稱(自動抓取)</Label>
           <Input
-            id="phone"
-            v-model="form.phone"
+            id="property_name"
+            v-model="form.property_name"
             type="tel"
             class="w-full border border-gray-300 rounded mt-1"
             required
           />
         </div>
         <div class="mb-4">
-          <Label for="email">信箱</Label>
+          <Label for="status">狀態</Label>
           <Input
-            id="email"
-            v-model="form.email"
+            id="status"
+            v-model="form.status"
             type="email"
             class="w-full border border-gray-300 rounded mt-1"
             required
+            readonly
           />
         </div>
         <div class="mb-4">
@@ -143,16 +146,9 @@ const type = ref(route.params.id);
 const user = useUser();
 
 
-const frameworks = [
-  { value: 'next.js', label: 'Next.js' },
-  { value: 'sveltekit', label: 'SvelteKit' },
-  { value: 'nuxt.js', label: 'Nuxt.js' },
-  { value: 'remix', label: 'Remix' },
-  { value: 'astro', label: 'Astro' },
-]
 
 const open = ref(false)
-const value = ref('')
+const value = ref('') //選擇表單的value
 
 
 const { data: house, refresh } = useAsyncData(async () => {
@@ -165,14 +161,32 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
+
 const form = ref({
   student_id: computed(() => user.value?.id || ''), // 使用 computed 來動態獲取 user.id
   property_addr: '',
-  phone: '',
-  email: '',
+  property_id: '',
+  property_name: '',
+  property_phone: '',
+  status: '請求中',
   message: '',
   date: undefined as Date | undefined,
 });
+
+const fetchAppUser = async () => {
+  try {
+    let { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', form.value.property_id);
+
+      form.value.property_name = app_user && app_user.length > 0 && app_user[0].name !== null ? app_user[0].name : '';
+      form.value.property_phone = app_user && app_user.length > 0 && app_user[0].phone !== null ? app_user[0].phone : '房東沒有留下電話';
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    form.value.property_name = '';
+  }
+};
 
 const handleSubmit = () => {
   console.log('Form submitted:', form.value);
