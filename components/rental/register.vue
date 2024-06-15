@@ -189,6 +189,7 @@ const handleSubmit = async (address: string | null = null) => {
       .then(({ data }) => {
         if (data) rental_property_id = data.id;
       });
+    console.log(rental_property_id, "rental_property_id");
     if (rental_property_id !== "") {
       isNewData = false;
     } else {
@@ -215,7 +216,14 @@ const handleSubmit = async (address: string | null = null) => {
           }
         });
     }
-    if (!props.isLandLord) {
+    emits("submit", {
+      name: name.value,
+      address: selectedAddress.value.address,
+      isLandLord: props.isLandLord,
+      isNewData,
+    });
+  }
+  if (!props.isLandLord) {
       // 如果是學生，新增該學生對租屋點的資料
       await supabase.from("map_rental_property_student").upsert({
         name: name.value,
@@ -224,13 +232,7 @@ const handleSubmit = async (address: string | null = null) => {
         is_currently_renting: true,
       } as Tables<"map_rental_property_student">);
     }
-    emits("submit", {
-      name: name.value,
-      address: selectedAddress.value.address,
-      isLandLord: props.isLandLord,
-      isNewData,
-    });
-  }
+
 };
 
 const emits = defineEmits<{
