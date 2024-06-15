@@ -18,5 +18,11 @@ useHead({
   },
 });
 
+onMounted(async () => {
+  const user = await useSupabaseUser();
+  console.log(user.value);
+});
+
+
 
 </script>
