@@ -61,7 +61,7 @@ const { data: student_data } = await useAsyncData("student", async () => {
   const { data, error } = await supabase.from("map_teacher_student")
     .select("*, student(*, app_user(*), school_department(*)), teacher(*)")
     .eq("teacher_id", user.value?.id)
-    .eq("student_id", student_id).single();
+    .eq("student_id", student_id).limit(1).single();
   if (error) {
     throw error;
   }
