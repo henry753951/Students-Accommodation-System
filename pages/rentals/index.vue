@@ -1,14 +1,21 @@
 <template>
   <div class="max-w-prose flex flex-col  justify-center ">
-    <div v-for="id in rental_id" class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black ">
-      <div v-bind:class="{ 'text-red-500': id.is_currently_renting }">
+    <div
+      v-for="id in rental_id"
+      class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black "
+    >
+      <div :class="{ 'text-red-500': id.is_currently_renting }">
         <span v-if="id.is_currently_renting">租賃中</span>
         <span v-else>未租賃</span>
       </div>
       <NuxtLink :to="'/rentals/' + id.Rental_property_id">
         {{ id.Rental_property_id }}
       </NuxtLink>
-      <NuxtLink :to="'/rentals/edit/' + id.Rental_property_id" class="text-blue-500 ml-4" v-if="!id.is_currently_renting">
+      <NuxtLink
+        v-if="!id.is_currently_renting"
+        :to="'/rentals/edit/' + id.Rental_property_id"
+        class="text-blue-500 ml-4"
+      >
         修改房屋資訊
       </NuxtLink>
     </div>
@@ -24,10 +31,9 @@ definePageMeta({
 });
 type rental = {
   address: string | null,
-}
+};
 const route = useRoute();
 const id = ref(route.params.id);
-
 
 onMounted(() => {
   initial_get_information();
@@ -37,16 +43,16 @@ const user = useSupabaseUser();
 type Rental_info = {
   Rental_property_id: string | null,
   is_currently_renting: boolean | null,
-}
+};
 
-let rental_id = ref<Rental_info[]>([]);
+const rental_id = ref<Rental_info[]>([]);
 
 
 const initial_get_information = async () => {
   const { data, error } = await supabase
     .from("map_rental_property_student")
     .select("rental_property_id,is_currently_renting")
-    .eq("student_id", "77bfd169-c679-473c-9c93-fc26679d7216")
+    .eq("student_id", "77bfd169-c679-473c-9c93-fc26679d7216");
   if (error) {
     toast({
       title: "Error",
@@ -91,7 +97,7 @@ const initial_get_information = async () => {
 
 for (let i = 0; i < rental_id.value.length; i++) {
   if (rental_id.value[i].is_currently_renting == true) {
-    rental_id.value.splice(i, 1)
+    rental_id.value.splice(i, 1);
   }
 }
 </script>

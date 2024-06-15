@@ -4,19 +4,30 @@
   </div> -->
   <!-- grid justify-items-center  -->
   <div class="container w-2/3 shadow-lg pt-3">
-    <FormField v-slot="{ componentField }" name="username">
+    <FormField
+      v-slot="{ componentField }"
+      name="username"
+    >
       <div class="flex flex-row">
         <!-- 到時候抓登入 -->
         <FormItem class="basis-1/2 mr-5">
           <FormLabel>Username</FormLabel>
           <FormControl>
-            <Input type="text" placeholder="莊印哲" v-bind="componentField" />
+            <Input
+              type="text"
+              placeholder="莊印哲"
+              v-bind="componentField"
+            />
           </FormControl>
         </FormItem>
         <FormItem class="basis-1/2 ml-5">
           <FormLabel>User ID</FormLabel>
           <FormControl>
-            <Input type="text" placeholder="A1105513" v-bind="componentField" />
+            <Input
+              type="text"
+              placeholder="A1105513"
+              v-bind="componentField"
+            />
           </FormControl>
         </FormItem>
       </div>
@@ -25,13 +36,19 @@
         <FormItem class="basis-1/2 mr-5">
           <FormLabel>地址</FormLabel>
           <FormControl>
-            <Input type="text" v-model="__address__" />
+            <Input
+              v-model="__address__"
+              type="text"
+            />
           </FormControl>
         </FormItem>
         <FormItem class="basis-1/2 ml-5">
           <FormLabel>月租費</FormLabel>
           <FormControl>
-            <Input type="text" v-model="__price__" />
+            <Input
+              v-model="__price__"
+              type="text"
+            />
           </FormControl>
         </FormItem>
       </div>
@@ -40,7 +57,10 @@
         <FormItem class="basis-3/4 mr-5">
           <FormLabel>租屋描述</FormLabel>
           <FormControl>
-            <Input type="text" v-model="__description__" />
+            <Input
+              v-model="__description__"
+              type="text"
+            />
           </FormControl>
         </FormItem>
         <FormItem class="basis-1/4">
@@ -51,7 +71,10 @@
                 <SelectValue :placeholder="__property_attributes__" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup v-for="(value, index) in house_type" :key="index">
+                <SelectGroup
+                  v-for="(value, index) in house_type"
+                  :key="index"
+                >
                   <SelectItem :value="value">
                     {{ value }}
                   </SelectItem>
@@ -67,7 +90,10 @@
         <FormItem class="basis-3/4 mr-5">
           <FormLabel>房東</FormLabel>
           <FormControl>
-            <Input type="text" v-model="__landlord_id__" />
+            <Input
+              v-model="__landlord_id__"
+              type="text"
+            />
           </FormControl>
         </FormItem>
         <FormItem class="basis-1/4">
@@ -76,10 +102,12 @@
             <Select v-model="__is_public__">
               <SelectTrigger class="w-[280px]">
                 <SelectValue :placeholder="__is_public__" />
-
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup v-for="(value, index) in Public" :key="index">
+                <SelectGroup
+                  v-for="(value, index) in Public"
+                  :key="index"
+                >
                   <SelectItem :value="value">
                     {{ value }}
                   </SelectItem>
@@ -103,21 +131,21 @@
         </div>
       </section>
     </FormField>
-    <Button @click="handleSubmit" type="submit" class="mb-5">
+    <Button
+      type="submit"
+      class="mb-5"
+      @click="handleSubmit"
+    >
       Submit
     </Button>
   </div>
 </template>
 
 <script lang="ts" setup>
-import * as z from 'zod'
-import { toTypedSchema } from '@vee-validate/zod'
-definePageMeta({
-  name: '租屋資訊',
-});
+import * as z from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
 import type { Database, Tables, Enums, Json } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
-const toast = useToast();
 import {
   Select,
   SelectContent,
@@ -126,19 +154,23 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select';
+definePageMeta({
+  name: '租屋資訊',
+});
+const toast = useToast();
 const route = useRoute();
 const id = ref(route.params.id);
 const supabase = useSupabaseClient<Database>();
 
-let __address__ = ref("");
-let __landlord_id__ = ref("");
-let __price__ = ref(0);
-let __property_attributes__ = ref("");
-let __description__ = ref("");
-let __is_public__ = ref("");
-let subsidy = ref("");
-let sex = ref("");  
+const __address__ = ref("");
+const __landlord_id__ = ref("");
+const __price__ = ref(0);
+const __property_attributes__ = ref("");
+const __description__ = ref("");
+const __is_public__ = ref("");
+const subsidy = ref("");
+const sex = ref("");  
 type rental = {
   address: string,
   landlord_id: string,
@@ -146,12 +178,12 @@ type rental = {
   property_attributes: string,
   description: string,
   is_public: boolean,
-}
-let rental_info = ref<rental>();
-let submit_rental_info = ref<rental>();
-let house_type = ref(["公寓", "透天", "別墅", "套房", "雅房", "其他"]);
-let Public = ref(["公開", "不公開"]);
-let __Landlord_name__ = ref([]);
+};
+const rental_info = ref<rental>();
+const submit_rental_info = ref<rental>();
+const house_type = ref(["公寓", "透天", "別墅", "套房", "雅房", "其他"]);
+const Public = ref(["公開", "不公開"]);
+const __Landlord_name__ = ref([]);
 
 onMounted(() => {
   initial_get_information();
@@ -162,7 +194,7 @@ const initial_get_information = async () => {
   const { data, error } = await supabase
     .from("rental_property")
     .select("*,rental_property_info(*)")
-    .eq("id", id.value)
+    .eq("id", id.value);
   if (error) {
     toast.toast({
       title: "Error",
@@ -180,7 +212,7 @@ const initial_get_information = async () => {
     is_public: item.rental_property_info[0].is_public,
   }) as rental)[0];
   // console.log(typeof rental_info.value.property_attributes, "rental_info");
-  let DATA = JSON.parse(rental_info.value.property_attributes);
+  const DATA = JSON.parse(rental_info.value.property_attributes);
   __property_attributes__.value = DATA.type;
   subsidy.value = DATA.subsidy;
   sex.value = DATA.sex;
@@ -197,13 +229,13 @@ const initial_get_information = async () => {
   }
   get_landlord_name(__landlord_id__.value);
   // __is_public__.value = rental_info.value.is_public;
-}
+};
 
 const get_landlord_name = async (landlord_id: string) => {
   const { data, error } = await supabase
     .from("app_user")
     .select("name")
-    .eq("id", landlord_id)
+    .eq("id", landlord_id);
   console.log(data, "landlord_id");
   if (error) {
     toast.toast({
@@ -214,7 +246,7 @@ const get_landlord_name = async (landlord_id: string) => {
     return;
   }
   __landlord_id__.value = data[0].name || "";
-}
+};
 
 const handleSubmit = async () => {
   submit_rental_info.value = {
@@ -224,7 +256,7 @@ const handleSubmit = async () => {
     property_attributes: JSON.stringify({ type: __property_attributes__.value, sex:sex.value,subsidy: subsidy.value,}),
     description: __description__.value,
     is_public: __is_public__.value === "公開" ? true : false,
-  }
+  };
   const { data, error } = await supabase
     .from("rental_property_info")
     .update({
@@ -233,7 +265,7 @@ const handleSubmit = async () => {
       description: submit_rental_info.value.description,
       is_public: submit_rental_info.value.is_public,
     })
-    .eq("rental_property_id", id.value)
+    .eq("rental_property_id", id.value);
   if (error) {
     toast.toast({
       title: "Error",
@@ -245,7 +277,7 @@ const handleSubmit = async () => {
   const {data : data2 , error: error2} = await supabase
     .from("app_user")
     .select("id")
-    .eq("name", submit_rental_info.value.landlord_id)
+    .eq("name", submit_rental_info.value.landlord_id);
   if (error2) {
     toast.toast({
       title: "Error",
@@ -260,7 +292,7 @@ const handleSubmit = async () => {
       address: submit_rental_info.value.address,
       landlord_id: data2[0].id,
     })
-    .eq("id", id.value)
+    .eq("id", id.value);
   if (error3) {
     toast.toast({
       title: "Error",
@@ -273,7 +305,7 @@ const handleSubmit = async () => {
     title: "Success",
     description: "更新成功",
   });
-}
+};
 
 </script>
 
