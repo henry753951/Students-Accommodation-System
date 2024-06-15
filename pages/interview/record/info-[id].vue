@@ -5,7 +5,7 @@
   >
     <div
       v-if="done"
-      class="w-2/3 grid grid-cols-1 gap-5"
+      class="w-full grid grid-cols-1 gap-5"
     >
       <NuxtLink
         :to="'/interview/record/' + id"

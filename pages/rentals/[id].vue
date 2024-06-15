@@ -3,141 +3,143 @@
     <p>Rental Property ID: {{ id }}</p>
   </div> -->
   <!-- grid justify-items-center  -->
-  <div class="container w-2/3 shadow-lg pt-3">
-    <FormField
-      v-slot="{ componentField }"
-      name="username"
-    >
-      <div class="flex flex-row">
-        <!-- 到時候抓登入 -->
-        <FormItem class="basis-1/2 mr-5">
-          <FormLabel>Username</FormLabel>
-          <FormControl>
-            <Input
-              type="text"
-              placeholder="莊印哲"
-              v-bind="componentField"
-            />
-          </FormControl>
-        </FormItem>
-        <FormItem class="basis-1/2 ml-5">
-          <FormLabel>User ID</FormLabel>
-          <FormControl>
-            <Input
-              type="text"
-              placeholder="A1105513"
-              v-bind="componentField"
-            />
-          </FormControl>
-        </FormItem>
-      </div>
-      <div class="flex flex-row">
-        <!-- 到時候抓登入 -->
-        <FormItem class="basis-1/2 mr-5">
-          <FormLabel>地址</FormLabel>
-          <FormControl>
-            <Input
-              v-model="__address__"
-              type="text"
-            />
-          </FormControl>
-        </FormItem>
-        <FormItem class="basis-1/2 ml-5">
-          <FormLabel>月租費</FormLabel>
-          <FormControl>
-            <Input
-              v-model="__price__"
-              type="text"
-            />
-          </FormControl>
-        </FormItem>
-      </div>
-      <div class="flex flex-row">
-        <!-- 到時候抓登入 -->
-        <FormItem class="basis-3/4 mr-5">
-          <FormLabel>租屋描述</FormLabel>
-          <FormControl>
-            <Input
-              v-model="__description__"
-              type="text"
-            />
-          </FormControl>
-        </FormItem>
-        <FormItem class="basis-1/4">
-          <FormLabel>房型</FormLabel>
-          <FormControl>
-            <Select v-model="__property_attributes__">
-              <SelectTrigger class="w-[280px]">
-                <SelectValue :placeholder="__property_attributes__" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup
-                  v-for="(value, index) in house_type"
-                  :key="index"
-                >
-                  <SelectItem :value="value">
-                    {{ value }}
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <!-- <Input type="text"v-model="__description__" :placeholder="rental_info?.description"  /> -->
-          </FormControl>
-        </FormItem>
-      </div>
-      <div class="flex flex-row">
-        <!-- 到時候抓登入 -->
-        <FormItem class="basis-3/4 mr-5">
-          <FormLabel>房東</FormLabel>
-          <FormControl>
-            <Input
-              v-model="__landlord_id__"
-              type="text"
-            />
-          </FormControl>
-        </FormItem>
-        <FormItem class="basis-1/4">
-          <FormLabel>是否公開</FormLabel>
-          <FormControl>
-            <Select v-model="__is_public__">
-              <SelectTrigger class="w-[280px]">
-                <SelectValue :placeholder="__is_public__" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup
-                  v-for="(value, index) in Public"
-                  :key="index"
-                >
-                  <SelectItem :value="value">
-                    {{ value }}
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </FormControl>
-        </FormItem>
-      </div>
-      <section>
-        <h2>
-          表單內容統整
-        </h2>
-        <div class="bg-gray-50 p-4 rounded-lg shadow-inner space-y-2">
-          <p><strong>地址:</strong> {{ __address__ }}</p>
-          <p><strong>描述:</strong> {{ __description__ }}</p>
-          <p><strong>房東:</strong> {{ __landlord_id__ }}</p>
-          <p><strong>價錢:</strong> {{ __price__ }}</p>
-          <p><strong>屬性:</strong> {{ __property_attributes__ }}</p>
-          <p><strong>是否公開:</strong> {{ __is_public__ }}</p>
+  <div class="container">
+    <div class="w-full shadow-lg pt-3">
+      <FormField
+        v-slot="{ componentField }"
+        name="username"
+      >
+        <div class="flex flex-row">
+          <!-- 到時候抓登入 -->
+          <FormItem class="basis-1/2 mr-5">
+            <FormLabel>Username</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="莊印哲"
+                v-bind="componentField"
+              />
+            </FormControl>
+          </FormItem>
+          <FormItem class="basis-1/2 ml-5">
+            <FormLabel>User ID</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="A1105513"
+                v-bind="componentField"
+              />
+            </FormControl>
+          </FormItem>
         </div>
-      </section>
-    </FormField>
-    <Button
-      type="submit"
-      class="mb-5"
-      @click="handleSubmit"
-    >
-      Submit
-    </Button>
+        <div class="flex flex-row">
+          <!-- 到時候抓登入 -->
+          <FormItem class="basis-1/2 mr-5">
+            <FormLabel>地址</FormLabel>
+            <FormControl>
+              <Input
+                v-model="__address__"
+                type="text"
+              />
+            </FormControl>
+          </FormItem>
+          <FormItem class="basis-1/2 ml-5">
+            <FormLabel>月租費</FormLabel>
+            <FormControl>
+              <Input
+                v-model="__price__"
+                type="text"
+              />
+            </FormControl>
+          </FormItem>
+        </div>
+        <div class="flex flex-row">
+          <!-- 到時候抓登入 -->
+          <FormItem class="basis-3/4 mr-5">
+            <FormLabel>租屋描述</FormLabel>
+            <FormControl>
+              <Input
+                v-model="__description__"
+                type="text"
+              />
+            </FormControl>
+          </FormItem>
+          <FormItem class="basis-1/4">
+            <FormLabel>房型</FormLabel>
+            <FormControl>
+              <Select v-model="__property_attributes__">
+                <SelectTrigger class="w-[280px]">
+                  <SelectValue :placeholder="__property_attributes__" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup
+                    v-for="(value, index) in house_type"
+                    :key="index"
+                  >
+                    <SelectItem :value="value">
+                      {{ value }}
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <!-- <Input type="text"v-model="__description__" :placeholder="rental_info?.description"  /> -->
+            </FormControl>
+          </FormItem>
+        </div>
+        <div class="flex flex-row">
+          <!-- 到時候抓登入 -->
+          <FormItem class="basis-3/4 mr-5">
+            <FormLabel>房東</FormLabel>
+            <FormControl>
+              <Input
+                v-model="__landlord_id__"
+                type="text"
+              />
+            </FormControl>
+          </FormItem>
+          <FormItem class="basis-1/4">
+            <FormLabel>是否公開</FormLabel>
+            <FormControl>
+              <Select v-model="__is_public__">
+                <SelectTrigger class="w-[280px]">
+                  <SelectValue :placeholder="__is_public__" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup
+                    v-for="(value, index) in Public"
+                    :key="index"
+                  >
+                    <SelectItem :value="value">
+                      {{ value }}
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </FormControl>
+          </FormItem>
+        </div>
+        <section>
+          <h2>
+            表單內容統整
+          </h2>
+          <div class="bg-gray-50 p-4 rounded-lg shadow-inner space-y-2">
+            <p><strong>地址:</strong> {{ __address__ }}</p>
+            <p><strong>描述:</strong> {{ __description__ }}</p>
+            <p><strong>房東:</strong> {{ __landlord_id__ }}</p>
+            <p><strong>價錢:</strong> {{ __price__ }}</p>
+            <p><strong>屬性:</strong> {{ __property_attributes__ }}</p>
+            <p><strong>是否公開:</strong> {{ __is_public__ }}</p>
+          </div>
+        </section>
+      </FormField>
+      <Button
+        type="submit"
+        class="mb-5"
+        @click="handleSubmit"
+      >
+        Submit
+      </Button>
+    </div>
   </div>
 </template>
 
