@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="p-4 flex flex-col gap-2 rounded-2xl shadow-[0_0px_8px_0px_rgba(0,0,0,0.1)] bg-background">
+    <div class="p-4 flex flex-col gap-2 md:rounded-2xl shadow-[0_0px_8px_0px_rgba(0,0,0,0.1)] bg-background">
       <div class="flex items-center gap-5">
         <div class="flex flex-wrap mr-auto">
           <div class="font-mono text-xl">
@@ -21,14 +21,19 @@
             @click="toggleDarkMode"
           >
             <Icon
-              v-if="isDarkMode"
+              v-if="colorMode_string === 'system'"
               size="10px"
-              name="tabler:moon"
+              name="gg:dark-mode"
+            />
+            <Icon
+              v-else-if="colorMode_string === 'dark'"
+              size="10px"
+              name="ph:moon-fill"
             />
             <Icon
               v-else
               size="10px"
-              name="tabler:sun"
+              name="ph:sun-fill"
             />
           </Button>
           <MenuAvatarDropdown />
@@ -70,13 +75,9 @@ const colorMode = useColorMode();
 
 const toggleDarkMode = () => {
   const modes = ["light", "dark", "system"];
-  colorMode.value = modes[(modes.indexOf(colorMode.value) + 1) % modes.length];
-  if (colorMode.value === "system")
-    colorMode.forced = false;
-  else
-    colorMode.forced = true;
+  colorMode.preference = modes[(modes.indexOf(colorMode.preference) + 1) % modes.length];
 };
-const isDarkMode = computed(() => colorMode.value === "dark");
+const colorMode_string = computed(() => colorMode.preference);
 
 </script>
 <style></style>

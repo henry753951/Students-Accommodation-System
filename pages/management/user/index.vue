@@ -298,7 +298,7 @@ const deleteUser = async (singleUser: Tables<'app_user'> | null = null) => {
 
 
 
-const updateSingleRoleForSelections = async (role: "學生" | "教師" | "房東", action: "add" | "remove") => {
+const updateSingleRoleForSelections = async (role: string, action: "add" | "remove") => {
   const selectedUserIds = Object.keys(selectedUsers.value).filter(userId => selectedUsers.value[userId]);
   const data = selectedUserIds.map(userId => ({ user_id: userId }));
   let error: string | null = null;
@@ -313,7 +313,7 @@ const updateSingleRoleForSelections = async (role: "學生" | "教師" | "房東
     } else if (role === "房東") {
       const { error: landlordAddError } = await supabase.from('landlord').upsert(data);
       error = landlordAddError?.message || null;
-    }else if (role === "管理員") {
+    } else if (role === "管理員") {
       const { error: adminAddError } = await supabase.from('admin').upsert(data);
       error = adminAddError?.message || null;
     }
@@ -327,7 +327,7 @@ const updateSingleRoleForSelections = async (role: "學生" | "教師" | "房東
     } else if (role === "房東") {
       const { error: landlordRemoveError } = await supabase.from('landlord').delete().in('user_id', selectedUserIds);
       error = landlordRemoveError?.message || null;
-    }else if (role === "管理員") {
+    } else if (role === "管理員") {
       const { error: adminRemoveError } = await supabase.from('admin').delete().in('user_id', selectedUserIds);
       error = adminRemoveError?.message || null;
     }

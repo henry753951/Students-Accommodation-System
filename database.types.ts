@@ -4,7 +4,7 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[];
+  | Json[]
 
 export type Database = {
   public: {
@@ -74,35 +74,6 @@ export type Database = {
           },
         ]
       }
-      announcement: {
-        Row: {
-          context: string | null
-          created_at: string
-          created_by: string | null
-          id: string
-        }
-        Insert: {
-          context?: string | null
-          created_at: string
-          created_by?: string | null
-          id?: string
-        }
-        Update: {
-          context?: string | null
-          created_at?: string
-          created_by?: string | null
-          id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "announcement_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "app_user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       app_user: {
         Row: {
           avatar_url: string | null
@@ -144,45 +115,6 @@ export type Database = {
           },
         ]
       }
-      comments: {
-        Row: {
-          comment: string
-          created: string
-          id: string
-          post_id: string
-          user_id: string
-        }
-        Insert: {
-          comment: string
-          created: string
-          id?: string
-          post_id?: string
-          user_id?: string
-        }
-        Update: {
-          comment?: string
-          created?: string
-          id?: string
-          post_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comment_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "app_user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       interview_record: {
         Row: {
           landlord_id: string | null
@@ -192,6 +124,7 @@ export type Database = {
           record_link: string
           record_time: string
           response: Json | null
+          status: string | null
           student_id: string
           teacher_id: string
         }
@@ -201,8 +134,9 @@ export type Database = {
           landlord_number?: string | null
           property_id?: string | null
           record_link?: string
-          record_time?: string
+          record_time: string
           response?: Json | null
+          status?: string | null
           student_id?: string
           teacher_id?: string
         }
@@ -214,6 +148,7 @@ export type Database = {
           record_link?: string
           record_time?: string
           response?: Json | null
+          status?: string | null
           student_id?: string
           teacher_id?: string
         }
@@ -346,8 +281,8 @@ export type Database = {
             foreignKeyName: "map_teacher_student_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "app_user"
-            referencedColumns: ["id"]
+            referencedRelation: "student"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "map_teacher_student_teacher_id_fkey"
@@ -360,45 +295,39 @@ export type Database = {
       }
       posts: {
         Row: {
-          content: string
-          created: string | null
+          context: string | null
+          created_at: string
+          created_by: string | null
           id: string
-          location_id: string
-          score: number | null
-          title: string
-          user_id: string
+          rental_property_id: string | null
         }
         Insert: {
-          content: string
-          created?: string | null
+          context?: string | null
+          created_at: string
+          created_by?: string | null
           id?: string
-          location_id?: string
-          score?: number | null
-          title: string
-          user_id?: string
+          rental_property_id?: string | null
         }
         Update: {
-          content?: string
-          created?: string | null
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
           id?: string
-          location_id?: string
-          score?: number | null
-          title?: string
-          user_id?: string
+          rental_property_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "posts_location_id_fkey"
-            columns: ["location_id"]
+            foreignKeyName: "announcement_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "rental_property"
+            referencedRelation: "app_user"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "announcement_rental_property_id_fkey"
+            columns: ["rental_property_id"]
             isOneToOne: false
-            referencedRelation: "app_user"
+            referencedRelation: "rental_property"
             referencedColumns: ["id"]
           },
         ]
@@ -472,55 +401,6 @@ export type Database = {
             columns: ["rental_property_id"]
             isOneToOne: false
             referencedRelation: "rental_property"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      report: {
-        Row: {
-          comment_id: string
-          created: string | null
-          id: string
-          post_id: string
-          reason: string
-          user_id: string
-        }
-        Insert: {
-          comment_id?: string
-          created?: string | null
-          id?: string
-          post_id?: string
-          reason: string
-          user_id?: string
-        }
-        Update: {
-          comment_id?: string
-          created?: string | null
-          id?: string
-          post_id?: string
-          reason?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "report_comment_id_fkey"
-            columns: ["comment_id"]
-            isOneToOne: false
-            referencedRelation: "comments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "report_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "report_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "app_user"
             referencedColumns: ["id"]
           },
         ]
@@ -698,9 +578,9 @@ export type Database = {
       [_ in never]: never
     }
   }
-};
+}
 
-type PublicSchema = Database[Extract<keyof Database, "public">];
+type PublicSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
   PublicTableNameOrOptions extends
@@ -725,7 +605,7 @@ export type Tables<
       }
       ? R
       : never
-    : never;
+    : never
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
@@ -746,7 +626,7 @@ export type TablesInsert<
       }
       ? I
       : never
-    : never;
+    : never
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
@@ -767,7 +647,7 @@ export type TablesUpdate<
       }
       ? U
       : never
-    : never;
+    : never
 
 export type Enums<
   PublicEnumNameOrOptions extends
@@ -780,4 +660,4 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never;
+    : never

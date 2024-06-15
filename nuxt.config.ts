@@ -21,7 +21,9 @@ export default defineNuxtConfig({
     redirect: false,
   },
   colorMode: {
+    preference: "system",
     classSuffix: "",
+    storageKey: "color-mode",
   },
   nitro: {
     azure: {
@@ -34,10 +36,9 @@ export default defineNuxtConfig({
     experimental: {
       openAPI: true,
     },
-
   },
   routeRules: {
-    "/auth/callback": {ssr: false},
+    "/auth/callback": { ssr: false },
     // "/api/*": {
     //   csurf: {
     //     https: false,
@@ -46,8 +47,8 @@ export default defineNuxtConfig({
     //       httpOnly: true,
     //       sameSite: "strict",
     //     },
-        // methodsToProtect: ["POST", "PUT", "PATCH", "GET"],
-        // addCsrfTokenToEventCtx: true,
+    // methodsToProtect: ["POST", "PUT", "PATCH", "GET"],
+    // addCsrfTokenToEventCtx: true,
     //   },
     // },
   },
