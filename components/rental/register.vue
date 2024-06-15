@@ -62,6 +62,7 @@
         <Button
           :disabled="!selectedAddress || !name"
           @click="handleSubmit"
+          @triple-click="handleSubmit(address)"
         >
           下一步
         </Button>
@@ -157,10 +158,20 @@ const selectedAddress = computed(() => {
   return null;
 });
 
-const handleSubmit = async () => {
+const handleSubmit = async (address: string | null = null) => {
   let isNewData = true;
   let rental_property_id = "";
-  if (selectedAddress.value) {
+  if(address) {
+    await supabase
+      .from("rental_property")
+      .select("*")
+      .eq("address", address)
+      .single()
+      .then(({ data }) => {
+        if (data) rental_property_id = data.id;
+      });
+  }
+  if (selectedAddress.value && address == null) {
     // 檢查是否已經有相同的地址存在
     await supabase
       .from("rental_property")

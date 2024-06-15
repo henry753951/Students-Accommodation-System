@@ -7,22 +7,29 @@
     v-for="property in rentals"
     v-else-if="rentals?.length !== 0"
     :key="property.id"
-    class="m-5 p-5 rounded-lg bg-background shadow-md flex justify-between items-center dark:bg-zinc-900"
+    class="p-5 rounded-lg shadow-sm flex justify-between items-center bg-card mb-2"
   >
-    <div :class="{ 'text-red-500': property.is_currently_renting }">
-      <span v-if="property.is_currently_renting">租賃中</span>
-      <span v-else>未租賃</span>
+    <div>
+      <div class="text-lg font-bold">
+        <NuxtLink :to="'/rentals/' + property.id">
+          {{ property.name }}
+        </NuxtLink>
+      </div>
+      <p>{{ property.rental_property.address }}</p>
     </div>
-    <NuxtLink :to="'/rentals/' + property.id">
-      {{ property.id }}
-    </NuxtLink>
-    <NuxtLink
-      v-if="!property.is_currently_renting"
-      :to="'/rentals/edit/' + property.id"
-      class="text-blue-500 ml-4"
-    >
-      修改房屋資訊
-    </NuxtLink>
+
+    <div>
+      <div :class="{ 'text-red-500': property.is_currently_renting }">
+        <span v-if="property.is_currently_renting">租賃中</span>
+        <span v-else>未租賃</span>
+      </div>
+      <NuxtLink
+        :to="'/rentals/edit/' + property.id"
+        class="text-blue-500"
+      >
+        修改房屋資訊
+      </NuxtLink>
+    </div>
   </div>
   <div
     v-else
