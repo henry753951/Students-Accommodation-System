@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Database, Tables, Enums } from "~/database.types";
+import type { Database, Tables, Enums} from "~/database.types";
 const supabase = useSupabaseClient<Database>();
 const route = useRoute();
 const id = ref(route.params.id);
@@ -51,7 +51,6 @@ const { data: records } =  useAsyncData('record', async() =>{
     data = {
       StudentID: isStudent() ? student_number.value : '',
       TeacherName: isTeacher() ? app_user.value?.name : '',
-
       RecordLink:'new',
     };
   }
@@ -59,10 +58,10 @@ const { data: records } =  useAsyncData('record', async() =>{
     data = {
     StudentID: record_row![0].student?.student_number,
     TeacherName: record_row![0].teacher?.app_user?.name,
-    LandLordName: record_row![0].landlord_name,
-    LandLordNumber: record_row![0].landlord_number,
+    LandLordName: record_row![0].landlord_name ? record_row![0].landlord_name : null,
+    LandLordNumber: record_row![0].landlord_number  ? record_row![0].landlord_number : null,
     PropertyAddress: record_row![0].rental_property?.address,
-    Response:  !error ? record_row![0].response : '',
+    Response:  checkNullResponse(record_row![0].response),
     RecordTime: computed(() =>{
         const dateObj = {
           calendar: { identifier: 'gregory' },
@@ -98,15 +97,16 @@ function isTeacher(){
   return false;
 }
 
-const {data: teacher_name} = useAsyncData('get_teacher_name', async() =>{
-  const {data: teacher, error} = await supabase
-  .from('app_user')
-  .select('*')
-  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-  .eq('id', app_user.value?.id!);
-
-  return teacher![0].name;
-});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function checkNullResponse(response: any){
+  console.log(response);
+  for(const i in response){
+   if(!response[i])
+    response[i] = null;
+  }
+  console.log(response);
+  return response;
+}
 </script>
 
 <style>

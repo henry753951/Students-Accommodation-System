@@ -13,8 +13,8 @@
           name=""
         >
           <CardHeader>
-            <CardTitle>確認師生資料</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
+            <CardTitle>確認師生資料及訪視日期</CardTitle>
+            <CardDescription>請您填入您的師生資料，以及進行校外訪視的日期</CardDescription>
           </CardHeader>
           <CardContent class="grid gap-4 ">
             <InterviewFormInput
@@ -37,7 +37,7 @@
         >
           <CardHeader>
             <CardTitle>確認房東資料</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
+            <CardDescription>請您輸入房東相關資料</CardDescription>
           </CardHeader>
           <CardContent class="grid gap-4">
             <InterviewFormInput
@@ -60,7 +60,7 @@
         > 
           <CardHeader>
             <CardTitle>選擇租屋點資料</CardTitle>
-            <CardDescription>請選擇您的租屋點</CardDescription>
+            <CardDescription>請選擇您進行訪視的租屋點</CardDescription>
           </CardHeader>
           <CardContent>
             <InterviewFormSelectProperty 
@@ -101,160 +101,304 @@
           v-if="currentStep === 4"
           name=""
         >
-          <CardHeader>
-            <CardTitle>校外賃居資料</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
-          </CardHeader>
-          <CardContent class="grid gap-4 ">
-            <InterviewFormRadio
-              field-name="租屋型態"
-            >
-              <InterviewFormRadioControl
-                value="獨棟透天"
-              />
-              <InterviewFormRadioControl 
-                value="公寓(五樓以下)"
-              />
-              <InterviewFormRadioControl 
-                value="大樓(六樓以上)"
-              />
-              <InterviewFormRadioControl 
-                value="大型學舍(為學生建設的宿舍)"
-              />
-              <InterviewFormRadioControl 
-                value="其他"
-              />
-            </InterviewFormRadio>
+          <div v-show="student_role">
+            <CardHeader>
+              <CardTitle>校外賃居資料 ( 學生填寫 )</CardTitle>
+              <CardDescription>請學生確認自己的賃居資料</CardDescription>
+            </CardHeader>
+            <CardContent class="grid gap-4 ">
+              <InterviewFormRadio
+                field-name="租屋型態"
+              >
+                <InterviewFormRadioControl
+                  value="獨棟透天"
+                />
+                <InterviewFormRadioControl 
+                  value="公寓(五樓以下)"
+                />
+                <InterviewFormRadioControl 
+                  value="大樓(六樓以上)"
+                />
+                <InterviewFormRadioControl 
+                  value="大型學舍(為學生建設的宿舍)"
+                />
+              </InterviewFormRadio>
       
-            <InterviewFormRadio
-              field-name="房間型態"
-            >
-              <InterviewFormRadioControl
-                value="雅房"
+              <InterviewFormRadio
+                field-name="房間型態"
+              >
+                <InterviewFormRadioControl
+                  value="雅房"
+                />
+                <InterviewFormRadioControl 
+                  value="套房"
+                />
+              </InterviewFormRadio>
+
+              <InterviewFormInput
+                field-name="租金"
+                lable-value="租金"
+                place-holder-value="請輸入一個月的租金"
               />
-              <InterviewFormRadioControl 
-                value="套房"
+
+              <InterviewFormInput
+                field-name="押金"
+                lable-value="押金"
+                place-holder-value="請輸入押金"
               />
-            </InterviewFormRadio>
 
-            <InterviewFormInput
-              field-name="租金"
-              lable-value="租金"
-              place-holder-value="請輸入一個月的租金"
-            />
-
-            <InterviewFormInput
-              field-name="押金"
-              lable-value="押金"
-              place-holder-value="請輸入押金"
-            />
-
-            <InterviewFormRadio
-              field-name="是否值得推薦其他同學租賃"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
-          </CardContent>
+              <InterviewFormRadio
+                field-name="是否值得推薦其他同學租賃"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
+            </CardContent>
+          </div>
         </FormField>
 
         <FormField
           v-if="currentStep === 5"
           name=""
         >
-          <CardHeader>
-            <CardTitle>校外賃居安全資料</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
-          </CardHeader>
-          <CardContent class="grid gap-4 ">
-            <InterviewFormRadio
-              field-name="木造隔間或鐵皮加蓋"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+          <div v-show="student_role">
+            <CardHeader>
+              <CardTitle>賃居安全自主管理檢視資料 ( 學生填寫 )</CardTitle>
+              <CardDescription>請學生對自己校外賃居的地點進行安全評估</CardDescription>
+            </CardHeader>
+            <CardContent class="grid gap-4 ">
+              <InterviewFormRadio
+                field-name="木造隔間或鐵皮加蓋"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="有火警警報器或偵煙器"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="有火警警報器或偵煙器"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="逃生通道暢通且標示清楚"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="逃生通道暢通且標示清楚"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="門禁及鎖具良好管理"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="門禁及鎖具良好管理"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
       
-            <InterviewFormRadio
-              field-name="有安裝照明設備(停車場及周邊)"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="有安裝照明設備(停車場及周邊)"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="瞭解熟悉電路安全及逃生要領"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="瞭解熟悉電路安全及逃生要領"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
       
-            <InterviewFormRadio
-              field-name="熟悉派出所、醫療、消防隊、學校校安專線電話"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
-          </CardContent>
+              <InterviewFormRadio
+                field-name="熟悉派出所、醫療、消防隊、學校校安專線電話"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
+            </CardContent>
+          </div>
         </FormField>
 
         <FormField
           v-if="currentStep === 6"
           name=""
         >
-          <CardHeader>
-            <CardTitle>校外賃居安全資料</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
-          </CardHeader>
-          <CardContent class="grid gap-4 ">
-            <InterviewFormRadio
-              field-name="使用多種電器(高耗能)，是否同時插在同一條延長線"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+          <div v-show="student_role">
+            <CardHeader>
+              <CardTitle>賃居安全自主管理檢視資料 ( 學生填寫 )</CardTitle>
+              <CardDescription>請學生對自己校外賃居的地點進行安全評估</CardDescription>
+            </CardHeader>
+            <CardContent class="grid gap-4 ">
+              <InterviewFormRadio
+                field-name="使用多種電器(高耗能)，是否同時插在同一條延長線"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="有滅火器且功能正常"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="有滅火器且功能正常"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio> 
+              <InterviewFormRadio
+                field-name="熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio> 
       
-            <InterviewFormRadio
-              field-name="分開6個以上房間或10個以上床位"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="分開6個以上房間或10個以上床位"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="有安裝監視器設備"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
+              <InterviewFormRadio
+                field-name="有安裝監視器設備"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
 
-            <InterviewFormRadio
-              field-name="使用<內政部定型化租賃契約>"
-            >
-              <InterviewFormTFControl />
-            </InterviewFormRadio>
-          </CardContent>
+              <InterviewFormRadio
+                field-name="使用<內政部定型化租賃契約>"
+              >
+                <InterviewFormTFControl />
+              </InterviewFormRadio>
+            </CardContent>
+          </div>
+        </FormField>
+
+        <FormField 
+          v-if="currentStep === 4"
+          name=""
+        >
+          <div v-show="teacher_role">
+            <CardHeader>
+              <CardTitle>環境及作息評估 ( 導師填寫 )</CardTitle>
+              <CardDescription>請導師評估學生賃居之環境及作息</CardDescription>
+            </CardHeader>
+            <CardContent class="grid gap-4 ">
+              <InterviewFormRadio
+                field-name="押金要求"
+              >
+                <InterviewFormRadioControl
+                  value="合理"
+                />
+                <InterviewFormRadioControl 
+                  value="不合理(2個月以上之租金)"
+                />
+              </InterviewFormRadio>
+      
+              <InterviewFormRadio
+                field-name="水電費要求"
+              >
+                <InterviewFormRadioControl
+                  value="合理"
+                />
+                <InterviewFormRadioControl 
+                  value="不合理"
+                />
+              </InterviewFormRadio>
+
+              <InterviewFormRadio
+                field-name="居家環境"
+              >
+                <InterviewFormRadioControl
+                  value="佳"
+                />
+                <InterviewFormRadioControl 
+                  value="適中"
+                />
+                <InterviewFormRadioControl 
+                  value="欠佳"
+                />
+              </InterviewFormRadio>
+
+              <InterviewFormRadio
+                field-name="生活設施"
+              >
+                <InterviewFormRadioControl
+                  value="佳"
+                />
+                <InterviewFormRadioControl 
+                  value="適中"
+                />
+                <InterviewFormRadioControl 
+                  value="欠佳"
+                />
+              </InterviewFormRadio>
+
+              <InterviewFormRadio
+                field-name="訪視現況"
+              >
+                <InterviewFormRadioControl
+                  value="生活規律"
+                />
+                <InterviewFormRadioControl 
+                  value="適中"
+                />
+                <InterviewFormRadioControl 
+                  value="待加強"
+                />
+              </InterviewFormRadio>
+
+              <InterviewFormRadio
+                field-name="主客相處"
+              >
+                <InterviewFormRadioControl
+                  value="和睦"
+                />
+                <InterviewFormRadioControl 
+                  value="欠佳"
+                />
+              </InterviewFormRadio>
+            </CardContent>
+          </div>
+        </FormField>
+
+        <FormField
+          v-if="currentStep === 5"
+          name=""
+        >
+          <div v-show="teacher_role">
+            <CardHeader>
+              <CardTitle>訪視結果 ( 導師填寫 )</CardTitle>
+              <CardDescription>請導師大略總結訪視結果</CardDescription>
+            </CardHeader>
+            <CardContent class="grid gap-4 ">
+              <InterviewFormRadio
+                field-name="訪視結果"
+              >
+                <InterviewFormRadioControl
+                  value="整體賃居狀況良好"
+                />
+                <InterviewFormRadioControl 
+                  value="聯繫家長關注"
+                />
+                <InterviewFormRadioControl 
+                  value="安全堪慮請協助"
+                />
+              </InterviewFormRadio>
+
+              <InterviewFormInput
+                field-name="訪視結果說明"
+                lable-value="訪視結果說明(若沒有請填無)"
+                place-holder-value="請簡述訪視結果"
+              />
+              <InterviewFormInput
+                field-name="其他記載或建議事項"
+                lable-value="其他記載或建議事項(若沒有請填無)"
+                place-holder-value="請輸入建議事項"
+              />
+            </CardContent>
+          </div>
+        </FormField> 
+
+        <FormField
+          v-if="currentStep === 6"
+          name=""
+        >
+          <div v-show="teacher_role">
+            <CardHeader>
+              <CardTitle>關懷宣導項目 ( 導師填寫 )</CardTitle>
+              <CardDescription>懇請導師賃居訪視時多予關懷叮嚀，至少選填一選項</CardDescription>
+            </CardHeader>
+            <CardContent class="grid gap-4 ">
+              <InterviewFormCheckBox />
+            </CardContent>
+          </div>
         </FormField>
 
         <FormField 
@@ -262,143 +406,23 @@
           name=""
         >
           <CardHeader>
-            <CardTitle>環境及作息評估 ( 導師填寫 )</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
-          </CardHeader>
-          <CardContent class="grid gap-4 ">
-            <InterviewFormRadio
-              field-name="押金要求"
-            >
-              <InterviewFormRadioControl
-                value="合理"
-              />
-              <InterviewFormRadioControl 
-                value="不合理(2個月以上之租金)"
-              />
-            </InterviewFormRadio>
-      
-            <InterviewFormRadio
-              field-name="水電費要求"
-            >
-              <InterviewFormRadioControl
-                value="合理"
-              />
-              <InterviewFormRadioControl 
-                value="不合理"
-              />
-            </InterviewFormRadio>
-
-            <InterviewFormRadio
-              field-name="居家環境"
-            >
-              <InterviewFormRadioControl
-                value="佳"
-              />
-              <InterviewFormRadioControl 
-                value="適中"
-              />
-              <InterviewFormRadioControl 
-                value="欠佳"
-              />
-            </InterviewFormRadio>
-
-            <InterviewFormInput
-              field-name="居家環境"
-              lable-value="居家環境: 其他(請說明)"
-              place-holder-value="請簡述居家環境情形"
-            />
-
-            <InterviewFormRadio
-              field-name="生活設施"
-            >
-              <InterviewFormRadioControl
-                value="佳"
-              />
-              <InterviewFormRadioControl 
-                value="適中"
-              />
-              <InterviewFormRadioControl 
-                value="欠佳"
-              />
-            </InterviewFormRadio>
-
-            <InterviewFormRadio
-              field-name="訪視現況"
-            >
-              <InterviewFormRadioControl
-                value="生活規律"
-              />
-              <InterviewFormRadioControl 
-                value="適中"
-              />
-              <InterviewFormRadioControl 
-                value="待加強"
-              />
-            </InterviewFormRadio>
-
-            <InterviewFormRadio
-              field-name="主客相處"
-            >
-              <InterviewFormRadioControl
-                value="和睦"
-              />
-              <InterviewFormRadioControl 
-                value="欠佳"
-              />
-            </InterviewFormRadio>
-          </CardContent>
-        </FormField>
-
-        <FormField
-          v-if="currentStep === 8"
-          name=""
-        >
-          <CardHeader>
-            <CardTitle>訪視結果 ( 導師填寫 )</CardTitle>
-            <CardDescription>請你先確認資料</CardDescription>
-          </CardHeader>
-          <CardContent class="grid gap-4 ">
-            <InterviewFormRadio
-              field-name="訪視結果"
-            >
-              <InterviewFormRadioControl
-                value="整體賃居狀況良好"
-              />
-              <InterviewFormRadioControl 
-                value="聯繫家長關注"
-              />
-              <InterviewFormRadioControl 
-                value="安全堪慮請協助"
-              />
-              <InterviewFormRadioControl 
-                value="其他"
-              />
-            </InterviewFormRadio>
-            <InterviewFormInput
-              field-name="訪視結果說明"
-              lable-value="訪視結果說明(若沒有請填無)"
-              place-holder-value="請簡述訪視結果"
-            />
-            <InterviewFormInput
-              field-name="其他記載或建議事項"
-              lable-value="其他記載或建議事項(若沒有請填無)"
-              place-holder-value="請輸入建議事項"
-            />
-          </CardContent>
-        </FormField> 
-
-        <FormField 
-          v-if="currentStep === 9"
-          name=""
-        >
-          <CardHeader>
-            <CardTitle>填寫完成!</CardTitle>
-            <CardDescription>感謝您的填寫</CardDescription>
+            <CardTitle v-if="status === '填答完畢'">
+              填寫完成!
+            </CardTitle>
+            <CardTitle v-else>
+              填寫尚未完成!
+            </CardTitle>
+            <CardDescription v-if="status === '填答完畢'">
+              感謝您的填寫
+            </CardDescription>
+            <CardDescription v-else>
+              目前已填寫的資料已上傳，後續請將未填寫的資料補上，或透過分享功能邀請他人填寫無法填寫的部分
+            </CardDescription>
           </CardHeader>
         </FormField>
 
         <CardFooter
-          v-if="currentStep >= 4 && currentStep < 9"
+          v-if="currentStep >= 4 && currentStep < 7"
           class="flex gap-5 place-content-end"
         >
           <Button
@@ -427,7 +451,7 @@
         </CardFooter>
 
         <CardFooter
-          v-if="currentStep === 9"
+          v-if="currentStep === 7"
           class="place-content-end"
         >
           <NuxtLink
@@ -452,8 +476,8 @@ import * as yup from 'yup';
 import { toast } from '@/components/ui/toast';
 
 import type { Database, Tables, Enums } from "~/database.types";
+const app_user = useUser();
 
-type record = Database['public']['Tables']['interview_record']['Row'];
 type initial = {
   StudentID: string,
   TeacherName: string,
@@ -467,9 +491,13 @@ type initial = {
 
 const modelValue = defineModel<initial>();
 const supabase = useSupabaseClient<Database>();
+const status = ref('填答完畢');
 
 const default_required_error = '此為必填問題!';
-
+onMounted(() => {
+  isStudent();
+  isTeacher();
+});
 const schemas = [
   yup.object({
     StudentID: yup.string()
@@ -488,51 +516,48 @@ const schemas = [
     RecordTime: yup.mixed().required('請選擇訪視時間!')
   }),
   yup.object({
-    LandLordName: yup.string().required('請輸入房東名字!'),
+    LandLordName: yup.string().nullable(),
     LandLordNumber:yup.string()
       .min(10,'房東電話應為10位!')
       .max(10,'房東電話應為10位!')
-      .required('請輸入房東電話!'),
+      .nullable(),
   }),
   yup.object({
-    PropertyAddress: yup.string().required('請選擇租屋點!'),
+    PropertyAddress: yup.string().nullable(),
   }), 
   yup.object({
-    '租屋型態': yup.string().required('請選擇租屋型態!'),
-    '房間型態': yup.string().required('請選擇房間型態!'),
-    '租金': yup.string().required('請輸入租金!'),
-    '押金': yup.string().required('請輸入押金!'),
-    '是否值得推薦其他同學租賃': yup.string().required(default_required_error),
+    '租屋型態': yup.string().nullable(),
+    '房間型態': yup.string().nullable(),
+    '租金': yup.string().nullable(),
+    '押金': yup.string().nullable(),
+    '是否值得推薦其他同學租賃': yup.string().nullable(),
+    '押金要求': yup.string().nullable(),
+    '水電費要求': yup.string().nullable(),
+    '居家環境': yup.string().nullable(),
+    '生活設施': yup.string().nullable(),
+    '訪視現況': yup.string().nullable(),
+    '主客相處': yup.string().nullable(),
   }),
   yup.object({
-    '木造隔間或鐵皮加蓋': yup.string().required(default_required_error),
-    '有火警警報器或偵煙器': yup.string().required(default_required_error),
-    '逃生通道暢通且標示清楚': yup.string().required(default_required_error),
-    '門禁及鎖具良好管理': yup.string().required(default_required_error),
-    '有安裝照明設備(停車場及周邊)': yup.string().required(default_required_error),
-    '瞭解熟悉電路安全及逃生要領': yup.string().required(default_required_error),
-    '熟悉派出所、醫療、消防隊、學校校安專線電話': yup.string().required(default_required_error),
+    '木造隔間或鐵皮加蓋': yup.string().nullable(),
+    '有火警警報器或偵煙器': yup.string().nullable(),
+    '逃生通道暢通且標示清楚': yup.string().nullable(),
+    '門禁及鎖具良好管理': yup.string().nullable(),
+    '有安裝照明設備(停車場及周邊)': yup.string().nullable(),
+    '瞭解熟悉電路安全及逃生要領': yup.string().nullable(),
+    '熟悉派出所、醫療、消防隊、學校校安專線電話': yup.string().nullable(),
+    '訪視結果': yup.string().nullable(),
+    '訪視結果說明': yup.string().nullable(),
+    '其他記載或建議事項': yup.string().nullable(),
   }),
   yup.object({
-    '使用多種電器(高耗能)，是否同時插在同一條延長線': yup.string().required(default_required_error),
-    '有滅火器且功能正常': yup.string().required(default_required_error),
-    '熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮': yup.string().required(default_required_error),
-    '分開6個以上房間或10個以上床位': yup.string().required(default_required_error),
-    '有安裝監視器設備': yup.string().required(default_required_error),
-    '使用<內政部定型化租賃契約>': yup.string().required(default_required_error),
-  }),
-  yup.object({
-    '押金要求': yup.string().required(default_required_error),
-    '水電費要求': yup.string().required(default_required_error),
-    '居家環境': yup.string().required(default_required_error),
-    '生活設施': yup.string().required(default_required_error),
-    '訪視現況': yup.string().required(default_required_error),
-    '主客相處': yup.string().required(default_required_error),
-  }),
-  yup.object({
-    '訪視結果': yup.string().required(default_required_error),
-    '訪視結果說明': yup.string().required(default_required_error),
-    '其他記載或建議事項': yup.string().required(default_required_error),
+    '使用多種電器(高耗能)，是否同時插在同一條延長線': yup.string().nullable(),
+    '有滅火器且功能正常': yup.string().nullable(),
+    '熱水器(電熱式及瓦斯式)安全良好，無一氧化碳中毒疑慮': yup.string().nullable(),
+    '分開6個以上房間或10個以上床位': yup.string().nullable(),
+    '有安裝監視器設備': yup.string().nullable(),
+    '使用<內政部定型化租賃契約>': yup.string().nullable(),
+    '關懷宣導項目': yup.array().nullable(),
   }),
 ];
 
@@ -544,7 +569,7 @@ const currentStep = ref(1);
 let firstFormValues = ref();
 
 function isLastStep(){
-  return currentStep.value === schemas.length;
+  return currentStep.value === 6;
 };
 
 function previousStep(){
@@ -587,8 +612,8 @@ const handleSubmit = async (first: any, second: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:string) => {
-  // const form1 = checkIfValueNull(firstForm.value);
-  // const form2 = checkIfValueNull(secondForm);
+  checkIfValueNull(firstForm.value);
+  checkIfValueNull(secondForm);
 
   const {data: student_user_id} = await supabase
     .from("student")
@@ -620,6 +645,9 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
     .select("*")
     .eq("address", firstForm.value.PropertyAddress);
   
+  console.log(firstForm.value);
+  console.log(secondForm);
+
   if(modelValue?.value?.RecordLink !== 'new'){
     const { data , error } = await supabase
       .from("interview_record")
@@ -629,9 +657,10 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
         "landlord_id": landlord_user_id,
         "landlord_name": firstForm.value.LandLordName,
         "landlord_number": firstForm.value.LandLordNumber,
-        "property_id":property_id![0].id,
+        "property_id": firstForm.value.PropertyAddress !== null ? property_id![0].id : null,
         "response": secondForm,
         "record_time":time,
+        "status": status.value,
       }
       ) 
       // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
@@ -656,9 +685,10 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
         "landlord_id": landlord_user_id,
         "landlord_name": firstForm.value.LandLordName,
         "landlord_number": firstForm.value.LandLordNumber,
-        "property_id":property_id![0].id,
+        "property_id": firstForm.value.PropertyAddress !== null ? property_id![0].id : null,
         "response": secondForm,
         "record_time":time,
+        "status": status.value,
       }
       )
       .select("*");
@@ -731,13 +761,28 @@ const { data: rental_property, pending: isLoading, refresh: refresh } = useAsync
 function checkIfValueNull(form: any){
   for(const i in form){
     if(!form[i]){
-      form[i] = '未填寫';
-      console.log(form[i]);
+      form[i] = null;
+      status.value = '尚未完成';
     }
   }
   console.log(form);
-  return null;
 };
+
+const student_role = ref(false);
+function isStudent(){
+  for(const i in app_user.value?.roles){
+    if(app_user.value?.roles[i as unknown as number] === 'student')
+      student_role.value = true;
+  }
+}
+
+const teacher_role = ref(false);
+function isTeacher(){
+  for(const i in app_user.value?.roles){
+    if(app_user.value?.roles[i as unknown as number] === 'teacher')
+      teacher_role.value = true;
+  }
+}
 </script>
 
 <style>

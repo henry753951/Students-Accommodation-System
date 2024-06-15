@@ -39,8 +39,11 @@
                 <TableHead class="w-2/12">
                   訪視日期
                 </TableHead>
-                <TableHead class="w-7/12">
+                <TableHead class="w-6/12">
                   居住地址
+                </TableHead>
+                <TableHead class="w-1/12 text-right">
+                  填答狀態
                 </TableHead>
                 <TableHead class="w-1/12 text-right">
                   操作
@@ -60,6 +63,7 @@
                     :location="row.rental_property?.address!"
                     :property-link="row.property_id!"
                     :record-link="row.record_link"
+                    :status="row.status!"
                   />
                   <TableCell class="text-right">
                     <Dialog>
@@ -188,13 +192,6 @@ const {
 
 const handleTime = (time: string) => {
   console.log(time);
-  // const hour: number = +time.slice(11, 13);
-  // if(hour < 12){
-  //   return time.slice(0, 10) + " / AM" + time.slice(11, 16);
-  // }
-  // else{
-  //   return time.slice(0, 10) + " / PM" + time.slice(11, 16);
-  // }
   return time;
 };
 

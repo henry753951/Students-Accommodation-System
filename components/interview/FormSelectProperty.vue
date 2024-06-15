@@ -14,7 +14,7 @@
             </DialogTrigger>
             <DialogContent class="sm:max-w-[800px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]">
               <DialogHeader class="p-6 pb-0">
-                <DialogTitle>選擇你的租屋點</DialogTitle>
+                <DialogTitle>選擇您的租屋點</DialogTitle>
                 <DialogDescription>
                   下列是已刊登在此平台的租屋點
                 </DialogDescription>
