@@ -99,12 +99,10 @@ function isTeacher(){
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function checkNullResponse(response: any){
-  console.log(response);
   for(const i in response){
    if(!response[i])
     response[i] = null;
   }
-  console.log(response);
   return response;
 }
 </script>

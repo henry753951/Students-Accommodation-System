@@ -289,7 +289,6 @@ const response_pairs = computed(() => {
         break;
       }
       else if(i === 13){
-        console.log(entries[21]);
         pair2.push([entries[i]!, handleCareResponse(entries[21])]);
         i--;
       }
@@ -303,7 +302,6 @@ const response_pairs = computed(() => {
   pair.push(pair0);
   pair.push(pair1);
   pair.push(pair2);
-  console.log(pair);
   return pair;
 });
 
@@ -319,9 +317,7 @@ function handleCareResponse(entry: any){
       careRes[1] = entry[1][i];
     else
       careRes[1] = careRes[1] + '、' +entry[1][i];
-    console.log(entry[1][i]);
   }
-  console.log(careRes);
   return careRes;
 }
 

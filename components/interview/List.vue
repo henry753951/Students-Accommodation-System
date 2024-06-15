@@ -175,8 +175,6 @@ const props = defineProps({
   },
 });
 
-
-
 const supabase = useSupabaseClient<Database>();
 const app_user = useUser();
 
@@ -191,7 +189,6 @@ const {
 });
 
 const handleTime = (time: string) => {
-  console.log(time);
   return time;
 };
 
@@ -223,7 +220,6 @@ watch(searchText, async () => {
 });
 
 const deleteRecord = async (recordLink: string) => {
-  console.log(recordLink);
   const { data, error } = await supabase.from("interview_record").delete().eq("record_link", recordLink);
 
   if (error) {

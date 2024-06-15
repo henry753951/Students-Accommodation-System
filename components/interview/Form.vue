@@ -581,10 +581,10 @@ function previousStep(){
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function nextStep(values: any){
-  toast({
-      title: 'You submitted the following values:',
-      description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
-    }); 
+  // toast({
+  //     title: 'You submitted the following values:',
+  //     description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
+  //   }); 
   
   if(currentStep.value === 3){
     firstFormValues = ref(values);
@@ -602,7 +602,6 @@ const handleSubmit = async (first: any, second: any) => {
   const comfirmation = confirm('確認送出?');
   if(comfirmation){
   const time = new Date(first.value.RecordTime.year, first.value.RecordTime.month - 1, first.value.RecordTime.day, 8, 0, 0).toISOString();
-  console.log(time);
   SubmitToInterviewRecord(first, second, time);
   }
   else{
@@ -630,7 +629,6 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
     .select("*")
     .eq("name", firstForm.value.LandLordName);
   
-  console.log(check_landlord_user);
   let landlord_user_id = null;
   if(check_landlord_user?.length !== 0){
     const { data } = await supabase
@@ -644,9 +642,6 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
     .from("rental_property")
     .select("*")
     .eq("address", firstForm.value.PropertyAddress);
-  
-  console.log(firstForm.value);
-  console.log(secondForm);
 
   if(modelValue?.value?.RecordLink !== 'new'){
     const { data , error } = await supabase
@@ -765,7 +760,6 @@ function checkIfValueNull(form: any){
       status.value = '尚未完成';
     }
   }
-  console.log(form);
 };
 
 const student_role = ref(false);
