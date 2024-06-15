@@ -20,7 +20,7 @@
           @input="refresh"
         />
         <Separator />
-        <ul class="flex py-2 flex-col gap-3">
+        <ul class="flex my-2 flex-col gap-3 overflow-y-scroll max-h-[50dvh] min-h-[30dvh]">
           <li
             v-for="student in filteredStudents"
             :key="student.user_id"
@@ -37,7 +37,7 @@
               </div>
               <Button
                 size="sm"
-                @click="addStudent(student)"
+                @click="emit('onStudentAdd',student.user_id)"
               >
                 新增
               </Button>
@@ -79,7 +79,7 @@
           @input="refresh"
         />
         <Separator />
-        <ul class="flex py-2 flex-col gap-3">
+        <ul class="flex py-2 flex-col gap-3 overflow-y-scroll max-h-[50dvh] min-h-[30dvh]">
           <li
             v-for="student in filteredStudents"
             :key="student.user_id"
@@ -96,7 +96,7 @@
               </div>
               <Button
                 size="sm"
-                @click="addStudent(student)"
+                @click="emit('onStudentAdd',student.user_id)"
               >
                 新增
               </Button>
@@ -131,9 +131,9 @@ const { data: filteredStudents, refresh } = useAsyncData("students", async () =>
   return data;
 });
 
-const addStudent = (student) => {
-  // 新增學生的邏輯
-  isDrawerOpen.value = false;
-};
+const emit = defineEmits<{
+  (event: 'onStudentAdd', user_id: string): void;
+}>();
+
 </script>
 <style></style>

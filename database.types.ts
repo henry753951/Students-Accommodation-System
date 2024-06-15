@@ -124,6 +124,7 @@ export type Database = {
           record_link: string
           record_time: string
           response: Json | null
+          status: string | null
           student_id: string
           teacher_id: string
         }
@@ -133,8 +134,9 @@ export type Database = {
           landlord_number?: string | null
           property_id?: string | null
           record_link?: string
-          record_time?: string
+          record_time: string
           response?: Json | null
+          status?: string | null
           student_id?: string
           teacher_id?: string
         }
@@ -146,6 +148,7 @@ export type Database = {
           record_link?: string
           record_time?: string
           response?: Json | null
+          status?: string | null
           student_id?: string
           teacher_id?: string
         }
