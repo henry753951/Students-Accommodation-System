@@ -8,15 +8,24 @@
         <div class="pb-1">
           <Dialog>
             <DialogTrigger as-child>
-              <Button variant="outline">
+              <Button 
+                variant="outline"
+                :disabled="app_user?.roles.includes('student') !== true"
+              >
                 選擇租屋點
               </Button>
+              <DialogDescription
+                v-if="app_user?.roles.includes('student') !== true"
+                class="pt-3"
+              >
+                只有學生可以選擇租屋點
+              </DialogDescription>
             </DialogTrigger>
             <DialogContent class="sm:max-w-[800px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]">
               <DialogHeader class="p-6 pb-0">
                 <DialogTitle>選擇您的租屋點</DialogTitle>
                 <DialogDescription>
-                  下列是已刊登在此平台的租屋點
+                  下列是您已在此平台綁定的租屋點
                 </DialogDescription>
               </DialogHeader>
               <div class="grid gap-4 py-4 overflow-y-auto px-6">
@@ -36,7 +45,7 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50" />
                         <div class="absolute bottom-0 left-0 p-4 text-white">
                           <h2 class="text-2xl font-bold">
-                            {{ property.address }}
+                            {{ property.rental_property.address }}
                           </h2>
                         </div>
                       </div>
@@ -55,7 +64,7 @@
                           <Button
                             type="submit"
                             class="bg-green-500 text-whitepx-4 py-2 rounded"
-                            @click="componentField.onChange(property.address);"
+                            @click="componentField.onChange(property.rental_property.address);"
                           >
                             選擇
                           </Button>
@@ -122,14 +131,13 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
-const supabase = useSupabaseClient<Database>();
-
+const app_user = useUser();
 type rental = Database["public"]['Tables']["rental_property"]["Row"];
 
 defineProps({
-  rentalProperty: {type: Object as PropType<rental[]>, required: true},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rentalProperty: {type: Object as any, required: true},
 });
-
 </script>
 
 <style>

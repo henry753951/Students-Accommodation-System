@@ -5,9 +5,7 @@
     <FormControl>
       <RadioGroupItem :value="value" />
     </FormControl>
-    <FormLabel class="font-normal">
-      {{ value }}
-    </FormLabel>
+    {{ value }}
   </Label>
 </template>
 
