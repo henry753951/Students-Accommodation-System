@@ -290,13 +290,13 @@ const deleteUser = async (singleUser: Tables<"app_user"> | null = null) => {
 
 // if singleUser is null, it will update all selected users
 const updateSingleRoleForSelections = async (role: string, action: "add" | "remove", userID: null | string = null) => {
-  let data: { user_id: string }[] = [];
+  let selectedUserIds: string[] = [];
   if (userID) {
-    data = [{ user_id: userID }];
+     selectedUserIds = [userID];
   } else {
-    const selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
-    data = selectedUserIds.map((userId) => ({ user_id: userId }));
+     selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
   }
+  const data = selectedUserIds.map((userId) => ({ user_id: userId }));
 
   let error: string | null = null;
 
