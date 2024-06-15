@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="records"
-    class="flex justify-center"
+    class="flex justify-center container"
   >
     <div
       v-if="done"
