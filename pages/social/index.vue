@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-prose flex flex-col  justify-center ">
     <div v-for="id in rental_id" class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black ">
-      <NuxtLink :to="'/social/' + id.Rental_property_id">
+      <NuxtLink :to="'./social/' + id.Rental_property_id">
       <div v-bind:class="{ 'text-red-500': id.is_currently_renting }">
         <span v-if="id.is_currently_renting">租賃中</span>
         <span v-else>未租賃</span>
@@ -15,6 +15,8 @@
 <script lang="ts" setup>
 import type { Database, Tables, Enums } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
+const supabase = useSupabaseClient<Database>();
+const user = useSupabaseUser();
 const toast = useToast();
 
 definePageMeta({
@@ -24,8 +26,7 @@ definePageMeta({
 onMounted(() => {
   initial_get_information();
 });
-const supabase = useSupabaseClient<Database>();
-const user = useSupabaseUser();
+
 type Rental_info = {
   Rental_property_id: string | null,
   is_currently_renting: boolean | null,
