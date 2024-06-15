@@ -8,9 +8,18 @@
         <div class="pb-1">
           <Dialog>
             <DialogTrigger as-child>
-              <Button variant="outline">
+              <Button 
+                variant="outline"
+                :disabled="app_user?.roles.includes('student') !== true"
+              >
                 選擇租屋點
               </Button>
+              <DialogDescription
+                v-if="app_user?.roles.includes('student') !== true"
+                class="pt-3"
+              >
+                只有學生可以選擇租屋點
+              </DialogDescription>
             </DialogTrigger>
             <DialogContent class="sm:max-w-[800px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]">
               <DialogHeader class="p-6 pb-0">
@@ -122,7 +131,7 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
-
+const app_user = useUser();
 type rental = Database["public"]['Tables']["rental_property"]["Row"];
 
 defineProps({
