@@ -22,7 +22,7 @@
               <div class="grid gap-4 py-4 overflow-y-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div
-                    v-for="property in rentals"
+                    v-for="property in rentalProperty"
                     :key="property.id"
                     class="mb-6"
                   >
@@ -122,22 +122,13 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
-const supabase = useSupabaseClient<Database>();
-const app_user = useUser();
+
 type rental = Database["public"]['Tables']["rental_property"]["Row"];
 
 defineProps({
-  rentalProperty: {type: Object as PropType<rental[]>, required: true},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rentalProperty: {type: Object as any, required: true},
 });
-
-const { data: rentals, pending } = await useAsyncData("map_rental_property_student", async () => {
-  const { data, error } = await supabase.from("map_rental_property_student").select("*, rental_property!inner(*)").eq("student_id", app_user.value!.id);
-  if (error) {
-    throw error;
-  }
-  return data;
-});
-
 </script>
 
 <style>

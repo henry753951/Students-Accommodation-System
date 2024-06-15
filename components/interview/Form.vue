@@ -758,10 +758,11 @@ const isValidTeacher = async (value: string): Promise<boolean> => {
   }
 };
 
-const { data: rental_property, pending: isLoading, refresh: refresh } = useAsyncData('rental_property', async () => {
-  const { data } = await supabase.from('rental_property').select(`
-    *
-  `);
+const { data: rental_property, pending, refresh } = useAsyncData('rental_property', async () => {
+  const { data, error } = await supabase.from("map_rental_property_student").select("*, rental_property!inner(*)").eq("student_id", app_user.value!.id);
+  if (error) {
+    throw error;
+  }
   return data;
 });
 
