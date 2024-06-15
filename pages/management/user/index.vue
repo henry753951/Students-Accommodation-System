@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto">
-    <div class="mb-4 ">
+    <div class="mb-4">
       <Tabs default-value="account">
         <TabsList class="w-full">
           <TabsTrigger
@@ -138,16 +138,14 @@
                       教師
                     </Badge>
                     <Badge
-                      v-if="
-                        user.landlord"
+                      v-if="user.landlord"
                       variant="secondary"
                       class="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 dark:bg-opacity-30"
                     >
                       房東
                     </Badge>
                     <Badge
-                      v-if="
-                        user.admin"
+                      v-if="user.admin"
                       variant="secondary"
                       class="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 dark:bg-opacity-30"
                     >
@@ -190,33 +188,28 @@
 </template>
 <script lang="ts" setup>
 import type { Database, Tables, Enums } from "~/database.types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check } from 'lucide-vue-next';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Check } from "lucide-vue-next";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 useHead({
-  title: '校外租屋平台 | 使用者管理',
+  title: "校外租屋平台 | 使用者管理",
 });
 
-definePageMeta(
-  {
-    name: "使用者管理",
-    layout: "dashboard",
-  }
-);
+definePageMeta({
+  name: "使用者管理",
+  layout: "dashboard",
+});
 
 const roles = ["學生", "教師", "房東", "管理員"] as "學生" | "教師" | "房東" | "管理員"[];
 const supabase = useSupabaseClient<Database>();
 
-// [Data] 
-const { data: users, pending: isLoading, refresh: refresh } = useAsyncData('users', async () => {
-  const { data } = await supabase.from('app_user').select('*, student(*), teacher(*), landlord(*),admin(*)');
+// [Data]
+const {
+  data: users,
+  pending: isLoading,
+  refresh: refresh,
+} = useAsyncData("users", async () => {
+  const { data } = await supabase.from("app_user").select("*, student(*), teacher(*), landlord(*),admin(*)");
   return data;
 });
 
@@ -258,13 +251,12 @@ const toggleSelectAll = (checked: boolean) => {
   });
 };
 
-
 // [Methods]
 const userSync = async () => {
-  const { data, error } = await useAPI('/api/management/user_sync', {
+  const { data, error } = await useAPI("/api/management/user_sync", {
     default: () => {
       return {
-        "message": "同步使用者資料不成功",
+        message: "同步使用者資料不成功",
       };
     },
   });
@@ -277,17 +269,17 @@ const userSync = async () => {
 };
 
 // Database operation
-const deleteUser = async (singleUser: Tables<'app_user'> | null = null) => {
+const deleteUser = async (singleUser: Tables<"app_user"> | null = null) => {
   if (singleUser) {
     const selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
-    const { error } = await supabase.from('app_user').delete().eq('id', singleUser.id);
+    const { error } = await supabase.from("app_user").delete().eq("id", singleUser.id);
     if (error) {
       console.error(error);
       return;
     }
   } else {
     const selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
-    const { error } = await supabase.from('app_user').delete().in('id', selectedUserIds);
+    const { error } = await supabase.from("app_user").delete().in("id", selectedUserIds);
     if (error) {
       console.error(error);
       return;
@@ -296,39 +288,44 @@ const deleteUser = async (singleUser: Tables<'app_user'> | null = null) => {
   await refresh();
 };
 
+// if singleUser is null, it will update all selected users
+const updateSingleRoleForSelections = async (role: string, action: "add" | "remove", userID: null | string = null) => {
+  let data: { user_id: string }[] = [];
+  if (userID) {
+    data = [{ user_id: userID }];
+  } else {
+    const selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
+    data = selectedUserIds.map((userId) => ({ user_id: userId }));
+  }
 
-
-const updateSingleRoleForSelections = async (role: string, action: "add" | "remove") => {
-  const selectedUserIds = Object.keys(selectedUsers.value).filter(userId => selectedUsers.value[userId]);
-  const data = selectedUserIds.map(userId => ({ user_id: userId }));
   let error: string | null = null;
 
   if (action === "add") {
     if (role === "學生") {
-      const { error: studentAddError } = await supabase.from('student').upsert(data);
+      const { error: studentAddError } = await supabase.from("student").upsert(data);
       error = studentAddError?.message || null;
     } else if (role === "教師") {
-      const { error: teacherAddError } = await supabase.from('teacher').upsert(data);
+      const { error: teacherAddError } = await supabase.from("teacher").upsert(data);
       error = teacherAddError?.message || null;
     } else if (role === "房東") {
-      const { error: landlordAddError } = await supabase.from('landlord').upsert(data);
+      const { error: landlordAddError } = await supabase.from("landlord").upsert(data);
       error = landlordAddError?.message || null;
     } else if (role === "管理員") {
-      const { error: adminAddError } = await supabase.from('admin').upsert(data);
+      const { error: adminAddError } = await supabase.from("admin").upsert(data);
       error = adminAddError?.message || null;
     }
   } else {
     if (role === "學生") {
-      const { error: studentRemoveError } = await supabase.from('student').delete().in('user_id', selectedUserIds);
+      const { error: studentRemoveError } = await supabase.from("student").delete().in("user_id", selectedUserIds);
       error = studentRemoveError?.message || null;
     } else if (role === "教師") {
-      const { error: teacherRemoveError } = await supabase.from('teacher').delete().in('user_id', selectedUserIds);
+      const { error: teacherRemoveError } = await supabase.from("teacher").delete().in("user_id", selectedUserIds);
       error = teacherRemoveError?.message || null;
     } else if (role === "房東") {
-      const { error: landlordRemoveError } = await supabase.from('landlord').delete().in('user_id', selectedUserIds);
+      const { error: landlordRemoveError } = await supabase.from("landlord").delete().in("user_id", selectedUserIds);
       error = landlordRemoveError?.message || null;
     } else if (role === "管理員") {
-      const { error: adminRemoveError } = await supabase.from('admin').delete().in('user_id', selectedUserIds);
+      const { error: adminRemoveError } = await supabase.from("admin").delete().in("user_id", selectedUserIds);
       error = adminRemoveError?.message || null;
     }
   }
@@ -336,15 +333,13 @@ const updateSingleRoleForSelections = async (role: string, action: "add" | "remo
   await refresh();
 
   if (error) {
-    console.error('Errors updating role:', error);
+    console.error("Errors updating role:", error);
   }
 };
 
 // [Watch]
 watch(searchText, () => {
   currentPage.value = 1;
-
 });
-
 </script>
 <style></style>
