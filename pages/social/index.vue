@@ -23,7 +23,7 @@ const user = useSupabaseUser();
 const toast = useToast();
 
 definePageMeta({
-  name: '租屋點交流平台',
+  name: '租屋點交流區',
 });
 
 onMounted(() => {
