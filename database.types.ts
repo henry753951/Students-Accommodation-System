@@ -209,6 +209,45 @@ export type Database = {
           },
         ]
       }
+      map_rental_property_landlord: {
+        Row: {
+          created_at: string
+          id: number
+          landlord_id: string | null
+          name: string | null
+          rental_property_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          landlord_id?: string | null
+          name?: string | null
+          rental_property_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          landlord_id?: string | null
+          name?: string | null
+          rental_property_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "map_rental_property_landlord_landlord_id_fkey"
+            columns: ["landlord_id"]
+            isOneToOne: false
+            referencedRelation: "landlord"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "map_rental_property_landlord_rental_property_id_fkey"
+            columns: ["rental_property_id"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       map_rental_property_student: {
         Row: {
           created_at: string | null
@@ -331,6 +370,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          id: string
+          name?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
       }
       rental_property: {
         Row: {
@@ -468,6 +525,21 @@ export type Database = {
           department_name?: string
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      share_resource: {
+        Row: {
+          id: string
+          img: string | null
+        }
+        Insert: {
+          id?: string
+          img?: string | null
+        }
+        Update: {
+          id?: string
+          img?: string | null
         }
         Relationships: []
       }

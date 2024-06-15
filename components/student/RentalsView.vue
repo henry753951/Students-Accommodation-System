@@ -24,14 +24,11 @@
       修改房屋資訊
     </NuxtLink>
   </div>
-  <div v-else>
-    <div>尚未新增租屋資訊</div>
-    <NuxtLink
-      :to="'/rentals/new'"
-      class="text-blue-500"
-    >
-      新增租屋資訊
-    </NuxtLink>
+  <div
+    v-else
+    class="m-5 p-5 rounded-lg flex justify-center"
+  >
+    <div>無資料</div>
   </div>
 </template>
 
