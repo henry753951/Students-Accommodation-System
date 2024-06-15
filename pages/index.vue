@@ -68,7 +68,7 @@ const { data: students, refresh } = useAsyncData(async () => {
         </Button>
         <Button
           class="w-full"
-          @click="navigateTo('map_teacher_student')"
+          @click="navigateTo('teacher/students')"
         >
           教授使用 map 學生
         </Button>

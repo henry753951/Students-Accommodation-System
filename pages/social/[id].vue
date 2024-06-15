@@ -10,7 +10,6 @@
       <!-- Main Section -->
       <div class="col-span-12 lg:col-span-9 space-y-6">
         <div class="bg-white rounded-lg shadow-sm p-4">
-
           <!-- Post Input -->
           <div class="relative w-full max-w-md mb-4 mx-auto">
             <input

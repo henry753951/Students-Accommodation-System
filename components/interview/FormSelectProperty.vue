@@ -65,6 +65,24 @@
                   </div>
                 </div>
               </div>
+              <DialogFooter class="grid grid-cols-1 place-self-center pb-4">
+                <div class="flex gap-3">
+                  <p class="text-gray-400">
+                    沒有找到您的租屋點?
+                  </p>
+                  <Icon
+                    class="place-self-center"
+                    size="10px"
+                    name="tabler:arrow-right"
+                  />
+                  <NuxtLink
+                    to="/addRental"
+                    class="text-sky-600 hover:underline underline-offset-1"
+                  >
+                    新增租屋點
+                  </NuxtLink>
+                </div>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>

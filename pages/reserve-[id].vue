@@ -32,7 +32,10 @@
           </PopoverTrigger>
           <PopoverContent class="w-[200px] p-0">
             <Command>
-              <CommandInput class="h-9" placeholder="Search framework..." />
+              <CommandInput
+                class="h-9"
+                placeholder="Search framework..."
+              />
               <CommandEmpty>No framework found.</CommandEmpty>
               <CommandList>
                 <CommandGroup>
@@ -95,7 +98,9 @@
         </div>
         <div class="mb-4">
           <FormField name="date">
-            <FormLabel class="mr-2">選擇日期</FormLabel>
+            <FormLabel class="mr-2">
+              選擇日期
+            </FormLabel>
             <Popover>
               <PopoverTrigger as-child>
                 <Button
@@ -126,7 +131,7 @@
             提交
           </Button>
         </div>
-        {{form}}
+        {{ form }}
       </form>
     </div>
   </div>
@@ -148,13 +153,27 @@ const route = useRoute();
 const type = ref(route.params.id);
 const user = useUser();
 
-const open = ref(false)
-const value = ref('') //選擇表單的value
+const open = ref(false);
+const value = ref(''); //選擇表單的value
+
+
+interface DateObj {
+  year: number;
+  month: number;
+  day: number;
+}
+
+const formatDate = (dateObj: DateObj): string => {
+  const year = dateObj.year;
+  const month = String(dateObj.month).padStart(2, '0');
+  const day = String(dateObj.day).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 
 const { data: house, refresh } = useAsyncData(async () => {
   const { data, error } = await supabase.from("rental_property")
-    .select("*")
+    .select("*");
   if (error) {
     console.error(error);
     return [];
@@ -171,21 +190,12 @@ const form = ref({
   property_phone: '',
   status: '邀請中',
   message: '',
-  date: computed(() => {
-    const dateObj = {
-      calendar: { identifier: 'gregory' },
-      era: 'AD',
-      year: 2024,
-      month: 6,
-      day: 12
-    };
-    return new Date(dateObj.year, dateObj.month - 1, dateObj.day);
-  })
+  date: '',
 });
 
 const fetchAppUser = async () => {
   try {
-    let { data: app_user, error } = await supabase
+    const { data: app_user, error } = await supabase
       .from('app_user')
       .select('*')
       .eq('id', form.value.property_id);
@@ -207,7 +217,7 @@ const SubmitToReserve = async () => {
         "student_id": form.value.student_id as string,
         "user_id": form.value.property_id as string,
         "status": form.value.status as string,
-        "reservation_time": form.value.date as unknown as string,
+        "reservation_time": formatDate(form.value.date as unknown as DateObj),
         "reservation_type": route.params.id as string,
       },
     ])
@@ -228,18 +238,14 @@ const handleSubmit = async () => {
     student_id: ${form.value.student_id}
     property_id: ${form.value.property_id}
     status: ${form.value.status}
-    reservation_time: ${form.value.date}
+    reservation_time: ${formatDate(form.value.date as unknown as DateObj)}
     reservation_type: ${route.params.id}
     
     確定要送出嗎?
   `);
 
   if (confirmation) {
-    //提交表單的邏輯
-    //送出到supabase
-    
     SubmitToReserve();
-    //console.log(rental_id, time);
   } else {
     console.log(confirmation);
   }

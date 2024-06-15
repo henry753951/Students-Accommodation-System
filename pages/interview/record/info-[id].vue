@@ -1,11 +1,11 @@
 <template>
   <div
     v-if="records"
-    class="flex justify-center"
+    class="flex justify-center container"
   >
     <div
       v-if="done"
-      class="w-2/3 grid grid-cols-1 gap-5"
+      class="w-full grid grid-cols-1 gap-5"
     >
       <NuxtLink
         :to="'/interview/record/' + id"
@@ -101,7 +101,7 @@
             </TableBody>
           </Table>
           <Table>
-            <TableCaption>以上為您已填入的訪視資料 | 最後編輯時間 : {{ handleTime(records![0].record_time) }}</TableCaption>
+            <TableCaption>以上為您已填入的訪視資料 | 訪視日期 : {{ handleTime(records![0].record_time) }}</TableCaption>
             <TableHeader>
               <TableRow />
             </TableHeader>
@@ -130,7 +130,7 @@
         </TabsContent>
         <TabsContent value="safety">
           <Table>
-            <TableCaption>以上為您已填入的訪視資料 | 最後編輯時間 : {{ handleTime(records![0].record_time) }}</TableCaption>
+            <TableCaption>以上為您已填入的訪視資料 | 訪視日期 : {{ handleTime(records![0].record_time) }}</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead class="w-2/6">
@@ -169,7 +169,7 @@
 
         <TabsContent value="routine">
           <Table>
-            <TableCaption>以上為您已填入的訪視資料 | 最後編輯時間 : {{ handleTime(records![0].record_time) }}</TableCaption>
+            <TableCaption>以上為您已填入的訪視資料 | 訪視日期 : {{ handleTime(records![0].record_time) }}</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead class="w-1/6">
@@ -275,13 +275,14 @@ const response_pairs = computed(() => {
 });
 
 const handleTime = (time: string) => {
-  const hour: number = +time.slice(11, 13);
-  if(hour < 12){
-    return time.slice(0, 10) + " / AM" + time.slice(11, 16);
-  }
-  else{
-    return time.slice(0, 10) + " / PM" + time.slice(11, 16);
-  }
+  // const hour: number = +time.slice(11, 13);
+  // if(hour < 12){
+  //   return time.slice(0, 10) + " / AM" + time.slice(11, 16);
+  // }
+  // else{
+  //   return time.slice(0, 10) + " / PM" + time.slice(11, 16);
+  // }
+  return time;
 };
 
 </script>
