@@ -18,15 +18,16 @@
           </CardHeader>
           <CardContent class="grid gap-4 ">
             <InterviewFormInput
-              field-name="StudentID"
-              lable-value="學生學號"
-              place-holder-value="請輸入學生學號"
-            />
-            <InterviewFormInput
               field-name="TeacherName"
               lable-value="老師名字"
               place-holder-value="請輸入指導老師的名字"
             />
+            <InterviewFormInput
+              field-name="StudentID"
+              lable-value="學生學號"
+              place-holder-value="請輸入學生學號"
+            />
+            <InterviewFormDatePicker />
           </CardContent>
         </FormField>  
       
@@ -71,9 +72,6 @@
           v-if="currentStep < 4"
           class="flex gap-5 place-content-end"
         >
-          <InterviewFormShare 
-            :link="modelValue?.RecordLink!"
-          />
           <Button
             :disabled="currentStep === 1"
             type="button"
@@ -403,9 +401,6 @@
           v-if="currentStep >= 4 && currentStep < 9"
           class="flex gap-5 place-content-end"
         >
-          <InterviewFormShare 
-            :link="modelValue?.RecordLink!"
-          />
           <Button
             type="button"
             variant="outline"
@@ -466,6 +461,7 @@ type initial = {
   LandLordNumber: string,
   PropertyAddress: string,
   Response: JSON,
+  RecordTime: unknown,
   RecordLink: string,
 };
 
@@ -489,6 +485,7 @@ const schemas = [
       .test("teacherName_async_validation","沒有 ${value} 這個老師!", function(value):Promise<boolean>{
         return isValidTeacher(value);
       }),
+    RecordTime: yup.mixed().required('請選擇訪視時間!')
   }),
   yup.object({
     LandLordName: yup.string().required('請輸入房東名字!'),
@@ -579,7 +576,8 @@ function nextStep(values: any){
 const handleSubmit = async (first: any, second: any) => {
   const comfirmation = confirm('確認送出?');
   if(comfirmation){
-  const time = new Date().toISOString();
+  const time = new Date(first.value.RecordTime.year, first.value.RecordTime.month - 1, first.value.RecordTime.day, 8, 0, 0).toISOString();
+  console.log(time);
   SubmitToInterviewRecord(first, second, time);
   }
   else{
@@ -589,6 +587,9 @@ const handleSubmit = async (first: any, second: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:string) => {
+  // const form1 = checkIfValueNull(firstForm.value);
+  // const form2 = checkIfValueNull(secondForm);
+
   const {data: student_user_id} = await supabase
     .from("student")
     .select("*")
@@ -671,7 +672,6 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
       }
       currentStep.value++;
   }
-  
 };
 
 const isValidStudent = async (value: string): Promise<boolean> => {
@@ -726,6 +726,18 @@ const { data: rental_property, pending: isLoading, refresh: refresh } = useAsync
   `);
   return data;
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function checkIfValueNull(form: any){
+  for(const i in form){
+    if(!form[i]){
+      form[i] = '未填寫';
+      console.log(form[i]);
+    }
+  }
+  console.log(form);
+  return null;
+};
 </script>
 
 <style>

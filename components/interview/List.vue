@@ -27,6 +27,7 @@
           class="rounded-lg border"
         >
           <Table>
+            <TableCaption>以上為與你相關的訪視記錄</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead class="w-1/12">
@@ -36,7 +37,7 @@
                   學生名稱
                 </TableHead>
                 <TableHead class="w-2/12">
-                  最後編輯時間
+                  訪視日期
                 </TableHead>
                 <TableHead class="w-7/12">
                   居住地址
@@ -49,10 +50,10 @@
             <TableBody>
               <template
                 v-for="row in paginatedRows"
-                :key="row"
+                :key="row.record_time"
               >
                 <TableRow>
-                  <InterviewTableRow
+                  <InterviewTableRow 
                     :teacher-name="row.teacher?.app_user?.name!"
                     :student-name="row.student?.app_user?.name!"
                     :created-time="handleTime(row.record_time)"
@@ -61,40 +62,49 @@
                     :record-link="row.record_link"
                   />
                   <TableCell class="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger as-child>
-                        <Button
-                          size="xs"
-                          variant="ghost"
-                        >
-                          <Icon name="ri:more-fill" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <NuxtLink :to="'/interview/record/info-' + row.record_link">
-                          <DropdownMenuItem class="cursor-pointer">
-                            確認資料
+                    <Dialog>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                          <Button
+                            size="xs"
+                            variant="ghost"
+                          >
+                            <Icon name="ri:more-fill" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <NuxtLink :to="'/interview/record/info-' + row.record_link">
+                            <DropdownMenuItem class="cursor-pointer">
+                              確認資料
+                            </DropdownMenuItem>
+                          </NuxtLink>
+                          <NuxtLink :to="'/interview/record/' + row.record_link">
+                            <DropdownMenuItem class="cursor-pointer">
+                              編輯
+                            </DropdownMenuItem>
+                          </NuxtLink>
+                          <DialogTrigger class="w-full">
+                            <DropdownMenuItem class="cursor-pointer">
+                              分享
+                            </DropdownMenuItem>
+                          </DialogTrigger>
+                          <DropdownMenuItem
+                            class="cursor-pointer focus:bg-red-500 focus:text-white"
+                            @click="deleteRecord(row.record_link);"
+                          >
+                            刪除
                           </DropdownMenuItem>
-                        </NuxtLink>
-                        <NuxtLink :to="'/interview/record/' + row.record_link">
-                          <DropdownMenuItem class="cursor-pointer">
-                            編輯
-                          </DropdownMenuItem>
-                        </NuxtLink>
-                        <DropdownMenuItem
-                          class="cursor-pointer focus:bg-red-500 focus:text-white"
-                          @click="deleteRecord(row.record_link)"
-                        >
-                          刪除
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <InterviewFormShare :link="row.record_link" />
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               </template>
             </TableBody>
           </Table>
         </div>
+
         <div
           v-else
           class="flex justify-center p-5 rounded-lg border"
@@ -164,6 +174,7 @@ const props = defineProps({
 
 
 const supabase = useSupabaseClient<Database>();
+const app_user = useUser();
 
 const {
   data: records,
@@ -171,17 +182,20 @@ const {
   pending,
   refresh,
 } = useAsyncData("get_record", async () => {
-  const { data } = await supabase.from("interview_record").select("*, student!inner(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId);
+  const { data } = await supabase.from("interview_record").select("*, student!inner(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId).order("record_time", { ascending: true });
   return data;
 });
 
 const handleTime = (time: string) => {
-  const hour: number = +time.slice(11, 13);
-  if (hour < 12) {
-    return time.slice(0, 10) + " / AM" + time.slice(11, 16);
-  } else {
-    return time.slice(0, 10) + " / PM" + time.slice(11, 16);
-  }
+  console.log(time);
+  // const hour: number = +time.slice(11, 13);
+  // if(hour < 12){
+  //   return time.slice(0, 10) + " / AM" + time.slice(11, 16);
+  // }
+  // else{
+  //   return time.slice(0, 10) + " / PM" + time.slice(11, 16);
+  // }
+  return time;
 };
 
 const currentPage = ref(1);
