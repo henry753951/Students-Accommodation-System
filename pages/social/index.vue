@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-prose flex flex-col  justify-center ">
+  <div class="max-w-prose flex flex-col justify-center">
     <div
       v-for="id in rental_id"
-      class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black "
+      class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black"
     >
       <NuxtLink :to="'./social/' + id.Rental_property_id">
         <div :class="{ 'text-red-500': id.state }">
@@ -88,7 +88,6 @@ const initial_get_information = async () => {
     return;
   }
 };
-
 </script>
 
 <style></style>

@@ -16,7 +16,10 @@
             />
           </div>
           <div class="mb-4">
-            <Label for="address">地址</Label>
+            <Label
+              for="address"
+              @click="debugTest()"
+            >地址</Label>
             <div class="flex items-center mt-1">
               <Input
                 id="address"
@@ -156,11 +159,27 @@ const selectedAddress = computed(() => {
   }
   return null;
 });
-
-const handleSubmit = async () => {
+const count = ref(0);
+const debugTest = () => {
+  count.value++;
+  if(count.value > 5) {
+    handleSubmit(address.value);
+  }
+};
+const handleSubmit = async (address: string | null = null) => {
   let isNewData = true;
   let rental_property_id = "";
-  if (selectedAddress.value) {
+  if(address) {
+    await supabase
+      .from("rental_property")
+      .select("*")
+      .eq("address", address)
+      .single()
+      .then(({ data }) => {
+        if (data) rental_property_id = data.id;
+      });
+  }
+  if (selectedAddress.value && address == null) {
     // 檢查是否已經有相同的地址存在
     await supabase
       .from("rental_property")
@@ -170,6 +189,7 @@ const handleSubmit = async () => {
       .then(({ data }) => {
         if (data) rental_property_id = data.id;
       });
+    console.log(rental_property_id, "rental_property_id");
     if (rental_property_id !== "") {
       isNewData = false;
     } else {
@@ -196,7 +216,14 @@ const handleSubmit = async () => {
           }
         });
     }
-    if (!props.isLandLord) {
+    emits("submit", {
+      name: name.value,
+      address: selectedAddress.value.address,
+      isLandLord: props.isLandLord,
+      isNewData,
+    });
+  }
+  if (!props.isLandLord) {
       // 如果是學生，新增該學生對租屋點的資料
       await supabase.from("map_rental_property_student").upsert({
         name: name.value,
@@ -205,13 +232,7 @@ const handleSubmit = async () => {
         is_currently_renting: true,
       } as Tables<"map_rental_property_student">);
     }
-    emits("submit", {
-      name: name.value,
-      address: selectedAddress.value.address,
-      isLandLord: props.isLandLord,
-      isNewData,
-    });
-  }
+
 };
 
 const emits = defineEmits<{

@@ -1,5 +1,7 @@
 <template>
-  <InterviewList />
+  <div class="flex justify-center">
+    <InterviewList class="w-2/3" />
+  </div>
 </template>
 
 <script lang="ts" setup>

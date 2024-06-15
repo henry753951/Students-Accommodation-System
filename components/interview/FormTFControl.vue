@@ -5,9 +5,7 @@
     <FormControl>
       <RadioGroupItem value="是" />
     </FormControl>
-    <FormLabel class="font-normal">
-      是
-    </FormLabel>
+    是
   </Label>
 
   <Label
@@ -16,9 +14,7 @@
     <FormControl>
       <RadioGroupItem value="否" />
     </FormControl>
-    <FormLabel class="font-normal">
-      否
-    </FormLabel>
+    否
   </Label>
 </template>
 

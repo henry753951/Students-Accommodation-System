@@ -452,8 +452,18 @@
 
         <CardFooter
           v-if="currentStep === 7"
-          class="place-content-end"
+          class="place-content-end gap-5"
         >
+          <NuxtLink
+            :to="'/interview/record/info-' + completed_link"
+          >
+            <Button
+              variant="outline"
+              type="button"
+            >
+              確認資料
+            </Button>
+          </NuxtLink>
           <NuxtLink
             to="/interview/record"
           >
@@ -609,6 +619,7 @@ const handleSubmit = async (first: any, second: any) => {
   }
 };
 
+const completed_link = ref('');
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:string) => {
   checkIfValueNull(firstForm.value);
@@ -644,7 +655,7 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
     .eq("address", firstForm.value.PropertyAddress);
 
   if(modelValue?.value?.RecordLink !== 'new'){
-    const { data , error } = await supabase
+    const { data: update , error } = await supabase
       .from("interview_record")
       .update({
         "student_id": student_user_id![0].user_id,
@@ -669,10 +680,11 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
         });
         return;
       }
+      completed_link.value = update![0].record_link;
       currentStep.value++;
   }
   else{
-    const { data , error } = await supabase
+    const { data: insert , error } = await supabase
       .from("interview_record")
       .insert({
         "student_id": student_user_id![0].user_id,
@@ -695,6 +707,7 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
         });
         return;
       }
+      completed_link.value = insert![0].record_link;
       currentStep.value++;
   }
 };

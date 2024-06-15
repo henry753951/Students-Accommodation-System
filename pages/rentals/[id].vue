@@ -119,9 +119,7 @@
           </FormItem>
         </div>
         <section>
-          <h2>
-            表單內容統整
-          </h2>
+          <h2>表單內容統整</h2>
           <div class="bg-gray-50 p-4 rounded-lg shadow-inner space-y-2">
             <p><strong>地址:</strong> {{ __address__ }}</p>
             <p><strong>描述:</strong> {{ __description__ }}</p>
@@ -144,21 +142,13 @@
 </template>
 
 <script lang="ts" setup>
-import * as z from 'zod';
-import { toTypedSchema } from '@vee-validate/zod';
+import * as z from "zod";
+import { toTypedSchema } from "@vee-validate/zod";
 import type { Database, Tables, Enums, Json } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 definePageMeta({
-  name: '租屋資訊',
+  name: "租屋資訊",
 });
 const toast = useToast();
 const route = useRoute();
@@ -172,14 +162,14 @@ const __property_attributes__ = ref("");
 const __description__ = ref("");
 const __is_public__ = ref("");
 const subsidy = ref("");
-const sex = ref("");  
+const sex = ref("");
 type rental = {
-  address: string,
-  landlord_id: string,
-  price: number,
-  property_attributes: string,
-  description: string,
-  is_public: boolean,
+  address: string;
+  landlord_id: string;
+  price: number;
+  property_attributes: string;
+  description: string;
+  is_public: boolean;
 };
 const rental_info = ref<rental>();
 const submit_rental_info = ref<rental>();
@@ -191,12 +181,8 @@ onMounted(() => {
   initial_get_information();
 });
 
-
 const initial_get_information = async () => {
-  const { data, error } = await supabase
-    .from("rental_property")
-    .select("*,rental_property_info(*)")
-    .eq("id", id.value);
+  const { data, error } = await supabase.from("rental_property").select("*,rental_property_info(*)").eq("id", id.value);
   if (error) {
     toast.toast({
       title: "Error",
@@ -205,14 +191,17 @@ const initial_get_information = async () => {
     });
     return;
   }
-  rental_info.value = data.map(item => ({
-    address: item.address,
-    landlord_id: item.landlord_id,
-    price: item.rental_property_info[0].price,
-    property_attributes: item.rental_property_info[0].property_attributes,
-    description: item.rental_property_info[0].description,
-    is_public: item.rental_property_info[0].is_public,
-  }) as rental)[0];
+  rental_info.value = data.map(
+    (item) =>
+      ({
+        address: item.address,
+        landlord_id: item.landlord_id,
+        price: item.rental_property_info[0].price,
+        property_attributes: item.rental_property_info[0].property_attributes,
+        description: item.rental_property_info[0].description,
+        is_public: item.rental_property_info[0].is_public,
+      }) as rental,
+  )[0];
   // console.log(typeof rental_info.value.property_attributes, "rental_info");
   const DATA = JSON.parse(rental_info.value.property_attributes);
   __property_attributes__.value = DATA.type;
@@ -225,8 +214,7 @@ const initial_get_information = async () => {
   __landlord_id__.value = rental_info.value.landlord_id;
   if (rental_info.value.is_public) {
     __is_public__.value = "公開";
-  }
-  else {
+  } else {
     __is_public__.value = "不公開";
   }
   get_landlord_name(__landlord_id__.value);
@@ -234,10 +222,7 @@ const initial_get_information = async () => {
 };
 
 const get_landlord_name = async (landlord_id: string) => {
-  const { data, error } = await supabase
-    .from("app_user")
-    .select("name")
-    .eq("id", landlord_id);
+  const { data, error } = await supabase.from("app_user").select("name").eq("id", landlord_id);
   console.log(data, "landlord_id");
   if (error) {
     toast.toast({
@@ -255,7 +240,7 @@ const handleSubmit = async () => {
     address: __address__.value,
     landlord_id: __landlord_id__.value,
     price: __price__.value,
-    property_attributes: JSON.stringify({ type: __property_attributes__.value, sex:sex.value,subsidy: subsidy.value,}),
+    property_attributes: JSON.stringify({ type: __property_attributes__.value, sex: sex.value, subsidy: subsidy.value }),
     description: __description__.value,
     is_public: __is_public__.value === "公開" ? true : false,
   };
@@ -276,10 +261,7 @@ const handleSubmit = async () => {
     });
     return;
   }
-  const {data : data2 , error: error2} = await supabase
-    .from("app_user")
-    .select("id")
-    .eq("name", submit_rental_info.value.landlord_id);
+  const { data: data2, error: error2 } = await supabase.from("app_user").select("id").eq("name", submit_rental_info.value.landlord_id);
   if (error2) {
     toast.toast({
       title: "Error",
@@ -308,7 +290,6 @@ const handleSubmit = async () => {
     description: "更新成功",
   });
 };
-
 </script>
 
 <style scoped>
