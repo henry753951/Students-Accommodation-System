@@ -311,7 +311,7 @@ const handleSubmit = async () => {
 
 </script>
 
-<style>
+<style scoped>
 .container {
   background-color: rgb(245, 245, 245);
   border-radius: 10px;

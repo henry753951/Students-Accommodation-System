@@ -1,6 +1,18 @@
 <template>
   <div class="container">
-    <StudentRentalsView :student-user-id="user!.id" />
+    <div class="w-full flex flex-col justify-center">
+      <div class="flex">
+        <Button
+          class="bg-green-600 text-white px-4 py-2 rounded mr-auto dark:bg-green-900"
+          @click="navigateTo('/interview/record/new')"
+        >
+          新增
+        </Button>
+      </div>
+      <div class="mt-3">
+        <StudentRentalsView :student-user-id="user!.id" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -17,4 +29,5 @@ const user = await useAsyncUser();
 
 </script>
 
-<style></style>
+<style scoped>
+</style>
