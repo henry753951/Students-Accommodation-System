@@ -54,7 +54,7 @@ const menu = ref({
   租屋點交流區: { 
     title: '租屋點交流區', 
     href: '/social',
-    description: '瀏覽和查找租屋廣告信息。' 
+    description: '租屋點成員交流。' 
   },
 });
 </script>
