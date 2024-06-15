@@ -16,7 +16,10 @@
             />
           </div>
           <div class="mb-4">
-            <Label for="address">地址</Label>
+            <Label
+              for="address"
+              @click="debugTest()"
+            >地址</Label>
             <div class="flex items-center mt-1">
               <Input
                 id="address"
@@ -62,7 +65,6 @@
         <Button
           :disabled="!selectedAddress || !name"
           @click="handleSubmit"
-          @triple-click="handleSubmit(address)"
         >
           下一步
         </Button>
@@ -157,7 +159,13 @@ const selectedAddress = computed(() => {
   }
   return null;
 });
-
+const count = ref(0);
+const debugTest = () => {
+  count.value++;
+  if(count.value > 5) {
+    handleSubmit(address.value);
+  }
+};
 const handleSubmit = async (address: string | null = null) => {
   let isNewData = true;
   let rental_property_id = "";
