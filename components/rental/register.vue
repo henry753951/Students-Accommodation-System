@@ -159,10 +159,18 @@ const selectedAddress = computed(() => {
 
 const handleSubmit = async () => {
   let isNewData = true;
-
+  let rental_property_id = "";
   if (selectedAddress.value) {
-      // 檢查是否已經有相同的地址存在
-    if (await supabase.from("rental_property").select("*").eq("address", selectedAddress.value.address).single()) {
+    // 檢查是否已經有相同的地址存在
+    await supabase
+      .from("rental_property")
+      .select("*")
+      .eq("address", selectedAddress.value.address)
+      .single()
+      .then(({ data }) => {
+        if (data) rental_property_id = data.id;
+      });
+    if (rental_property_id !== "") {
       isNewData = false;
     } else {
       // 沒有相同的地址存在，新增租屋點
@@ -173,16 +181,29 @@ const handleSubmit = async () => {
         })
         .select("*")
         .single()
-        .then(({ data }) => {
+        .then(async ({ data }) => {
+          if (!data) {
+            return;
+          }
+          rental_property_id = data.id;
           // 如果是房東，新增該房東對租屋點的資料
           if (props.isLandLord) {
-            supabase.from("map_rental_property_landlord").upsert({
+            await supabase.from("map_rental_property_landlord").upsert({
               name: name.value,
-              rental_property_id: data?.id,
+              rental_property_id: rental_property_id,
               landlord_id: user.value?.id,
             });
           }
         });
+    }
+    if (!props.isLandLord) {
+      // 如果是學生，新增該學生對租屋點的資料
+      await supabase.from("map_rental_property_student").upsert({
+        name: name.value,
+        rental_property_id: rental_property_id,
+        student_id: user.value?.id,
+        is_currently_renting: true,
+      } as Tables<"map_rental_property_student">);
     }
     emits("submit", {
       name: name.value,
