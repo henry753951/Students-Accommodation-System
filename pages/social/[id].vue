@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-screen mx-auto" style="max-width: 1100px;">
     <!-- Header -->
-    <header v-if='property_data' class="bg-white shadow-sm px-6 py-4 flex items-center justify-between">
+    <header v-if='property_data' class="bg-card shadow-sm px-6 py-4 flex items-center justify-between">
       <h1 class="text-2xl font-bold">{{ property_data[0].address }}</h1>
     </header>
 
@@ -9,7 +9,7 @@
     <div class="flex-1 grid grid-cols-12 gap-4 p-4">
       <!-- Main Section -->
       <div class="col-span-12 lg:col-span-9 space-y-6">
-        <div class="bg-white rounded-lg shadow-sm p-4">
+        <div class="bg-card rounded-lg shadow-sm p-4">
           <!-- Post Input -->
           <div class="relative w-full max-w-md mb-4 mx-auto">
             <input
@@ -41,7 +41,7 @@
                     <div class="font-semibold">{{ post.app_user?.name }}</div>
                     <div class="text-gray-500 text-sm">{{ post.created_at }}</div>
                   </div>
-                  <p class="text-gray-700 mt-2">{{ post.context }}</p>
+                  <p class="mt-2">{{ post.context }}</p>
                 </div>
               </div>
               <div class="flex justify-end mt-2">
@@ -61,7 +61,7 @@
       <!-- Sidebar -->
       <div class="col-span-12 lg:col-span-3 space-y-6">
         <!-- Members Section -->
-        <div class="bg-white rounded-lg shadow-sm p-4">
+        <div class="bg-card rounded-lg shadow-sm p-4">
           <h2 class="text-lg font-semibold mb-4">租屋點成員</h2>
           <hr class="mb-4 border-gray-300">
           <div class="space-y-4">
