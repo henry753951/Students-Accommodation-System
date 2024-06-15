@@ -1,14 +1,12 @@
 <template>
   <div class="flex justify-center">
-    <div class="grid grid-cols-1 gap-5 w-2/3">
+    <div class="w-full flex flex-col justify-center">
       <div class="flex">
         <NuxtLink
           to="/interview/record/new"
           class="flex-none w-1/2"
         >
-          <Button 
-            class="bg-green-600 text-white px-4 py-2 rounded"
-          >
+          <Button class="bg-green-600 text-white px-4 py-2 rounded">
             新增
           </Button>
         </NuxtLink>
@@ -53,7 +51,7 @@
               :key="row"
             >
               <TableRow>
-                <InterviewTableRow 
+                <InterviewTableRow
                   :teacher-name="row.teacher?.app_user?.name!"
                   :student-name="row.student?.app_user?.name!"
                   :created-time="handleTime(row.record_time)"
@@ -84,7 +82,7 @@
                       </NuxtLink>
                       <DropdownMenuItem
                         class="cursor-pointer focus:bg-red-500 focus:text-white"
-                        @click="deleteRecord(row.record_link);"
+                        @click="deleteRecord(row.record_link)"
                       >
                         刪除
                       </DropdownMenuItem>
@@ -96,7 +94,7 @@
           </TableBody>
         </Table>
       </div>
-      <div class="place-self-center">
+      <div class="mx-auto mt-4">
         <Pagination
           v-slot="{ page }"
           :items-per-page="rowsPerPage"
@@ -109,7 +107,7 @@
             class="flex items-center gap-1"
           >
             <PaginationFirst @click="currentPage = 1" />
-            <PaginationPrev @click="currentPage -=1" />
+            <PaginationPrev @click="currentPage -= 1" />
 
             <template v-for="(item, index) in items">
               <PaginationListItem
@@ -134,8 +132,7 @@
                 :index="index"
               />
             </template>
-
-            <PaginationNext @click="currentPage +=1" />
+            <PaginationNext @click="currentPage += 1" />
             <PaginationLast @click="currentPage = Math.ceil(usersSearched.length / rowsPerPage)" />
           </PaginationList>
         </Pagination>
@@ -147,29 +144,38 @@
 <script lang="ts" setup>
 import type { Database, Tables, Enums } from "~/database.types";
 import Table from "../ui/table/Table.vue";
-import { toast } from '@/components/ui/toast';
+import { toast } from "@/components/ui/toast";
+
+const props = defineProps({
+  studentUserId: {
+    type: String,
+    default: "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4", // 戴延修
+  },
+});
+
+
 
 const supabase = useSupabaseClient<Database>();
 
-const { data: records, error , refresh } =  useAsyncData('get_record' , async() => {
-  const { data } = await supabase
-  .from('interview_record')
-  .select('*, student(app_user(*)), teacher(app_user(*)), rental_property(*)');
-  console.log(data);
+const {
+  data: records,
+  error,
+  refresh,
+} = useAsyncData("get_record", async () => {
+  const { data } = await supabase.from("interview_record").select("*, student(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId);
   return data;
 });
 
 const handleTime = (time: string) => {
   const hour: number = +time.slice(11, 13);
-  if(hour < 12){
+  if (hour < 12) {
     return time.slice(0, 10) + " / AM" + time.slice(11, 16);
-  }
-  else{
+  } else {
     return time.slice(0, 10) + " / PM" + time.slice(11, 16);
   }
 };
 
-const currentPage= ref(1);
+const currentPage = ref(1);
 const rowsPerPage = 8;
 const searchText = ref("");
 
@@ -177,52 +183,44 @@ const searchText = ref("");
 const usersSearched = computed(() => {
   if (!records.value) return [];
   const userSearched = records.value.filter((record) => {
-    if (searchText.value === "") 
-      return true;
-    if (!record.student?.app_user?.name || !record.teacher?.app_user?.name || !record.rental_property?.address) 
-      return false;
+    if (searchText.value === "") return true;
+    if (!record.student?.app_user?.name || !record.teacher?.app_user?.name || !record.rental_property?.address) return false;
     return record.student?.app_user?.name.includes(searchText.value) || record.teacher?.app_user.name.includes(searchText.value) || record.rental_property?.address.includes(searchText.value);
   });
   return userSearched;
 });
 
 const paginatedRows = computed(() => {
-    if (!usersSearched.value) return [];
-    const start = (currentPage.value - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+  if (!usersSearched.value) return [];
+  const start = (currentPage.value - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
   return usersSearched.value.slice(start, end);
 });
 
-watch(searchText, async() =>{
-  const button = document.getElementById('button1');
+watch(searchText, async () => {
+  const button = document.getElementById("button1");
   button?.click();
 });
 
 const deleteRecord = async (recordLink: string) => {
   console.log(recordLink);
-  const {data , error} = await supabase
-    .from('interview_record')
-    .delete()
-    .eq("record_link", recordLink);
+  const { data, error } = await supabase.from("interview_record").delete().eq("record_link", recordLink);
 
-    if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
+  if (error) {
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
     return;
-    }
-    else{
-      toast({
-        title: "Success",
-        description: "刪除成功",
-      });
-    }
+  } else {
+    toast({
+      title: "Success",
+      description: "刪除成功",
+    });
+  }
   await refresh();
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

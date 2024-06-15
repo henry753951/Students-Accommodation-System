@@ -1,8 +1,13 @@
 <template>
   <div class="flex flex-col h-screen">
     <!-- Header -->
-    <header v-if = 'main_data' class="bg-white shadow-sm px-6 py-4 flex items-center justify-between">
-      <h1 class="text-2xl font-bold">{{ main_data[0].address }}</h1>
+    <header
+      v-if="main_data"
+      class="bg-white shadow-sm px-6 py-4 flex items-center justify-between"
+    >
+      <h1 class="text-2xl font-bold">
+        {{ main_data[0].address }}
+      </h1>
     </header>
 
     <!-- Main Content -->
@@ -10,7 +15,6 @@
       <!-- Main Section -->
       <div class="col-span-9 space-y-6">
         <div class="bg-white rounded-lg shadow-sm p-4">
-
           <!-- Post Input -->
           <div class="relative w-full max-w-md mb-4">
             <input
@@ -18,14 +22,25 @@
               type="text"
               placeholder="Say something..."
               class="pl-10 pr-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button @click="publishPost" class="absolute right-3 top-1/2 transform -translate-y-1/2">Post</button>
+            >
+            <button
+              class="absolute right-3 top-1/2 transform -translate-y-1/2"
+              @click="publishPost"
+            >
+              Post
+            </button>
           </div>
 
           <!-- Announcements -->
-          <h2 class="text-lg font-semibold mb-4">貼文</h2>
+          <h2 class="text-lg font-semibold mb-4">
+            貼文
+          </h2>
           <div class="space-y-4">
-            <div class="flex items-start space-x-4" v-for="(post, index) in main_data" :key="index">
+            <div
+              v-for="(post, index) in main_data"
+              :key="index"
+              class="flex items-start space-x-4"
+            >
               <!-- User Avatar -->
               <Avatar class="bg-slate-200 mr-3">
                 <AvatarImage
@@ -37,9 +52,13 @@
               <!-- Post Content -->
               <div class="flex-1">
                 <div class="flex items-center justify-between">
-                  <div class="text-gray-500 text-sm">{{ post.created_at }}</div>
+                  <div class="text-gray-500 text-sm">
+                    {{ post.created_at }}
+                  </div>
                 </div>
-                <p class="text-gray-700">{{ post.context }}</p>
+                <p class="text-gray-700">
+                  {{ post.context }}
+                </p>
               </div>
             </div>
           </div>

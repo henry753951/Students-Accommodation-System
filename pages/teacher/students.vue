@@ -37,7 +37,7 @@ definePageMeta({
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 
-const { data: students, refresh } = useAsyncData("student", async () => {
+const { data: students, refresh } = await useAsyncData("student", async () => {
   const user = await useAsyncUser();
   if (!user.value) {
     return [];
