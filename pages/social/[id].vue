@@ -44,12 +44,18 @@
                   <p class="mt-2">{{ post.context }}</p>
                 </div>
               </div>
-              <div class="flex justify-end mt-2">
+              <div class="flex justify-end mt-2 space-x-2">
                 <Button
                   class="bg-red-400 text-white px-4 py-2 rounded"
                   @click="deletePost(post.id, post.created_by ? post.created_by : 'null')"
                 >
                   刪除
+                </Button>
+                <Button
+                  class="bg-red-400 text-white px-4 py-2 rounded"
+                  @click="reportPost()"
+                >
+                  檢舉
                 </Button>
               </div>
               <hr class="my-4 border-gray-300" v-if="post_data && postIndex < post_data.length - 1">
@@ -88,9 +94,11 @@
 
 <script setup lang="ts">
 import type { Database, Tables, Enums, Json } from "~/database.types";
+import { useToast } from "~/components/ui/toast/use-toast";
 const supabase = useSupabaseClient<Database>();
 const user = useSupabaseUser();
 const route = useRoute();
+const toast = useToast();
 const current_property_id = ref(route.params.id);
 
 definePageMeta({
@@ -190,6 +198,13 @@ const deletePost = async (postId: string, created_by:string) => {
     window.alert('不能刪除別人的留言');
   }
 };
+
+//檢舉貼文
+const reportPost = async () => {
+  window.alert('檢舉已送出');
+  return;
+};
+
 </script>
 
 <style scoped>
