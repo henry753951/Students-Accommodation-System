@@ -29,7 +29,7 @@
         </TabsTrigger>
       </TabsList>
       <TabsContent value="visit-records">
-        <InterviewList />
+        <InterviewList :student-user-id="student_id" />
       </TabsContent>
       <TabsContent value="rental-points">
         <!-- 租屋點內容 -->
@@ -49,7 +49,7 @@ definePageMeta({
   name: "學生資料",
 });
 
-const student_id = useRoute().params.id;
+const student_id = useRoute().params.id as string;
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 

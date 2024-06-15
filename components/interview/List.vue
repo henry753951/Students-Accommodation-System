@@ -2,14 +2,12 @@
   <div class="flex justify-center">
     <div class="w-full flex flex-col justify-center">
       <div class="flex">
-        <NuxtLink
-          to="/interview/record/new"
-          class="flex-none w-1/2"
+        <Button
+          class="bg-green-600 text-white px-4 py-2 rounded mr-auto dark:bg-green-900"
+          @click="navigateTo('/interview/record/new')"
         >
-          <Button class="bg-green-600 text-white px-4 py-2 rounded">
-            新增
-          </Button>
-        </NuxtLink>
+          新增
+        </Button>
         <Label class="flex-none w-[40px] place-content-center text-sm">搜尋</Label>
         <div class="flex-strech w-1/2">
           <Input
@@ -19,123 +17,133 @@
           />
         </div>
       </div>
-      <div class="place-self-strech">
+      <div class="mt-3">
         <Skeleton
-          v-if="records?.length === 0"
-          class="h-[50px]"
+          v-if="pending"
+          class="h-[50px] rounded-lg border"
         />
-        <Table v-if="records?.length !== 0">
-          <TableCaption>以上為與你相關的訪視記錄</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead class="w-1/12">
-                老師名稱
-              </TableHead>
-              <TableHead class="w-1/12">
-                學生名稱
-              </TableHead>
-              <TableHead class="w-2/12">
-                最後編輯時間
-              </TableHead>
-              <TableHead class="w-7/12">
-                居住地址
-              </TableHead>
-              <TableHead class="w-1/12 text-right">
-                操作
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <template
-              v-for="row in paginatedRows"
-              :key="row"
-            >
-              <TableRow>
-                <InterviewTableRow
-                  :teacher-name="row.teacher?.app_user?.name!"
-                  :student-name="row.student?.app_user?.name!"
-                  :created-time="handleTime(row.record_time)"
-                  :location="row.rental_property?.address!"
-                  :property-link="row.property_id!"
-                  :record-link="row.record_link"
-                />
-                <TableCell class="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger as-child>
-                      <Button
-                        size="xs"
-                        variant="ghost"
-                      >
-                        <Icon name="ri:more-fill" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <NuxtLink :to="'/interview/record/info-' + row.record_link">
-                        <DropdownMenuItem class="cursor-pointer">
-                          確認資料
-                        </DropdownMenuItem>
-                      </NuxtLink>
-                      <NuxtLink :to="'/interview/record/' + row.record_link">
-                        <DropdownMenuItem class="cursor-pointer">
-                          編輯
-                        </DropdownMenuItem>
-                      </NuxtLink>
-                      <DropdownMenuItem
-                        class="cursor-pointer focus:bg-red-500 focus:text-white"
-                        @click="deleteRecord(row.record_link)"
-                      >
-                        刪除
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            </template>
-          </TableBody>
-        </Table>
-      </div>
-      <div class="mx-auto mt-4">
-        <Pagination
-          v-slot="{ page }"
-          :items-per-page="rowsPerPage"
-          :total="usersSearched.length"
-          :sibling-count="1"
-          show-edges
+        <div
+          v-if="records?.length !== 0"
+          class="rounded-lg border"
         >
-          <PaginationList
-            v-slot="{ items }"
-            class="flex items-center gap-1"
-          >
-            <PaginationFirst @click="currentPage = 1" />
-            <PaginationPrev @click="currentPage -= 1" />
-
-            <template v-for="(item, index) in items">
-              <PaginationListItem
-                v-if="item.type === 'page'"
-                :key="index"
-                v-model="currentPage"
-                :value="item.value"
-                as-child
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead class="w-1/12">
+                  老師名稱
+                </TableHead>
+                <TableHead class="w-1/12">
+                  學生名稱
+                </TableHead>
+                <TableHead class="w-2/12">
+                  最後編輯時間
+                </TableHead>
+                <TableHead class="w-7/12">
+                  居住地址
+                </TableHead>
+                <TableHead class="w-1/12 text-right">
+                  操作
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <template
+                v-for="row in paginatedRows"
+                :key="row"
               >
-                <Button
-                  :id="'button' + item.value"
-                  class="w-10 h-10 p-0"
-                  :variant="item.value === page ? 'default' : 'outline'"
-                  @click="currentPage = item.value"
+                <TableRow>
+                  <InterviewTableRow
+                    :teacher-name="row.teacher?.app_user?.name!"
+                    :student-name="row.student?.app_user?.name!"
+                    :created-time="handleTime(row.record_time)"
+                    :location="row.rental_property?.address!"
+                    :property-link="row.property_id!"
+                    :record-link="row.record_link"
+                  />
+                  <TableCell class="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger as-child>
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                        >
+                          <Icon name="ri:more-fill" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <NuxtLink :to="'/interview/record/info-' + row.record_link">
+                          <DropdownMenuItem class="cursor-pointer">
+                            確認資料
+                          </DropdownMenuItem>
+                        </NuxtLink>
+                        <NuxtLink :to="'/interview/record/' + row.record_link">
+                          <DropdownMenuItem class="cursor-pointer">
+                            編輯
+                          </DropdownMenuItem>
+                        </NuxtLink>
+                        <DropdownMenuItem
+                          class="cursor-pointer focus:bg-red-500 focus:text-white"
+                          @click="deleteRecord(row.record_link)"
+                        >
+                          刪除
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              </template>
+            </TableBody>
+          </Table>
+        </div>
+        <div
+          v-else
+          class="flex justify-center p-5 rounded-lg border"
+        >
+          <p>目前沒有任何訪視記錄</p>
+        </div>
+        <div class="mt-4 flex justify-center">
+          <Pagination
+            v-slot="{ page }"
+            :items-per-page="rowsPerPage"
+            :total="usersSearched.length"
+            :sibling-count="1"
+            show-edges
+          >
+            <PaginationList
+              v-slot="{ items }"
+              class="flex items-center gap-1"
+            >
+              <PaginationFirst @click="currentPage = 1" />
+              <PaginationPrev @click="currentPage -= 1" />
+
+              <template v-for="(item, index) in items">
+                <PaginationListItem
+                  v-if="item.type === 'page'"
+                  :key="index"
+                  v-model="currentPage"
+                  :value="item.value"
+                  as-child
                 >
-                  {{ item.value }}
-                </Button>
-              </PaginationListItem>
-              <PaginationEllipsis
-                v-else
-                :key="item.type"
-                :index="index"
-              />
-            </template>
-            <PaginationNext @click="currentPage += 1" />
-            <PaginationLast @click="currentPage = Math.ceil(usersSearched.length / rowsPerPage)" />
-          </PaginationList>
-        </Pagination>
+                  <Button
+                    :id="'button' + item.value"
+                    class="w-10 h-10 p-0"
+                    :variant="item.value === page ? 'default' : 'outline'"
+                    @click="currentPage = item.value"
+                  >
+                    {{ item.value }}
+                  </Button>
+                </PaginationListItem>
+                <PaginationEllipsis
+                  v-else
+                  :key="item.type"
+                  :index="index"
+                />
+              </template>
+              <PaginationNext @click="currentPage += 1" />
+              <PaginationLast @click="currentPage = Math.ceil(usersSearched.length / rowsPerPage)" />
+            </PaginationList>
+          </Pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -160,9 +168,10 @@ const supabase = useSupabaseClient<Database>();
 const {
   data: records,
   error,
+  pending,
   refresh,
 } = useAsyncData("get_record", async () => {
-  const { data } = await supabase.from("interview_record").select("*, student(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId);
+  const { data } = await supabase.from("interview_record").select("*, student!inner(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId);
   return data;
 });
 
