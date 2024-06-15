@@ -8,9 +8,18 @@
         <div class="pb-1">
           <Dialog>
             <DialogTrigger as-child>
-              <Button variant="outline">
+              <Button 
+                variant="outline"
+                :disabled="app_user?.roles.includes('student') !== true"
+              >
                 選擇租屋點
               </Button>
+              <DialogDescription
+                v-if="app_user?.roles.includes('student') !== true"
+                class="pt-3"
+              >
+                只有學生可以選擇租屋點
+              </DialogDescription>
             </DialogTrigger>
             <DialogContent class="sm:max-w-[800px] grid-rows-[auto_minmax(0,1fr)_auto] p-0 max-h-[90dvh]">
               <DialogHeader class="p-6 pb-0">
@@ -22,7 +31,7 @@
               <div class="grid gap-4 py-4 overflow-y-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div
-                    v-for="property in rentals"
+                    v-for="property in rentalProperty"
                     :key="property.id"
                     class="mb-6"
                   >
@@ -122,22 +131,13 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
-const supabase = useSupabaseClient<Database>();
 const app_user = useUser();
 type rental = Database["public"]['Tables']["rental_property"]["Row"];
 
 defineProps({
-  rentalProperty: {type: Object as PropType<rental[]>, required: true},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rentalProperty: {type: Object as any, required: true},
 });
-
-const { data: rentals, pending } = await useAsyncData("map_rental_property_student", async () => {
-  const { data, error } = await supabase.from("map_rental_property_student").select("*, rental_property!inner(*)").eq("student_id", app_user.value!.id);
-  if (error) {
-    throw error;
-  }
-  return data;
-});
-
 </script>
 
 <style>
