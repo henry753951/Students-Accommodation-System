@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
+  <div class="p-6 flex items-center justify-center">
     <div class="max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
         預約列表

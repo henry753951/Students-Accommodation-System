@@ -10,36 +10,39 @@ export default async () => {
     userStore.setUser(null);
     return a_user;
   }
-  await supabase
-    .from("app_user")
-    .select("*, student(*), teacher(*), landlord(*),admin(*)")
-    .eq("id", user.value.id)
-    .single()
-    .then(({ data: user_data, error }) => {
-      if (error || !user_data) {
-        userStore.setUser(null);
-        return;
-      }
-      userStore.setUser({
-        roles: [],
-        id: user_data.id,
-        name: user_data.name,
-        email: user_data.email,
-        phone: user_data.phone,
+  if (import.meta.server) {
+    const p = supabase
+      .from("app_user")
+      .select("*, student(*), teacher(*), landlord(*),admin(*)")
+      .eq("id", user.value.id)
+      .single()
+      .then(({ data: user_data, error }) => {
+        if (error || !user_data) {
+          userStore.setUser(null);
+          return;
+        }
+        userStore.setUser({
+          roles: [],
+          id: user_data.id,
+          name: user_data.name,
+          email: user_data.email,
+          phone: user_data.phone,
+        });
+        if (user_data.student) {
+          userStore.user!.roles.push("student");
+        }
+        if (user_data.teacher) {
+          userStore.user!.roles.push("teacher");
+        }
+        if (user_data.landlord) {
+          userStore.user!.roles.push("landlord");
+        }
+        if (user_data.admin) {
+          userStore.user!.roles.push("admin");
+        }
       });
-      if (user_data.student) {
-        userStore.user!.roles.push("student");
-      }
-      if (user_data.teacher) {
-        userStore.user!.roles.push("teacher");
-      }
-      if (user_data.landlord) {
-        userStore.user!.roles.push("landlord");
-      }
-      if (user_data.admin) {
-        userStore.user!.roles.push("admin");
-      }
-    });
 
-    return a_user;
+    await p;
+  }
+  return a_user;
 };
