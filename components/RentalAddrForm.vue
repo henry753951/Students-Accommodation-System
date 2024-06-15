@@ -47,8 +47,6 @@ const landlordName = defineModel('landlordName', { type: String, default: '' });
 
 </script>
 
-<script type='text/javascript' src='https://embedmaps.com/google-maps-authorization/script.js?id=fd0331e753ea23f614360b12d394a6b01ef82ce6'></script>
-
 <style scoped>
 /* Add any additional styling here */
-</script> <iframe width="520" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" id="gmap_canvas" src="https://maps.google.com/maps?width=520&amp;height=400&amp;hl=en&amp;q=%7BStreet%7D%20%7Bthis_city%7D+()&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe> <a href='https://www.versicherungen.at/unfallversicherung-rechner/'>private Unfallversicherung</a>
+</style>

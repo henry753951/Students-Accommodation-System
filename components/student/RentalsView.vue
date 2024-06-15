@@ -7,7 +7,7 @@
     v-for="property in rentals"
     v-else-if="rentals?.length !== 0"
     :key="property.id"
-    class="m-5 p-5 rounded-lg"
+    class="m-5 p-5 rounded-lg bg-background shadow-md flex justify-between items-center dark:bg-zinc-900"
   >
     <div :class="{ 'text-red-500': property.is_currently_renting }">
       <span v-if="property.is_currently_renting">租賃中</span>
