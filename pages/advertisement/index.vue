@@ -83,11 +83,10 @@
                 <div class="text-lg font-semibold text-green-600">
                   {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : '尚無價位' }}
                 </div>
-                {{property.address}}
                 <ReservationInviteDrawer 
                   v-if="user"
                   v-model:inviter="user.id"
-                  v-model:invitee="ReserveType"
+                  v-model:invitee="property.landlord_id"
                   v-model:reservation_type="ReserveType"
                   v-model:propertyId="property.id"
                 />
@@ -111,7 +110,8 @@ const supabase = useSupabaseClient<Database>();
 import { watchOnce } from '@vueuse/core'
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
-
+const ReserveType = ref('rental')
+const user = useUser();
 const emblaMainApi = ref<CarouselApi>()
 const emblaThumbnailApi = ref<CarouselApi>()
 const selectedIndex = ref(0)

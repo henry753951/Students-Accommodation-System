@@ -2,8 +2,7 @@
   <div class="p-6 flex items-center justify-center">
     <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
-        預約表單 - {{ reservationType }}
-        {{property_id}}
+        預約表單 - {{ reservation_type }} 
       </h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
@@ -146,7 +145,6 @@
             提交
           </Button>
         </div>
-        {{form}}
       </form>
     </div>
   </div>
@@ -194,7 +192,7 @@ const formatDate = (dateObj: DateObj): string => {
 const { data: house, refresh } = useAsyncData(async () => {
   const { data, error } = await supabase.from("map_rental_property_student")
   .select("*, rental_property!inner(*)")
-  .eq("student_id", props.inviteeId);
+  .eq("student_id", props.invitee);
   if (error) {
     console.error(error);
     return [];
