@@ -10,12 +10,12 @@
             <DialogTrigger as-child>
               <Button 
                 variant="outline"
-                :disabled="app_user?.roles.includes('student') !== true"
+                :disabled="app_user?.roles.includes('student') !== true && app_user?.roles.includes('admin') !== true"
               >
                 選擇租屋點
               </Button>
               <DialogDescription
-                v-if="app_user?.roles.includes('student') !== true"
+                v-if="app_user?.roles.includes('student') !== true && app_user?.roles.includes('admin') !== true"
                 class="pt-3"
               >
                 只有學生可以選擇租屋點
