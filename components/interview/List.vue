@@ -1,8 +1,8 @@
 <template>
   <div class="flex justify-center">
     <div class="w-full flex flex-col justify-center">
-      <div class="flex">
-        <div class="grid grid-cols-6 w-[500px]">
+      <div class="flex gap-5">
+        <div class="mr-auto space-x-3">
           <Button
             class="bg-green-600 text-white px-4 py-2 rounded mr-auto dark:bg-green-900"
             @click="navigateTo('/interview/record/new')"

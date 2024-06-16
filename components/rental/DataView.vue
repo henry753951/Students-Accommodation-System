@@ -4,11 +4,12 @@
     class="h-[50px] rounded-lg border"
   />
   <template v-else-if="rentals && rentals.length > 0">
-    <div class="flex flex-wrap gap-5 justify-center">
+    <div class="flex flex-wrap gap-5">
       <div
         v-for="rental in rentals"
         :key="rental.id"
-        class="rounded-lg flex md:flex-col gap-5 bg-card shadow-lg overflow-hidden"
+        class="rounded-lg flex md:flex-col gap-5 bg-card shadow-lg overflow-hidden md:w-[400px]"
+        @click="navigateTo(`/rentals/edit/${rental.rental_property_id}`)"
       >
         <img
           class="md:w-full w-1/3 h-64 object-cover"

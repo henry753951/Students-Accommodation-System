@@ -1,6 +1,5 @@
 <template>
   <form
-    class="space-y-6 border-2 shadow-lg p-4 w-1/2"
     @submit="onSubmit"
   >
     <FormField

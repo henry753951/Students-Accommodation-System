@@ -1,7 +1,7 @@
 <template>
-  <Drawer class="">
+  <Drawer>
     <DrawerTrigger>
-      <Button>
+      <Button class="rounded">
         預約
       </Button>
     </DrawerTrigger>
@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
 
-const user = useUser();
 const inviter = defineModel('inviter', { type: String, default: '' });
 const invitee = defineModel('invitee', { type: String, default: '' });
 const reservation_type = defineModel('reservation_type', { type: String, default: '' }); 
