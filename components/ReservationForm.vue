@@ -133,7 +133,6 @@
           >
             提交
           </Button>
-          {{ form }}
         </div>
       </form>
     </div>
@@ -219,7 +218,7 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
-let { data: auto_rental_property, error } = await supabase
+let { data: auto_rental_property } = await supabase
   .from('rental_property')
   .select('address')
   .eq('id', props.property_id);
