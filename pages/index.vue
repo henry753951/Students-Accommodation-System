@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import type { Database } from '~/database.types';
 import { onMounted, ref } from 'vue';
 definePageMeta({
