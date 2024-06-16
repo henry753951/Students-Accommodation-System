@@ -37,19 +37,19 @@ const { data: records } =  useAsyncData('record', async() =>{
   .eq('record_link', id.value);
 
   const student_number = ref<string>('');
-  if(isStudent()){
-    const {data: student, error} = await supabase
+  
+  if(id.value.length > 4){
+    const { data: student } = await supabase
     .from('student')
     .select('*')
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    .eq('user_id', app_user.value?.id!);
+    .eq('user_id', id.value.slice(4));
 
     student_number.value = student![0].student_number!;
   }
 
   if(error){
     data = {
-      StudentID: isStudent() ? student_number.value : '',
+      StudentID: student_number.value,
       TeacherName: isTeacher() ? app_user.value?.name : '',
       RecordLink:'new',
     };
