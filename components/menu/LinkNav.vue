@@ -54,7 +54,7 @@ const menu_ = ref({
       title: '我的租屋點',
       href: '/rentals',
       description: '查看和管理您的租屋點信息。',
-      roles: null
+      roles: ['student']
     },
     {
       title: '預約看屋',
@@ -84,6 +84,9 @@ const menu = computed(() => {
           value.filter((item) => {
             if (item.roles === null) {
               return true;
+            }
+            if (user.value === null) {
+              return false;
             }
             return item.roles.some((role) => user.value!.roles.includes(role));
           }),
