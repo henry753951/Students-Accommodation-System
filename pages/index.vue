@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import type { Database } from '~/database.types';
+import { onMounted, ref } from 'vue';
 definePageMeta({
   name: "首頁",
 });
@@ -12,6 +14,8 @@ const { data: test } = await useAPI("/api/test", {
     return [];
   },
 });
+
+
 
 const query_school_number = ref("a1105534");
 const { data: students, refresh } = useAsyncData(async () => {
@@ -37,10 +41,7 @@ const { data: students, refresh } = useAsyncData(async () => {
             Login
           </Button>
         </div>
-        <div
-          v-else
-          class="flex items-center space-x-4"
-        >
+        <div v-else class="flex items-center space-x-4">
           {{ user }}
           <span class="text-gray-700 font-semibold">{{ user.name }}</span>
           <Button @click="navigateTo('auth/logout')">
@@ -60,60 +61,39 @@ const { data: students, refresh } = useAsyncData(async () => {
         </div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Button
-          class="w-full"
-          @click="navigateTo('test_student_rental')"
-        >
+        <Button class="w-full" @click="navigateTo('test_student_rental')">
           要先確認身分組 Student 新增租屋點
         </Button>
-        <Button
-          class="w-full"
-          @click="navigateTo('teacher/students')"
-        >
+        <Button class="w-full" @click="navigateTo('teacher/students')">
           教授使用 map 學生
         </Button>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <NuxtLink
-          to="/addRental"
-          class="w-full sm:w-auto"
-        >
+        <NuxtLink to="/addRental" class="w-full sm:w-auto">
           <Button class="w-full">
             Add Rental page
           </Button>
         </NuxtLink>
-        <NuxtLink
-          to="/student_rental/Rental_student"
-          class="w-full sm:w-auto"
-        >
+        <NuxtLink to="/student_rental/Rental_student" class="w-full sm:w-auto">
           <Button class="w-full">
             test_student_rental page
           </Button>
         </NuxtLink>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <NuxtLink
-          to="/social"
-          class="w-full sm:w-auto"
-        >
+        <NuxtLink to="/social" class="w-full sm:w-auto">
           <Button class="w-full">
             租屋點交流平台
           </Button>
         </NuxtLink>
-        <NuxtLink
-          to="/advertisement"
-          class="w-full sm:w-auto"
-        >
+        <NuxtLink to="/advertisement" class="w-full sm:w-auto">
           <Button class="w-full">
             廣告頁面
           </Button>
         </NuxtLink>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <NuxtLink
-          to="/social"
-          class="w-full sm:w-auto"
-        >
+        <NuxtLink to="/social" class="w-full sm:w-auto">
           <Button class="w-full">
             TAB
           </Button>
@@ -130,13 +110,15 @@ const { data: students, refresh } = useAsyncData(async () => {
         </Button>
         <p>Result:</p>
         <div class="flex gap-2 flex-wrap">
-          <span
-            v-for="student in students"
-            :key="student.id"
-          >
+          <span v-for="student in students" :key="student.id">
             {{ student.name }}[{{ student.student!.student_number }}] </span>
         </div>
       </div>
     </div>
+    
   </div>
 </template>
+
+<style>
+
+</style>
