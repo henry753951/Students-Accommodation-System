@@ -23,6 +23,7 @@
             v-model="invitee_name as string"
             type="tel"
             class="w-full border border-gray-300 rounded mt-1"
+            readonly
             required
           />
         </div>
@@ -61,7 +62,7 @@
                 class="h-9"
                 placeholder="搜尋地址..."
               />
-              <CommandEmpty>沒有找到該地址</CommandEmpty>
+              <CommandEmpty>無地址或沒有找到該地址</CommandEmpty>
               <CommandList>
                 <CommandGroup>
                   <CommandItem
@@ -127,12 +128,14 @@
           </FormField>
         </div>
         <div class="text-center">
-          <Button
-            type="submit"
-            class="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            提交
-          </Button>
+          <DrawerClose>
+            <Button
+              type="submit"
+              class="bg-green-500 text-white px-4 py-2 rounded"
+            >
+              提交
+            </Button>
+          </DrawerClose>
         </div>
       </form>
     </div>
@@ -218,10 +221,35 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
+let { data: auto_rental_property } = await supabase
+  .from('rental_property')
+  .select('address')
+  .eq('id', props.property_id);
+
+  if (auto_rental_property === null) {
+    auto_rental_property = [];
+}
+          
+const handleSubmit = async () => {
+  const confirmation = confirm(`
+    確定要送出嗎?
+  `);
+
+  if (confirmation) {
+    if(props.reservation_type !== '預約看房'){
+      SubmitToReserve();
+    }
+    else{
+      SubmitToReserveRental();
+    }
+  } else {
+    console.log(confirmation);
+  }
+};
 
 const form = ref({
   student_id: computed(() => props.inviter || ''), // 使用 computed 來動態獲取 user.id
-  property_addr: '',
+  property_addr: props.property_id ? auto_rental_property![0].address : '',
   property_id: computed(() => props.property_id || ''),
   property_name: invitee_name,
   property_phone: '',
@@ -251,30 +279,56 @@ const SubmitToReserve = async () => {
   if (error) {
     toast.toast({
       title: "Error",
-      description: error.message,
+      description: ifTimeError(error.message),
       variant: "destructive",
     });
     return 'error';
+  }else{
+    toast.toast({
+      title: "Success",
+      description: "預約成功",
+    });
   }
 };
 
-
-const { data: auto_rental_property, error } = await supabase
-  .from('rental_property')
-  .select('address')
-  .eq('id', props.property_id);
-          
-const handleSubmit = async () => {
-  const confirmation = confirm(`
-    確定要送出嗎?
-  `);
-
-  if (confirmation) {
-    SubmitToReserve();
-  } else {
-    console.log(confirmation);
+const SubmitToReserveRental = async () => {
+  console.log("BINHAN SO BIG");
+  const { data, error } = await supabase
+    .from("reservations")
+    .insert([
+      {
+        "student_id": props.inviter as string,
+        "user_id": props.invitee as string,
+        "status": form.value.status as string,
+        "reservation_time": formatDate(form.value.date as unknown as DateObj),
+        "reservation_type": props.reservation_type as string,
+        "reservation_addr": auto_rental_property[0].address  as string,
+        "message": form.value.message as string,
+      },
+    ])
+    .select("*");
+  if (error) {
+    toast.toast({
+      title: "Error",
+      description: ifTimeError(error.message),
+      variant: "destructive",
+    });
+    return 'error';
+  }else{
+    toast.toast({
+      title: "Success",
+      description: "預約成功",
+    });
   }
 };
+
+function ifTimeError(msg: string){
+  if(msg === 'invalid input syntax for type timestamp: "undefined-undefined-undefined"')
+    return '請選擇日期!';
+  else
+    return msg;
+}
+
 </script>
 
 <style scoped>

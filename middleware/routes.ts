@@ -35,6 +35,6 @@ export default [
   {
     name: "social",
     path: "/social",
-    role: ["admin, student, landlord"],
+    role: ["landlord", "admin", "student"],
   },
 ];

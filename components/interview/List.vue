@@ -31,14 +31,11 @@
             class="border border-gray-300 rounded"
           >
             <SelectTrigger>
-              <SelectValue placeholder="選擇篩選條件" />
+              <SelectValue placeholder="選擇排序條件" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>篩選條件</SelectLabel>
-                <SelectItem value="all">
-                  全部
-                </SelectItem>
                 <SelectItem value="record_time_ascending">
                   訪視日期：低到高
                 </SelectItem>
@@ -74,19 +71,19 @@
             </TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead class="w-2/12">
+                <TableHead class="w-1/12">
                   老師名稱
                 </TableHead>
-                <TableHead class="w-2/12">
+                <TableHead class="w-1/12">
                   學生名稱
                 </TableHead>
-                <TableHead class="w-1/12">
+                <TableHead class="w-2/12">
                   訪視日期
                 </TableHead>
                 <TableHead class="w-2/12">
                   最後編輯時間
                 </TableHead>
-                <TableHead class="w-3/12">
+                <TableHead class="w-4/12">
                   居住地址
                 </TableHead>
                 <TableHead class="w-1/12 text-right">

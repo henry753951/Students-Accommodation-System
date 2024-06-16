@@ -83,7 +83,6 @@
                 <div class="text-lg font-semibold text-green-600">
                   {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : '尚無價位' }}
                 </div>
-                {{property.id}}
                 <ReservationInviteDrawer 
                   v-if="user"
                   v-model:inviter="user.id"

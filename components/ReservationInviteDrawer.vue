@@ -12,11 +12,11 @@
       </DrawerHeader>
       <ScrollArea class="h-full">
         <ReservationForm 
-            :inviter="inviter" 
-            :invitee="invitee" 
-            :reservation_type="reservation_type" 
-            :property_id="propertyId" 
-          />
+          :inviter="inviter" 
+          :invitee="invitee" 
+          :reservation_type="reservation_type" 
+          :property_id="propertyId" 
+        />
       </ScrollArea>
     </DrawerContent>
   </Drawer>
