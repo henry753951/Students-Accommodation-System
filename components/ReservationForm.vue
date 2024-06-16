@@ -3,8 +3,6 @@
     <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
         預約表單 - {{ reservation_type }} 
-        {{inviter_name}}
-        {{invitee_name}}
       </h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
