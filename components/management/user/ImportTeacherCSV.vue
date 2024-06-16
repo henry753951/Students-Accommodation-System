@@ -12,9 +12,9 @@
           {{ description }}
         </DialogDescription>
       </DialogHeader>
-      <div class="mt-4 ">
+      <div class="mt-4">
         <!-- <Button  @change="handleFileUpload">匯入</Button> -->
-        <Input type="file" @change="handleFileUpload" accept=".csv"  class = ""/>
+        <Input type="file" @change="handleFileUpload" accept=".csv" />
       </div>
     </DialogContent>
   </Dialog>
@@ -50,19 +50,19 @@ type department = {
   department_name: string;
   department_code: string;
 };
-type student_import_ = {
+type teacher_import_ = {
   email: string;
   department_uuid: string | undefined;
-  teacher_name: string;
   name: string;
 };
 
 const processCSV = async (data: string) => {
   const rows = data.split('\n');
   const result = rows.map(row => row.split(','));
+  // console.log(result, "result");
   let departments: department[] = [];
   for (let i = 1; i < result.length; i++) {
-    let departmentName = result[i][0];
+    let departmentName = result[i][2];
     let departmentCode = result[i][1];
     let exists = departments.some(department => department.department_name === departmentName && department.department_code === departmentCode);
     if (!exists) {
@@ -74,7 +74,6 @@ const processCSV = async (data: string) => {
   }
 
   departments.pop();
-
   const { data: department_info, error: department_error } = await supabase
     .from('school_department')
     .upsert(
@@ -91,27 +90,25 @@ const processCSV = async (data: string) => {
   }
   // console.log(result, "result");
   result.pop();
-  let student_import: student_import_[] = [];
+  let teacher_import: teacher_import_[] = [];
   const { data: map_department_id, error: department_data_error } = await supabase
     .from('school_department')
     .select('department_name, id')
-  console.log(map_department_id, "map_department_id");
+  console.log(result, "map_department_id");
   for (let i = 1; i < result.length; i++) {
-    let email = result[i][3] + "@mail.nuk.edu.tw";
-    let teacher_name = result[i][2];
-    let student_name = result[i][4];
-    student_import.push({
+    let email = result[i][0];
+    let name = result[i][3];
+    teacher_import.push({
       email: email,
-      department_uuid: map_department_id?.find(department => department.department_name === result[i][0])?.id,
-      teacher_name: teacher_name,
-      name: student_name
+      department_uuid: map_department_id?.find(department => department.department_name === result[i][2])?.id,
+      name: name
     });
   }
   // console.log(student_import, "651651");
   const { data: upsert_data, error: upsert_error } = await supabase
-    .from("studentimport")
+    .from("teacherimport")
     .upsert(
-      student_import,
+      teacher_import,
       {
         ignoreDuplicates: true,
       }
@@ -127,5 +124,5 @@ const processCSV = async (data: string) => {
 </script>
 
 <style scoped>
-  /* 添加一些基本的樣式 */
+/* 添加一些基本的樣式 */
 </style>

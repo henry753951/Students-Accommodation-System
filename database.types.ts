@@ -597,26 +597,31 @@ export type Database = {
       studentimport: {
         Row: {
           department_uuid: string | null
-          email: string | null
-          id: string
+          email: string
           name: string | null
           teacher_name: string | null
         }
         Insert: {
           department_uuid?: string | null
-          email?: string | null
-          id?: string
+          email: string
           name?: string | null
           teacher_name?: string | null
         }
         Update: {
           department_uuid?: string | null
-          email?: string | null
-          id?: string
+          email?: string
           name?: string | null
           teacher_name?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "studentimport_department_uuid_fkey"
+            columns: ["department_uuid"]
+            isOneToOne: false
+            referencedRelation: "school_department"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       teacher: {
         Row: {
@@ -650,6 +655,32 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teacherimport: {
+        Row: {
+          department_uuid: string | null
+          email: string
+          name: string | null
+        }
+        Insert: {
+          department_uuid?: string | null
+          email: string
+          name?: string | null
+        }
+        Update: {
+          department_uuid?: string | null
+          email?: string
+          name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacherimport_department_uuid_fkey"
+            columns: ["department_uuid"]
+            isOneToOne: false
+            referencedRelation: "school_department"
             referencedColumns: ["id"]
           },
         ]
