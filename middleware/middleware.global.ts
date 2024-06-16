@@ -28,6 +28,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return true;
     }
     // 已登入的使用者 role 符合就放行
+    console.log(user.value?.roles, route.role)
     if (user.value && user.value.roles && user.value.roles.some((role) => route.role.includes(role))) {
       return true;
     } else {
