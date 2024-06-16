@@ -70,7 +70,14 @@
                 <div class="text-lg font-semibold text-green-600">
                   {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : '尚無價位' }}
                 </div>
-                <ReservationInviteDrawer v-model:inviter="inviterType"/>
+                {{property.address}}
+                <ReservationInviteDrawer 
+                  v-if="user"
+                  v-model:inviter="user.id"
+                  v-model:invitee="ReserveType"
+                  v-model:reservation_type="ReserveType"
+                  v-model:propertyId="property.id"
+                />
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
                   <NuxtLink :to="'/advertisement/info-' + property.id">
                     詳細
@@ -88,7 +95,8 @@
 import { ref } from 'vue';
 import type { Database, Tables, Enums, Json } from "~/database.types";
 const supabase = useSupabaseClient<Database>();
-const inviterType = ref('老師老師我要加分');
+const user = useUser();
+const ReserveType = ref('預約房東看屋');
 definePageMeta({
   name: "房屋廣告頁面",
 });

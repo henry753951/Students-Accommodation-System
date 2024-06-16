@@ -11,11 +11,12 @@
         <DrawerDescription>填入必要資訊</DrawerDescription>
       </DrawerHeader>
       <ScrollArea class="h-full">
-        <ReservationForm
-          :inviter-id="inviter"
-          :invitee-id="invitee"
-          :reservation_type="reservation_type"
-        />
+        <ReservationForm 
+            :inviter="inviter" 
+            :invitee="invitee" 
+            :reservation_type="reservation_type" 
+            :property_id="propertyId" 
+          />
       </ScrollArea>
     </DrawerContent>
   </Drawer>
@@ -27,6 +28,7 @@ const user = useUser();
 const inviter = defineModel('inviter', { type: String, default: '' });
 const invitee = defineModel('invitee', { type: String, default: '' });
 const reservation_type = defineModel('reservation_type', { type: String, default: '' }); 
+const propertyId = defineModel('propertyId', { type: String, default: '' });
 </script>
 
 <style scoped>

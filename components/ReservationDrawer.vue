@@ -8,7 +8,7 @@
         預約清單
       </Button>
     </DrawerTrigger>
-    <DrawerContent class="w-1/3 h-full absolute left-2/3">
+    <DrawerContent class="w-1/3 h-full left-2/3">
         <DrawerHeader>
           <DrawerTitle>預約清單</DrawerTitle>
           <DrawerDescription>以下是您的預約列表</DrawerDescription>
