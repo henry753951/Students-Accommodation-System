@@ -1,24 +1,25 @@
 <template>
   <div class="p-6 flex items-center justify-center">
-    <div class="max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+    <div class="max-w-4xl w-full bg-card p-6 rounded-lg shadow-lg border ">
       <h2 class="text-2xl font-bold mb-6 text-center">
-        預約列表(學生視角)
+        您送出的預約列表
       </h2>
       <div class="space-y-4">
         <Card
-          v-for="object in reserve_list_student"
+          v-for="(object, index) in reserve_list_student"
+          :key="index"
         >
           <CardHeader>
-            <CardTitle>{{ getUserContactInfo(object.user_id).name }}</CardTitle>
-            <CardDescription>電話:{{getUserContactInfo(object.user_id).phone }}</CardDescription>
+            <CardTitle>{{ getUserContactInfo(object.user_id!).name }} - {{ object.reservation_type }}</CardTitle>
+            <CardDescription>聯絡電話：{{ getUserContactInfo(object.user_id!).phone ? getUserContactInfo(object.user_id!).phone : '無' }}</CardDescription>
           </CardHeader>
           <CardContent>
-            <p>預約時間: {{ object.reservation_time }}</p>
-            <p>預約地點: {{ object.reservation_addr }}</p>
-            <p>更多資訊:{{ object.message }}</p>
-            <p>狀態: {{ object.status }}</p>
+            <p>預約時間：{{ object.reservation_time.split('T')[0] }}</p>
+            <p>預約地點：{{ object.reservation_addr ? object.reservation_addr : '無' }}</p>
+            <p>預約備註：{{ object.message ? object.message : '無' }}</p>
+            <p>預約狀態：{{ object.status }}</p>
           </CardContent>
-          <CardFooter>
+          <!-- <CardFooter>
             <Dialog>
               <DialogTrigger>
                 <Button
@@ -31,17 +32,19 @@
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>預約詳情</DialogTitle>
-                  <DialogDescription>
-                    
-                  </DialogDescription>
+                  <DialogDescription />
                 </DialogHeader>
-                <DialogFooter>
-    
-                </DialogFooter>
+                <DialogFooter />
               </DialogContent>
             </Dialog>
-          </CardFooter>
+          </CardFooter> -->
         </Card>
+        <div
+          v-if="!reserve_list_student?.length"
+          class="text-center text-gray-500"
+        >
+          沒有送出的預約
+        </div>
       </div>
     </div>
   </div>
@@ -82,7 +85,7 @@ const fetchUserContactInfo = async (userId: string) => {
       console.error(error);
       return { name: "未知姓名", phone: "未知電話" };
     }
-    userContactInfo.value[userId] = { name: data.name, phone: data.phone };
+    userContactInfo.value[userId] = { name: data.name!, phone: data.phone! };
   }
   return userContactInfo.value[userId];
 };
