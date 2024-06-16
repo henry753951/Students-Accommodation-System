@@ -38,6 +38,32 @@
               </DialogContent>
             </Dialog>
           </CardFooter> -->
+          <CardFooter>
+            <Badge
+              v-if="object.status === '邀請中'"
+              variant="outline"
+              size="sm"
+              class="border-2 border-sky-600"
+            >
+              {{ object.status }}
+            </Badge>
+            <Badge
+              v-if="object.status === '已拒絕'"
+              variant="outline"
+              size="sm"
+              class="border-2 border-red-600"
+            >
+              {{ object.status }}
+            </Badge>
+            <Badge
+              v-if="object.status === '已接受'"
+              variant="outline"
+              size="sm"
+              class="border-2 border-green-600"
+            >
+              {{ object.status }}
+            </Badge>
+          </CardFooter>
         </Card>
         <div
           v-if="!reserve_list_student?.length"
