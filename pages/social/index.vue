@@ -46,6 +46,25 @@ const initial_get_information = async () => {
     window.alert('請先登入');
     return;
   }
+  else if((user.value.roles.includes("admin")) == true){
+    const { data, error } = await supabase
+      .from("rental_property")
+      .select("id,updated_at,address")
+      .order('updated_at', { ascending: false });
+    if (error) {
+      toast.toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      return data;
+    }
+    properties.value = data.map(item => ({
+      Rental_property_id: item.id,
+      state: true,
+      address: item.address,
+    }));
+  }
   else if((user.value.roles.includes("student")) == true){
     const { data, error } = await supabase
       .from("map_rental_property_student")
@@ -58,7 +77,7 @@ const initial_get_information = async () => {
         description: error.message,
         variant: "destructive",
       });
-      return;
+      return data;
     }
     properties.value = data.map(item => ({
       Rental_property_id: item.rental_property_id,
@@ -78,7 +97,7 @@ const initial_get_information = async () => {
         description: error.message,
         variant: "destructive",
       });
-      return;
+      return data;
     }
     properties.value = data.map(item => ({
       Rental_property_id: item.id,
