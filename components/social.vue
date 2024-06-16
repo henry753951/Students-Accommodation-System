@@ -118,7 +118,12 @@
           </h2>
           <hr class="mb-4 border-gray-300">
           <div class="space-y-4">
-            <h2>房東： {{ landlord?.[0]?.app_user?.name }}</h2>
+            <div v-if= "landlord?.[0]?.landlord_id">
+              <h2>房東： {{ landlord?.[0]?.app_user?.name }}</h2>
+            </div>
+            <div v-else>
+              <h2>房東： 無</h2>
+            </div>
             <!-- Display Members -->
             <div
               v-for="(student, index) in students"
