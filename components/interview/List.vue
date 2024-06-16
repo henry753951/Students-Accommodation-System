@@ -2,12 +2,21 @@
   <div class="flex justify-center">
     <div class="w-full flex flex-col justify-center">
       <div class="flex">
-        <Button
-          class="bg-green-600 text-white px-4 py-2 rounded mr-auto dark:bg-green-900"
-          @click="navigateTo('/interview/record/new')"
-        >
-          新增
-        </Button>
+        <div class="grid grid-cols-6 w-[500px]">
+          <Button
+            class="bg-green-600 text-white px-4 py-2 rounded mr-auto dark:bg-green-900"
+            @click="navigateTo('/interview/record/new')"
+          >
+            新增
+          </Button>
+          <Button
+            v-if="props.studentUserId"
+            class="px-4 py-2 rounded mr-auto "
+            @click="navigateTo('/reserve-interview')"
+          >
+            預約
+          </Button>
+        </div>
         <Label class="flex-none w-[40px] place-content-center text-sm">搜尋</Label>
         <div class="flex-strech w-1/2">
           <Input
@@ -15,6 +24,36 @@
             class=""
             placeholder="老師/學生/居住地址"
           />
+        </div>
+        <div class="w-48 pl-4">
+          <Select
+            v-model="selectedFilter"
+            class="border border-gray-300 rounded"
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="選擇篩選條件" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>篩選條件</SelectLabel>
+                <SelectItem value="all">
+                  全部
+                </SelectItem>
+                <SelectItem value="record_time_ascending">
+                  訪視日期：低到高
+                </SelectItem>
+                <SelectItem value="record_time_descending">
+                  訪視日期：高到低
+                </SelectItem>
+                <SelectItem value="updated_time_ascending">
+                  最後編輯時間：低到高
+                </SelectItem>
+                <SelectItem value="updated_time_descending">
+                  最後編輯時間：高到低
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       <div class="mt-3">
@@ -27,7 +66,12 @@
           class="rounded-lg border"
         >
           <Table>
-            <TableCaption>以上為與你相關的訪視記錄</TableCaption>
+            <TableCaption v-if="props.studentUserId">
+              以上為與該學生相關的訪視記錄
+            </TableCaption>
+            <TableCaption v-else>
+              以上為所有訪視記錄
+            </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead class="w-1/12">
@@ -36,10 +80,13 @@
                 <TableHead class="w-1/12">
                   學生名稱
                 </TableHead>
-                <TableHead class="w-2/12">
+                <TableHead class="w-1/12">
                   訪視日期
                 </TableHead>
-                <TableHead class="w-6/12">
+                <TableHead class="w-2/12">
+                  最後編輯時間
+                </TableHead>
+                <TableHead class="w-4/12">
                   居住地址
                 </TableHead>
                 <TableHead class="w-1/12 text-right">
@@ -52,14 +99,15 @@
             </TableHeader>
             <TableBody>
               <template
-                v-for="row in paginatedRows"
-                :key="row.record_time"
+                v-for="(row, index) in paginatedRows"
+                :key="index"
               >
                 <TableRow>
                   <InterviewTableRow 
                     :teacher-name="row.teacher?.app_user?.name!"
                     :student-name="row.student?.app_user?.name!"
-                    :created-time="handleTime(row.record_time)"
+                    :record-time="handleTime(row.record_time)"
+                    :updated-time="handleTime(row.updated_at!)"
                     :location="row.rental_property?.address!"
                     :property-link="row.property_id!"
                     :record-link="row.record_link"
@@ -169,9 +217,11 @@ import Table from "../ui/table/Table.vue";
 import { toast } from "@/components/ui/toast";
 
 const props = defineProps({
+  // eslint-disable-next-line vue/require-default-prop
   studentUserId: {
     type: String,
-    default: "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4", // 戴延修
+    required: false,
+    // default: "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4"
   },
   propertyId: {
     type: String,
@@ -188,11 +238,34 @@ const {
   pending,
   refresh,
 } = useAsyncData("get_record", async () => {
-  const { data } = await supabase.from("interview_record").select("*, student!inner(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId).order("record_time", { ascending: true });
-  return data?.filter((record) => record.property_id === props.propertyId || props.propertyId === "");
+  if(props.studentUserId === undefined){
+    const { data } = await supabase.from("interview_record").select("*, student!inner(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").order("record_time", { ascending: true });
+    return data;
+  }
+  else{
+    const { data } = await supabase.from("interview_record").select("*, student!inner(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId).order("record_time", { ascending: true });
+    return data?.filter((record) => record.property_id === props.propertyId || props.propertyId === "");
+  }
 });
 
 const handleTime = (time: string) => {
+  if(time.length > 10){
+    const locale = new Date(time).toLocaleString();
+    const split_date = locale.split(' ')[0].split('/');
+    if(split_date[0].length === 1) split_date[0] = '0' + split_date[0];
+    if(split_date[1].length === 1) split_date[1] = '0' + split_date[1];
+    
+    const stamp = ref('');
+    const split_time = locale.split(' ')[1].split(':');
+    if(split_time[0].slice(0, 2) === '上午')
+      stamp.value = 'AM';
+    else
+      stamp.value = 'PM';
+
+    split_time[0] = split_time[0].slice(2);
+    if(split_time[0].length === 1) split_time[0] = '0' + split_time[0];
+    return split_date.join('-') + ' ' + stamp.value + split_time[0] + ':' + split_time[1];
+  }
   return time;
 };
 
@@ -200,10 +273,47 @@ const currentPage = ref(1);
 const rowsPerPage = 8;
 const searchText = ref("");
 
+const selectedFilter = ref("");
+const sortedRecords = computed(() => {
+  if (!records.value) return [];
+
+  if(selectedFilter.value === 'record_time_ascending'){
+    return [...records.value].sort((a, b) => {
+      const timeA = new Date(a.record_time).valueOf() ?? 0;
+      const timeB = new Date(b.record_time).valueOf() ?? 0;
+      return timeA - timeB;
+    });
+  }
+  else if(selectedFilter.value === 'record_time_descending'){
+    return [...records.value].sort((a, b) => {
+      const timeA = new Date(a.record_time).valueOf() ?? 0;
+      const timeB = new Date(b.record_time).valueOf() ?? 0;
+      return timeB - timeA;
+    });
+  }
+  else if(selectedFilter.value === 'updated_time_ascending'){
+    return [...records.value].sort((a, b) => {
+      const timeA = new Date(a.updated_at!).valueOf() ?? 0;
+      const timeB = new Date(b.updated_at!).valueOf() ?? 0;
+      return timeA - timeB;
+    });
+  }
+  else if(selectedFilter.value === 'updated_time_descending'){
+    return [...records.value].sort((a, b) => {
+      const timeA = new Date(a.updated_at!).valueOf() ?? 0;
+      const timeB = new Date(b.updated_at!).valueOf() ?? 0;
+      return timeB - timeA;
+    });
+  }
+  else{
+    return records.value;
+  }
+});
 // 搜尋後的使用者列表
 const usersSearched = computed(() => {
-  if (!records.value) return [];
-  const userSearched = records.value.filter((record) => {
+  if (!sortedRecords.value) return [];
+  console.log(sortedRecords.value);
+  const userSearched = sortedRecords.value.filter((record) => {
     if (searchText.value === "") return true;
     if (!record.student?.app_user?.name || !record.teacher?.app_user?.name || !record.rental_property?.address) return false;
     return record.student?.app_user?.name.includes(searchText.value) || record.teacher?.app_user.name.includes(searchText.value) || record.rental_property?.address.includes(searchText.value);

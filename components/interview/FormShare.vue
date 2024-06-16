@@ -16,7 +16,7 @@
         </Label>
         <Input
           id="link"
-          :default-value="url.href + '/' + link"
+          :default-value="url.origin + '/interview/record/' + link"
           read-only
         />
       </div>
@@ -51,7 +51,8 @@ const props = defineProps<{
 }>();
 
 function copyURL(){
-  navigator.clipboard.writeText(url.href + '/' + props.link);
+  console.log(url.origin);
+  navigator.clipboard.writeText(url.origin + '/interview/record/' + props.link);
   toast({
       title: '已複製',
       description: '您可以將此連結分享給學生填寫',

@@ -464,16 +464,14 @@
               確認資料
             </Button>
           </NuxtLink>
-          <NuxtLink
-            to="/interview/record"
+
+          <Button
+            variant="outline"
+            type="button"
+            @click="back"
           >
-            <Button
-              variant="outline"
-              type="button"
-            >
-              返回訪視紀錄清單
-            </Button>
-          </NuxtLink>
+            返回
+          </Button>
         </CardFooter>
       </Form>
     </Card>
@@ -667,6 +665,7 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
         "response": secondForm,
         "record_time":time,
         "status": status.value,
+        "updated_at": new Date().toISOString(),
       }
       ) 
       // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
@@ -791,6 +790,15 @@ function isTeacher(){
       teacher_role.value = true;
   }
 }
+
+const router = useRouter();
+const back = () => {
+  if (router.getRoutes().length > 1) {
+    router.back();
+  } else {
+    router.push("/");
+  }
+};
 </script>
 
 <style>
