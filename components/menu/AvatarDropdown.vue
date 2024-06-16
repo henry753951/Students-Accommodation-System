@@ -24,7 +24,7 @@
         />
         <span>個人資料編輯</span>
       </DropdownMenuItem>
-      <DropdownMenuItem @click="navigateTo('/account/role_select')">
+      <DropdownMenuItem @click="navigateTo('/auth/role_select')">
         <Icon
           name="tabler:settings"
           class="mr-1"
