@@ -173,6 +173,10 @@ const props = defineProps({
     type: String,
     default: "97fdcdda-8a08-4d07-abd0-2b3e5b7dace4", // 戴延修
   },
+  propertyId: {
+    type: String,
+    default: "",
+  },
 });
 
 const supabase = useSupabaseClient<Database>();
@@ -185,7 +189,7 @@ const {
   refresh,
 } = useAsyncData("get_record", async () => {
   const { data } = await supabase.from("interview_record").select("*, student!inner(user_id, app_user(*)), teacher(app_user(*)), rental_property(*)").eq("student.user_id", props.studentUserId).order("record_time", { ascending: true });
-  return data;
+  return data?.filter((record) => record.property_id === props.propertyId || props.propertyId === "");
 });
 
 const handleTime = (time: string) => {

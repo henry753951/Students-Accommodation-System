@@ -12,7 +12,7 @@
     <div>
       <div class="text-lg font-bold">
         <NuxtLink :to="'/rentals/' + property.id">
-          {{ property.name }}
+          {{ property.name || '無名稱' }}
         </NuxtLink>
       </div>
       <p>{{ property.rental_property.address }}</p>
