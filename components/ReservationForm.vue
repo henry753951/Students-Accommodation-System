@@ -218,10 +218,14 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
+const { data: auto_rental_property, error } = await supabase
+  .from('rental_property')
+  .select('address')
+  .eq('id', props.property_id);
 
 const form = ref({
   student_id: computed(() => props.inviter || ''), // 使用 computed 來動態獲取 user.id
-  property_addr: '',
+  property_addr: props.property_id ? auto_rental_property![0].address : '',
   property_id: computed(() => props.property_id || ''),
   property_name: invitee_name,
   property_phone: '',
@@ -257,13 +261,7 @@ const SubmitToReserve = async () => {
     return 'error';
   }
 };
-
-
-const { data: auto_rental_property, error } = await supabase
-  .from('rental_property')
-  .select('address')
-  .eq('id', props.property_id);
-          
+  
 const handleSubmit = async () => {
   const confirmation = confirm(`
     確定要送出嗎?
