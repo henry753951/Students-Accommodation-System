@@ -15,13 +15,19 @@
               class="mt-1 block w-full"
             />
           </div>
-          <div class="mb-4">
+          <div class="mb-2">
+            <Label for="image_url">照片網址</Label>
+            <Input
+              id="image_url"
+              v-model="image_url"
+              class="mt-1 block w-full"
+            />
+          </div>
+          <div class="mb-2">
             <Label
               for="address"
               @click="debugTest()"
-            >
-              地址
-            </Label>
+            > 地址 </Label>
             <div class="flex items-center mt-1">
               <Input
                 id="address"
@@ -106,6 +112,7 @@ const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 const name = ref("");
 const address = ref("");
+const image_url = ref("");
 const searchResults = ref([] as Candidate[]);
 const user = await useAsyncUser();
 const props = defineProps({
@@ -185,7 +192,7 @@ const handleSubmit = async (address: string | null = null) => {
   const insertNewRentalProperty = async (addr: string) => {
     const { data } = await supabase
       .from("rental_property")
-      .insert({ address: addr, landlord_id: props.isLandLord ? user.value?.id : undefined })
+      .insert({ address: addr, landlord_id: props.isLandLord ? user.value?.id : undefined, image: image_url.value })
       .select("*")
       .single();
     return data ? data.id : "";
