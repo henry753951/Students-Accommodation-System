@@ -15,9 +15,10 @@
         </DrawerHeader>
         <ScrollArea class="h-full">
           <ReservationList class=""/>
+          <ReservationListLandlord />
         </ScrollArea>
         <DrawerClose>
-          <Button variant="outline" >
+          <Button variant="outline" class="border-2 border-black">
             關閉
           </Button>
         </DrawerClose>
