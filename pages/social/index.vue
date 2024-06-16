@@ -9,17 +9,25 @@
         :key="property.Rental_property_id!"
         class="p-5 rounded-lg shadow-lg bg-gray-200 dark:bg-gray-800"
       >
-        <NuxtLink :to="'./social/' + property.Rental_property_id" class="block">
+        <NuxtLink
+          :to="'./social/' + property.Rental_property_id"
+          class="block"
+        >
           <img
             :src="property.image!"
             alt="House Image"
             class="w-full h-64 object-cover rounded-lg mb-3"
-          />
-          <div :class="{ 'text-green-500': property.state, 'text-red-500': !property.state }" class="font-semibold">
+          >
+          <div
+            :class="{ 'text-green-500': property.state, 'text-red-500': !property.state }"
+            class="font-semibold"
+          >
             <span v-if="property.state">Active</span>
             <span v-else>Inactive</span>
           </div>
-          <div class="text-lg">{{ property.address }}</div>
+          <div class="text-lg">
+            {{ property.address }}
+          </div>
         </NuxtLink>
       </div>
     </div>
@@ -121,8 +129,8 @@ const initial_get_information = async () => {
     toast.toast({
       title: "Error",
       description: "Unknown Character",
-    })
+    });
   };
-}
+};
 </script>
 <style></style>
