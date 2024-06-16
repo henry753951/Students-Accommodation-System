@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col mx-auto h-screen">
+  <div class="flex flex-col mx-auto h-screen p-4">
     <!-- Main Content -->
     <div class="flex-1 grid grid-cols-12 gap-4">
       <!-- Main Section -->
       <div class="col-span-12 lg:col-span-9 space-y-6">
-        <div class="bg-card rounded-lg shadow-sm p-4">
+        <div class="rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800 p-4">
           <!-- Post Input -->
           <div class="relative w-full mb-4 mx-auto flex gap-3">
             <Textarea
@@ -46,6 +46,34 @@
                   <div class="flex items-center justify-between">
                     <div class="font-semibold">
                       {{ post.app_user?.name }}
+                      <Badge
+                        v-if="post.app_user?.student"
+                        variant="secondary"
+                        class="ml-2"
+                      >
+                        學生
+                      </Badge>
+                      <Badge
+                        v-if="post.app_user?.teacher"
+                        variant="secondary"
+                        class="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100 dark:bg-opacity-30"
+                      >
+                        教師
+                      </Badge>
+                      <Badge
+                        v-if="post.app_user?.landlord"
+                        variant="secondary"
+                        class="ml-2 bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 dark:bg-opacity-30"
+                      >
+                        房東
+                      </Badge>
+                      <Badge
+                        v-if="post.app_user?.admin"
+                        variant="secondary"
+                        class="ml-2 bg-rose-300 text-rose-900 dark:bg-rose-400 dark:text-rose-100 dark:bg-opacity-30"
+                      >
+                        管理員
+                      </Badge>
                     </div>
                     <div class="text-gray-500 text-sm">
                       {{ formatDate(post.created_at) }}
@@ -73,18 +101,18 @@
                   <Icon name="mdi:alert" />
                 </Button>
               </div>
-              <hr
-                v-if="post_data && postIndex < post_data.length - 1"
-                class="my-4 border-gray-300"
-              >
+              <hr class="my-4 border-gray-300">
             </div>
+            <h2 class="mb-10 text-center text-2xl font-bold text-gray-800 dark:text-white">
+              到底了 沒有其他留言 QQ
+            </h2>
           </div>
         </div>
       </div>
       <!-- Sidebar -->
       <div class="col-span-12 lg:col-span-3 space-y-6">
         <!-- Members Section -->
-        <div class="bg-card rounded-lg shadow-sm p-4">
+        <div class="rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800 p-4">
           <h2 class="text-lg font-semibold mb-4">
             租屋點成員
           </h2>
@@ -118,6 +146,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import type { Database, Tables, Enums, Json } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
@@ -137,14 +166,15 @@ const current_property_id = ref<string>(props.propertyId);
 const { data: property_data, pending: isLoading } = useAsyncData(async () => {
     const { data } = await supabase.from('rental_property')
         .select(`*`)
-        .eq('id', current_property_id.value);
+        .eq('id', current_property_id.value)
+        .single();
     return data;
 });
 
 //貼文資料
 const { data: post_data, pending: isLoading2, refresh: refreshPosts } = useAsyncData(async () => {
     const { data } = await supabase.from('posts')
-        .select(`*, app_user(name, avatar_url)`)
+        .select(`*, app_user(name, avatar_url, student(*), teacher(*), landlord(*), admin(*) )`)
         .eq('rental_property_id', current_property_id.value)
         .order('created_at', { ascending: false });
     return data;
@@ -156,7 +186,7 @@ const { data: landlord, pending: isLoading3 } = useAsyncData(async () => {
         .select(`
         landlord_id,
         app_user(name, avatar_url)
-      `)
+       `)
         .eq('id', current_property_id.value);
     return data;
 });
@@ -167,7 +197,7 @@ const { data: students, pending: isLoading4 } = useAsyncData(async () => {
         .select(`
         student_id,
         app_user(name, avatar_url)
-      `)
+        `)
         .eq('rental_property_id', current_property_id.value);
     return data;
 });

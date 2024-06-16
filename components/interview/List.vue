@@ -9,13 +9,12 @@
           >
             新增
           </Button>
-          <Button
+          <ReservationInviteDrawer
             v-if="props.studentUserId"
-            class="px-4 py-2 rounded mr-auto "
-            @click="navigateTo('/reserve-interview')"
-          >
-            預約
-          </Button>
+            v-model:inviter="inviterID"
+            v-model:invitee="inviteeID"
+            v-model:reservation_type="reservationType"
+          />
         </div>
         <Label class="flex-none w-[40px] place-content-center text-sm">搜尋</Label>
         <div class="flex-strech w-1/2">
@@ -351,6 +350,11 @@ const deleteRecord = async (recordLink: string) => {
   }
   await refresh();
 };
+
+
+const inviterID = ref(app_user.value?.id);
+const inviteeID = ref(props.studentUserId);
+const reservationType = ref('預約校外訪視');
 </script>
 
 <style></style>

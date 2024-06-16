@@ -2,35 +2,49 @@
   <div class="p-6 flex items-center justify-center">
     <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
-        預約表單 - {{ inviter }}
+        預約表單 - {{ reservationType }}
       </h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
-          <Label for="student_id">學生ID:{{ inviter }}</Label>
+          <Label for="student_id">邀請者</Label>
           <Input
             id="student_id"
-            v-model="form.student_id"
+            v-model="inviter_name"
             type="text"
             class="w-full border border-gray-300 rounded mt-1"
             readonly
             required
           />
         </div>
+        <div class="mb-4">
+          <Label for="phone">受邀者</Label>
+          <Input
+            id="property_name"
+            v-model="form.property_name"
+            type="tel"
+            class="w-full border border-gray-300 rounded mt-1"
+            required
+          />
+        </div>
         <Popover v-model:open="open">
+          <Label
+            for="property_id"
+            class="pr-4"
+          >房屋地址</Label>
           <PopoverTrigger as-child>
             <Button
               variant="outline"
               role="combobox"
               :aria-expanded="open"
-              class="w-[200px] justify-between border-2 border-gray-300"
+              class="justify-between border-2 border-gray-300"
             >
               {{ value
-                ? house?.find((house) => house.address === value)?.address
+                ? house?.find((house) => house.rental_property.address === value)?.rental_property.address
                 : "搜尋或選擇地址" }}
               <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent class="w-[200px] p-0">
+          <PopoverContent class="p-0">
             <Command>
               <CommandInput
                 class="h-9"
@@ -42,22 +56,20 @@
                   <CommandItem
                     v-for="property in house"
                     :key="property.id"
-                    :value="property.address"
+                    :value="property.rental_property.address"
                     @select="(ev) => {
                       if (typeof ev.detail.value === 'string') {
                         value = ev.detail.value
                         form.property_addr = ev.detail.value
-                        form.property_id = house?.find((house) => house.address === value)?.landlord_id ?? ''
-                        fetchAppUser()
                       }
                       open = false
                     }"
                   >
-                    {{ property.address }}
+                    {{ property.rental_property.address }}
                     <Check
                       :class="[
                         'ml-auto h-4 w-4',
-                        value === property.address ? 'opacity-100' : 'opacity-0',
+                        value === property.rental_property.address ? 'opacity-100' : 'opacity-0',
                       ]"
                     />
                   </CommandItem>
@@ -66,27 +78,7 @@
             </Command>
           </PopoverContent>
         </Popover>
-        <div class="mb-4">
-          <Label for="phone">房東名稱(自動抓取)</Label>
-          <Input
-            id="property_name"
-            v-model="form.property_name"
-            type="tel"
-            class="w-full border border-gray-300 rounded mt-1"
-            required
-          />
-        </div>
-        <div class="mb-4">
-          <Label for="status">狀態</Label>
-          <Input
-            id="status"
-            v-model="form.status"
-            type="email"
-            class="w-full border border-gray-300 rounded mt-1"
-            required
-            readonly
-          />
-        </div>
+        
         <div class="mb-4">
           <Label for="message">備註訊息</Label>
           <Textarea
@@ -148,14 +140,15 @@ definePageMeta({
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 const route = useRoute();
-const type = ref(route.params.id);
 const user = useUser();
 
 const open = ref(false);
 const value = ref(''); //選擇表單的value
 
 const props = defineProps<{
-  inviter: string;
+  inviterId: string;
+  inviteeId: string;
+  reservationType: string;
 }>();
 
 
@@ -174,8 +167,9 @@ const formatDate = (dateObj: DateObj): string => {
 
 
 const { data: house, refresh } = useAsyncData(async () => {
-  const { data, error } = await supabase.from("rental_property")
-    .select("*");
+  const { data, error } = await supabase.from("map_rental_property_student")
+  .select("*, rental_property!inner(*)")
+  .eq("student_id", props.inviteeId);
   if (error) {
     console.error(error);
     return [];
@@ -183,32 +177,47 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
+const { data: inviter_name } = useAsyncData('get_inviter_name', async () => {
+  try {
+    const { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', props.inviterId);
+      
+      console.log(app_user);
+      return app_user![0].name;   
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    return '';
+  }
+}); 
+
+const { data: invitee_name } = useAsyncData('get_invitee_name', async () => {
+  try {
+    const { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', props.inviteeId);
+      
+      console.log(app_user);
+      return app_user![0].name;   
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    return '';
+  }
+});
 
 const form = ref({
-  student_id: computed(() => user.value?.id || ''), // 使用 computed 來動態獲取 user.id
+  student_id: computed(() => props.inviterId || ''), // 使用 computed 來動態獲取 user.id
   property_addr: '',
-  property_id: '',
-  property_name: '',
-  property_phone: '',
+  property_id: computed(() => props.inviteeId || ''),
+  property_name: invitee_name,
   status: '邀請中',
   message: '',
   date: '',
 });
 
-const fetchAppUser = async () => {
-  try {
-    const { data: app_user, error } = await supabase
-      .from('app_user')
-      .select('*')
-      .eq('id', form.value.property_id);
 
-      form.value.property_name = app_user && app_user.length > 0 && app_user[0].name !== null ? app_user[0].name : '';
-      form.value.property_phone = app_user && app_user.length > 0 && app_user[0].phone !== null ? app_user[0].phone : '房東沒有留下電話';
-    } catch (error) {
-    console.error('Error fetching app_user:', error);
-    form.value.property_name = '';
-  }
-};
 
 const SubmitToReserve = async () => {
   console.log("BINHAN SO BIG");
@@ -216,11 +225,11 @@ const SubmitToReserve = async () => {
     .from("reservations")
     .insert([
       {
-        "student_id": form.value.student_id as string,
-        "user_id": form.value.property_id as string,
+        "student_id": props.inviterId as string,
+        "user_id": props.inviteeId as string,
         "status": form.value.status as string,
         "reservation_time": formatDate(form.value.date as unknown as DateObj),
-        "reservation_type": route.params.id as string,
+        "reservation_type": props.reservationType as string,
         "reservation_addr": form.value.property_addr as string,
         "message": form.value.message as string,
       },
@@ -239,12 +248,6 @@ const SubmitToReserve = async () => {
 
 const handleSubmit = async () => {
   const confirmation = confirm(`
-    student_id: ${form.value.student_id}
-    property_id: ${form.value.property_id}
-    status: ${form.value.status}
-    reservation_time: ${formatDate(form.value.date as unknown as DateObj)}
-    reservation_type: ${route.params.id}
-    
     確定要送出嗎?
   `);
 
