@@ -14,6 +14,7 @@
             v-model:inviter="inviterID"
             v-model:invitee="inviteeID"
             v-model:reservation_type="reservationType"
+            v-model:propertyId="empty_text"
           />
         </div>
         <Label class="flex-none w-[40px] place-content-center text-sm">搜尋</Label>
@@ -351,7 +352,7 @@ const deleteRecord = async (recordLink: string) => {
   await refresh();
 };
 
-
+const empty_text = ref('');
 const inviterID = ref(app_user.value?.id);
 const inviteeID = ref(props.studentUserId);
 const reservationType = ref('預約校外訪視');

@@ -1,9 +1,9 @@
 <template>
   
-  <div class="container w-2/3">
-    <h1 class="text">房屋廣告公告</h1>
+  <div class="container w-2/3 mb-10 ">
+    <h1 class="text-2xl">房屋廣告公告</h1>
     <Carousel class="relative w-full " @init-api="(val) => emblaMainApi = val">
-      <CarouselContent class = "w-1000">
+      <CarouselContent class = "w-full">
         <CarouselItem v-for="(_, index) in items" :key="index">
           <div class="p-1">
             <Card>
@@ -83,7 +83,14 @@
                 <div class="text-lg font-semibold text-green-600">
                   {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : '尚無價位' }}
                 </div>
-                <ReservationInviteDrawer v-model:inviter="inviterType"/>
+                {{property.id}}
+                <ReservationInviteDrawer 
+                  v-if="user"
+                  v-model:inviter="user.id"
+                  v-model:invitee="property.landlord_id"
+                  v-model:reservation_type="ReserveType"
+                  v-model:propertyId="property.id"
+                />
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
                   <NuxtLink :to="'/advertisement/info-' + property.id">
                     詳細
@@ -104,7 +111,8 @@ const supabase = useSupabaseClient<Database>();
 import { watchOnce } from '@vueuse/core'
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
-
+const ReserveType = ref('預約看房')
+const user = useUser();
 const emblaMainApi = ref<CarouselApi>()
 const emblaThumbnailApi = ref<CarouselApi>()
 const selectedIndex = ref(0)

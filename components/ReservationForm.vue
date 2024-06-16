@@ -2,14 +2,14 @@
   <div class="p-6 flex items-center justify-center">
     <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
-        預約表單 - {{ reservationType }}
+        預約表單 - {{ reservation_type }} 
       </h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
           <Label for="student_id">邀請者</Label>
           <Input
             id="student_id"
-            v-model="inviter_name"
+            v-model="inviter_name as string"
             type="text"
             class="w-full border border-gray-300 rounded mt-1"
             readonly
@@ -20,7 +20,7 @@
           <Label for="phone">受邀者</Label>
           <Input
             id="property_name"
-            v-model="form.property_name"
+            v-model="invitee_name as string"
             type="tel"
             class="w-full border border-gray-300 rounded mt-1"
             required
@@ -31,7 +31,18 @@
             for="property_id"
             class="pr-4"
           >房屋地址</Label>
-          <PopoverTrigger as-child>
+          <Input
+            v-if="reservation_type === '預約看房'"
+            id="autoInputAddress"
+            v-model="auto_rental_property![0].address as string"
+            type="tel"
+            class="w-full border border-gray-300 rounded mt-1"
+            readonly
+          />
+          <PopoverTrigger
+            v-if="reservation_type !== '預約看房'"
+            as-child
+          >
             <Button
               variant="outline"
               role="combobox"
@@ -146,9 +157,10 @@ const open = ref(false);
 const value = ref(''); //選擇表單的value
 
 const props = defineProps<{
-  inviterId: string;
-  inviteeId: string;
-  reservationType: string;
+  inviter: string;  //我有小改變數名稱
+  invitee: string; //房東or老師id
+  reservation_type: string;//預約類型
+  property_id: string; //房屋的id
 }>();
 
 
@@ -165,25 +177,13 @@ const formatDate = (dateObj: DateObj): string => {
   return `${year}-${month}-${day}`;
 };
 
-
-const { data: house, refresh } = useAsyncData(async () => {
-  const { data, error } = await supabase.from("map_rental_property_student")
-  .select("*, rental_property!inner(*)")
-  .eq("student_id", props.inviteeId);
-  if (error) {
-    console.error(error);
-    return [];
-  }
-  return data;
-});
-
 const { data: inviter_name } = useAsyncData('get_inviter_name', async () => {
   try {
     const { data: app_user, error } = await supabase
       .from('app_user')
       .select('*')
-      .eq('id', props.inviterId);
-      
+      .eq('id', props.inviter);
+
       console.log(app_user);
       return app_user![0].name;   
     } catch (error) {
@@ -197,8 +197,8 @@ const { data: invitee_name } = useAsyncData('get_invitee_name', async () => {
     const { data: app_user, error } = await supabase
       .from('app_user')
       .select('*')
-      .eq('id', props.inviteeId);
-      
+      .eq('id', props.invitee);
+
       console.log(app_user);
       return app_user![0].name;   
     } catch (error) {
@@ -207,11 +207,24 @@ const { data: invitee_name } = useAsyncData('get_invitee_name', async () => {
   }
 });
 
+const { data: house, refresh } = useAsyncData(async () => {
+  const { data, error } = await supabase.from("map_rental_property_student")
+  .select("*, rental_property!inner(*)")
+  .eq("student_id", props.invitee);
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  return data;
+});
+
+
 const form = ref({
-  student_id: computed(() => props.inviterId || ''), // 使用 computed 來動態獲取 user.id
+  student_id: computed(() => props.inviter || ''), // 使用 computed 來動態獲取 user.id
   property_addr: '',
-  property_id: computed(() => props.inviteeId || ''),
+  property_id: computed(() => props.property_id || ''),
   property_name: invitee_name,
+  property_phone: '',
   status: '邀請中',
   message: '',
   date: '',
@@ -225,11 +238,11 @@ const SubmitToReserve = async () => {
     .from("reservations")
     .insert([
       {
-        "student_id": props.inviterId as string,
-        "user_id": props.inviteeId as string,
+        "student_id": props.inviter as string,
+        "user_id": props.invitee as string,
         "status": form.value.status as string,
         "reservation_time": formatDate(form.value.date as unknown as DateObj),
-        "reservation_type": props.reservationType as string,
+        "reservation_type": props.reservation_type as string,
         "reservation_addr": form.value.property_addr as string,
         "message": form.value.message as string,
       },
@@ -246,6 +259,11 @@ const SubmitToReserve = async () => {
 };
 
 
+const { data: auto_rental_property, error } = await supabase
+  .from('rental_property')
+  .select('address')
+  .eq('id', props.property_id);
+          
 const handleSubmit = async () => {
   const confirmation = confirm(`
     確定要送出嗎?
