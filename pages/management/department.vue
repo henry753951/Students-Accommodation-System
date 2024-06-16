@@ -116,6 +116,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { toast } from "@/components/ui/toast";
 import type { Database, Tables, Enums } from "~/database.types";
 import {
   Table,
@@ -225,7 +226,14 @@ const deleteSelected = async () => {
       .delete()
       .in('id', selectedIds);
 
-    if (error) throw error;
+    if (error){
+      toast({
+      title: "Error",
+      description: '刪除失敗',
+      variant: "destructive",
+      });
+    throw error;
+    }
     // 若成功新增，刷新資料
     refresh();
     selectedDepartments.value = {};

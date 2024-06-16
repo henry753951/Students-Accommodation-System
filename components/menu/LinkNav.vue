@@ -57,20 +57,12 @@ const menu_ = ref({
   //     description: '進行校外訪視的預約。' 
   //   },
   // ],
-  我的租屋點: [
-    {
+  我的租屋點:{
       title: '我的租屋點',
       href: '/rentals',
       description: '查看和管理您的租屋點信息。',
       roles: ['student']
-    },
-    {
-      title: '預約看屋',
-      href: '/reserve-rental',
-      description: '進行看屋的預約。',
-      roles: ['student']
-    },
-  ],
+  },
   租屋平台: {
     title: '租屋平台',
     href: '/advertisement',
