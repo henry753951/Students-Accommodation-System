@@ -204,7 +204,7 @@ const createDepartment = async () => {
       .insert({
         department_name: newDepartment.value.department_name || '',
         department_code: newDepartment.value.department_code
-      });
+      } as Tables<'school_department'>);
 
     if (error) throw error;
     // 若成功新增，刷新資料

@@ -6,13 +6,10 @@
     學生資料匯入功能允許你匯入未註冊的學生資料。匯入的資料需包含學生的電子郵件和任教教師的資訊。如果匯入的資料中包含已註冊的學生，系統將自動更新該學生的資料。
   </p>
   <div class="flex gap-3 w-full justify-center mt-4">
-    <ManagementUseImport
-      title="單筆匯入"
-      description="請輸入學生的Email與資料"
-    />
     <ManagementUserImportCSV
       title="批量匯入"
       description="請上傳CSV檔案"
+      @uploaded="refresh"
     />
   </div>
   <div>
@@ -24,22 +21,35 @@
         <TableRow>
           <TableHead>Email</TableHead>
           <TableHead>任教教師</TableHead>
+          <TableHead>學生姓名</TableHead>
+          <TableHead>系所</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow
-          v-for="user in users"
+          v-for="user in data"
           :key="user.email"
         >
           <TableCell>{{ user.email }}</TableCell>
-          <TableCell>{{ user.teacher }}</TableCell>
+          <TableCell>{{ user.name }}</TableCell>
+          <TableCell>{{ user.teacher_name }}</TableCell>
+          <TableCell>{{ user.school_department!.department_name }}</TableCell>
         </TableRow>
       </TableBody>
-    </table>
+    </Table>
   </div>
 </template>
 <script lang="ts" setup>
-const users = ref([] as { email: string; teacher: string }[]);
+import type { Database, Tables, Enums } from "~/database.types";
+const supabase = useSupabaseClient<Database>();
+
+const { data, refresh } = useAsyncData("imported_user", async () => {
+  const { data, error } = await supabase.from("studentimport").select("*, school_department(*)");
+  if (error) {
+    throw error;
+  }
+  return data;
+});
 
 </script>
 <style></style>

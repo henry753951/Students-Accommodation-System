@@ -14,7 +14,12 @@
       </DialogHeader>
       <div class="mt-4 ">
         <!-- <Button  @change="handleFileUpload">匯入</Button> -->
-        <Input type="file" @change="handleFileUpload" accept=".csv"  class = ""/>
+        <Input
+          type="file"
+          accept=".csv"
+          class=""
+          @change="handleFileUpload"
+        />
       </div>
     </DialogContent>
   </Dialog>
@@ -23,13 +28,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
-const supabase = useSupabaseClient<Database>();
 import { useToast } from "~/components/ui/toast/use-toast";
+const supabase = useSupabaseClient<Database>();
 const toast = useToast();
 defineProps({
   title: String,
   description: String,
 });
+
+const emits = defineEmits<{
+  (event: 'uploaded'): void;
+}>();
 
 const handleFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -60,11 +69,11 @@ type student_import_ = {
 const processCSV = async (data: string) => {
   const rows = data.split('\n');
   const result = rows.map(row => row.split(','));
-  let departments: department[] = [];
+  const departments: department[] = [];
   for (let i = 1; i < result.length; i++) {
-    let departmentName = result[i][0];
-    let departmentCode = result[i][1];
-    let exists = departments.some(department => department.department_name === departmentName && department.department_code === departmentCode);
+    const departmentName = result[i][0];
+    const departmentCode = result[i][1];
+    const exists = departments.some(department => department.department_name === departmentName && department.department_code === departmentCode);
     if (!exists) {
       departments.push({
         department_name: departmentName,
@@ -85,21 +94,21 @@ const processCSV = async (data: string) => {
       }
       ,
 
-    )
+    );
   if (department_error) {
-    console.log(department_error)
+    console.log(department_error);
   }
   // console.log(result, "result");
   result.pop();
-  let student_import: student_import_[] = [];
+  const student_import: student_import_[] = [];
   const { data: map_department_id, error: department_data_error } = await supabase
     .from('school_department')
-    .select('department_name, id')
+    .select('department_name, id');
   console.log(map_department_id, "map_department_id");
   for (let i = 1; i < result.length; i++) {
-    let email = result[i][3] + "@mail.nuk.edu.tw";
-    let teacher_name = result[i][2];
-    let student_name = result[i][4];
+    const email = result[i][3] + "@mail.nuk.edu.tw";
+    const teacher_name = result[i][2];
+    const student_name = result[i][4];
     student_import.push({
       email: email,
       department_uuid: map_department_id?.find(department => department.department_name === result[i][0])?.id,
@@ -123,6 +132,7 @@ const processCSV = async (data: string) => {
     title: "Success",
     description: "匯入成功",
   });
+  emits('uploaded');
 };
 </script>
 
