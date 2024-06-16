@@ -1,12 +1,20 @@
 <template>
   <div class="container">
-    <div class="mb-3">
-      <h1 class="text-2xl font-bold">
-        {{ rentalData?.name || '租屋點' }}
-      </h1>
-      <p class="text-lg">
-        {{ rentalData?.rental_property?.address || '租屋點描述' }}
-      </p>
+    <div class="mb-3 flex justify-between items-end">
+      <div>
+        <h1 class="text-2xl font-bold">
+          {{ rentalData?.name || '租屋點' }}
+        </h1>
+        <p class="text-lg">
+          {{ rentalData?.rental_property?.address || '租屋點描述' }}
+        </p>
+      </div>
+      <Button
+        v-if="rentalData"
+        @click="navigateTo('/advertisement/info-' + rentalData.rental_property?.id)"
+      >
+        租屋廣告平台
+      </Button>
     </div>
     <Tabs
       v-model="currentTab"
@@ -24,14 +32,6 @@
           class="w-full"
         >
           租屋交流區
-        </TabsTrigger>
-        <TabsTrigger
-          v-if="rentalData"
-          value="rental-platform"
-          class="w-full"
-          @click="navigateTo('/advertisement/info-' + rentalData.rental_property?.id)"
-        >
-          租屋平台
         </TabsTrigger>
       </TabsList>
     </Tabs>
