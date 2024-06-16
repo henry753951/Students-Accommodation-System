@@ -778,7 +778,7 @@ function checkIfValueNull(form: any){
 const student_role = ref(false);
 function isStudent(){
   for(const i in app_user.value?.roles){
-    if(app_user.value?.roles[i as unknown as number] === 'student')
+    if(app_user.value?.roles[i as unknown as number] === 'student' || app_user.value?.roles[i as unknown as number] === 'admin')
       student_role.value = true;
   }
 }
@@ -786,7 +786,7 @@ function isStudent(){
 const teacher_role = ref(false);
 function isTeacher(){
   for(const i in app_user.value?.roles){
-    if(app_user.value?.roles[i as unknown as number] === 'teacher')
+    if(app_user.value?.roles[i as unknown as number] === 'teacher' || app_user.value?.roles[i as unknown as number] === 'admin')
       teacher_role.value = true;
   }
 }

@@ -38,7 +38,7 @@ const { data: records } =  useAsyncData('record', async() =>{
 
   const student_number = ref<string>('');
   
-  if(id.value.length > 4){
+  if(id.value.length > 4 && id.value.slice(0, 3) === 'new'){
     const { data: student } = await supabase
     .from('student')
     .select('*')
