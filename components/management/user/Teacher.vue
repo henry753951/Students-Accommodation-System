@@ -13,7 +13,7 @@
       title="單筆匯入"
       description="請輸入學生的Email與資料"
     />
-    <ManagementUserImportCSV
+    <ManagementUserImportTeacherCSV
       title="批量匯入"
       description="請上傳CSV檔案"
     />
