@@ -163,18 +163,50 @@
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem> 編輯 </DropdownMenuItem>
+                        <DropdownMenuItem @click="OpenEditDialog(user)">
+                          編輯
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell>
+                  </TableCell>  
                 </TableRow>
               </TableBody>
             </Table>
           </div>
-          <AutoPagination
-            v-model:page="currentPage"
-            :data="usersSearched"
-          />
+          <Dialog
+            v-model:open="isEditDialogOpen"
+          >
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>編輯使用者</DialogTitle>
+              </DialogHeader>
+              <div
+                v-if="currentEditUser"
+                class="flex flex-col gap-4"
+              >
+                <Input
+                  v-model="currentEditUser.name"
+                  placeholder="姓名"
+                />
+                <Input
+                  v-model="currentEditUser.email"
+                  placeholder="電子郵件"
+                />
+              </div>
+              <DialogFooter>
+                <Button @click="deleteUser(currentEditUser)">
+                  刪除
+                </Button>
+                <Button @click="isEditDialogOpen = false">
+                  取消
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+            <AutoPagination
+              v-model:page="currentPage"
+              :data="usersSearched"
+            />
+          </dialog>
         </TabsContent>
         <TabsContent value="StudentImport">
           <ManagementUserStudent />
@@ -287,7 +319,6 @@ const deleteUser = async (singleUser: Tables<"app_user"> | null = null) => {
   }
   await refresh();
 };
-
 // if singleUser is null, it will update all selected users
 const updateSingleRoleForSelections = async (role: string, action: "add" | "remove", userID: null | string = null) => {
   let selectedUserIds: string[] = [];
@@ -336,7 +367,12 @@ const updateSingleRoleForSelections = async (role: string, action: "add" | "remo
     console.error("Errors updating role:", error);
   }
 };
-
+const isEditDialogOpen = ref(false);
+const currentEditUser = ref<Tables<"app_user"> | null>(null);
+const OpenEditDialog = (user: Tables<"app_user">) => {
+  currentEditUser.value = { ...user };
+  isEditDialogOpen.value = true;
+};
 // [Watch]
 watch(searchText, () => {
   currentPage.value = 1;

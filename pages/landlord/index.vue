@@ -4,13 +4,13 @@
       <div class="flex">
         <Button
           class="bg-green-600 text-white px-4 py-2 rounded mr-auto dark:bg-green-900"
-          @click="navigateTo('/rentals/add')"
+          @click="navigateTo('/landlord/add')"
         >
           新增
         </Button>
       </div>
       <div class="mt-3">
-        <StudentRentalsView :student-user-id="user!.id" />
+        <RentalDataView :landlord="user?.id" />
       </div>
     </div>
   </div>

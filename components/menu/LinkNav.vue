@@ -34,7 +34,15 @@ const menu_ = ref({
       title: '旗下學生管理',
       href: '/teacher/students',
       description: '管理教師和學生之間的互動和分配。',
-      roles: ['admin']
+      roles: ['teacher']
+    },
+  ],
+  房東專區: [
+    {
+      title: '我的出租點',
+      href: '/landlord',
+      description: '查看和管理您的出租點信息。',
+      roles: ['landlord']
     },
   ],
   // 訪視系統:[
