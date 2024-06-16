@@ -354,7 +354,7 @@ const deleteRecord = async (recordLink: string) => {
 
 const inviterID = ref(app_user.value?.id);
 const inviteeID = ref(props.studentUserId);
-const reservationType = ref('interview');
+const reservationType = ref('預約校外訪視');
 </script>
 
 <style></style>
