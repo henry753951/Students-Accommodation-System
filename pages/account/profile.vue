@@ -1,35 +1,59 @@
 <template>
-  <div class="head">
-    修改個人資料
-  </div>
-  <div class="container w-1/4 shadow-lg rounded-lg mt-6 bg-card  ">
-    <form @submit.prevent="updateUser" >
-      <FormField v-slot="{ componentField }" name="full_name" >
-        <FormItem class="relative pt-5">
-          <FormLabel>Full Name</FormLabel>
-          <FormControl>
-            <Input v-bind="componentField" class="w-full" placeholder="Enter your full name" type="text"
-              autocomplete="off" @change="isChanged.full_name = true" />
-          </FormControl>
-          <FormMessage class="absolute top-0 right-1" />
-        </FormItem>
-      </FormField>
-      <FormField v-slot="{ componentField }" name="phone">
-        <FormItem class="relative mt-5">
-          <FormLabel>Phone</FormLabel>
-          <FormControl>
-            <Input v-bind="componentField" class="w-full" placeholder="Enter your phone number" type="text"
-              autocomplete="off" @change="isChanged.phone = true" />
-          </FormControl>
-          <FormMessage class="absolute top-0 right-1" />
-        </FormItem>
-      </FormField>
-      <div class="mt-6">
-        <Button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg mb-6" @click="updateUser()">
-          Save Changes
-        </Button>
-      </div>
-    </form>
+  <div class="container flex flex-col items-center">
+    <div class="head">
+      修改個人資料
+    </div>
+    <div class="w-full shadow-lg rounded-lg bg-card p-5 max-w-[700px]">
+      <form @submit.prevent="updateUser">
+        <FormField
+          v-slot="{ componentField }"
+          name="full_name"
+        >
+          <FormItem class="relative pt-5">
+            <FormLabel>名稱</FormLabel>
+            <FormControl>
+              <Input
+                v-bind="componentField"
+                class="w-full"
+                placeholder="Enter your full name"
+                type="text"
+                autocomplete="off"
+                @change="isChanged.full_name = true"
+              />
+            </FormControl>
+            <FormMessage class="absolute top-0 right-1" />
+          </FormItem>
+        </FormField>
+        <FormField
+          v-slot="{ componentField }"
+          name="phone"
+        >
+          <FormItem class="relative mt-5">
+            <FormLabel>手機號碼</FormLabel>
+            <FormControl>
+              <Input
+                v-bind="componentField"
+                class="w-full"
+                placeholder="請輸入手機號碼"
+                type="text"
+                autocomplete="off"
+                @change="isChanged.phone = true"
+              />
+            </FormControl>
+            <FormMessage class="absolute top-0 right-1" />
+          </FormItem>
+        </FormField>
+        <div class="mt-6">
+          <Button
+            type="submit"
+            class="w-full bg-blue-500 text-white py-2 rounded-lg mb-6"
+            @click="updateUser()"
+          >
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -82,7 +106,7 @@ const updateUser = form.handleSubmit(async (values) => {
       title: "Error",
       description: "Phone number 需要10位數字",
       variant: "destructive",
-    })
+    });
     return;}
   if (user.value) {
     const { data: __user, error: usererror } = await supabase
