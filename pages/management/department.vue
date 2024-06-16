@@ -3,7 +3,7 @@
     <!-- 功能列 -->
     <Menubar>
       <MenubarMenu>
-        <MenubarTrigger>操作</MenubarTrigger>
+        <MenubarTrigger class="bg-gray-400">操作 </MenubarTrigger>
         <MenubarContent>
           <MenubarItem @click="OpenAddDepartmentDialog">
             新增

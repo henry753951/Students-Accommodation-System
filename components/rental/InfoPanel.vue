@@ -36,14 +36,14 @@
                   />
                 </div>
               </div>
-              <DialogFooter>
+              <DialogClose>
                 <Button
                   type="submit"
                   @click="updateRentalName({ name: tempName })"
                 >
                   儲存
                 </Button>
-              </DialogFooter>
+              </DialogClose>
             </DialogContent>
           </Dialog>
         </div>
@@ -55,9 +55,9 @@
       </CardContent>
       <CardFooter class="flex justify-end items-center">
         <div class="rental-status">
-          <Button
-            class="status-text"
-            :class="{ 'text-red-500': !rentalData.is_currently_renting , 'text-green-500': rentalData.is_currently_renting }"
+          <Button 
+            class="status-text bg-green-200"
+            :class="{ 'text-red-500 bg-red-200': !rentalData.is_currently_renting , 'text-green-500': rentalData.is_currently_renting }"
             variant="ghost"
             @click="switchRentalStatus"
           >
@@ -154,13 +154,13 @@ const emits = defineEmits<{
   (event: "update"): void;
 }>();
 
-const updateRentalName = async (data: { name: string }) => {
-  await supabase.from("map_rental_property_student").update(data).eq("id", props.rentalData!.id);
+const updateRentalName = async (data: { name: string}) => {
+  await supabase.from("map_rental_property_student").update({...data, updated_at: new Date().toISOString()}).eq("id", props.rentalData!.id);
   emits("update");
 };
 
 const switchRentalStatus = async () => {
-  await supabase.from("map_rental_property_student").update({ is_currently_renting: !props.rentalData!.is_currently_renting }).eq("id", props.rentalData!.id);
+  await supabase.from("map_rental_property_student").update({ is_currently_renting: !props.rentalData!.is_currently_renting,updated_at: new Date().toISOString() }).eq("id", props.rentalData!.id);
   emits("update");
 };
 const tempName = ref("");
