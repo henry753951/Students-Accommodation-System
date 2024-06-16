@@ -7,7 +7,7 @@
       <div
         v-for="property in properties"
         :key="property.Rental_property_id!"
-        class="p-5 rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800"
+        class="p-5 rounded-lg shadow-lg bg-gray-200 dark:bg-gray-800"
       >
         <NuxtLink :to="'./social/' + property.Rental_property_id" class="block">
           <img

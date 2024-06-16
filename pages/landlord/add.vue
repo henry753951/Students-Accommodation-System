@@ -15,14 +15,9 @@
         <RentalRegister
           v-if="currentStep === 'registerAddress'"
           key="registerAddress"
-          :is-land-lord="false"
+          :is-land-lord="true"
           class="absolute"
           @submit="onAddressRegisterDone"
-        />
-        <RentalInviteLandlord
-          v-else-if="currentStep === 'InviteLandlord'"
-          key="InviteLandlord"
-          class="absolute"
         />
       </Transition>
     </div>
