@@ -40,7 +40,10 @@
         v-if="currentTab === 'rental-points'"
         class="space-y-5"
       >
-        <RentalInfoPanel :rental-data="rentalData" />
+        <RentalInfoPanel
+          :rental-data="rentalData"
+          @update="refresh"
+        />
         <p class="text-2xl font-bold">
           訪視記錄
         </p>

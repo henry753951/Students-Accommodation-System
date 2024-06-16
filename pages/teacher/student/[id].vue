@@ -1,14 +1,22 @@
 <template>
   <div class="p-4 container">
-    <Card>
-      <CardHeader>
-        <CardTitle>{{ student_data!.student?.app_user?.name }}</CardTitle>
-        <CardDescription>
-          學號: {{ student_data!.student?.student_number }}<br>
-          科系: {{ student_data!.student?.school_department?.department_name }}
-        </CardDescription>
-      </CardHeader>
-    </Card>
+    <div class="flex items-end gap-8">
+      <Card class="w-full">
+        <CardHeader>
+          <CardTitle>{{ student_data!.student?.app_user?.name }}</CardTitle>
+          <CardDescription>
+            學號: {{ student_data!.student?.student_number }}<br>
+            科系: {{ student_data!.student?.school_department?.department_name }}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+      <Button
+        variant="destructive"
+        @click="handleUnbindStudent"
+      >
+        取消綁定此學生
+      </Button>
+    </div>
 
     <Tabs
       default-value="visit-records"
@@ -67,6 +75,22 @@ const { data: student_data } = await useAsyncData("student", async () => {
   }
   return data;
 });
+
+const handleUnbindStudent = async () => {
+  const { error } = await supabase.from("map_teacher_student")
+    .delete()
+    .eq("teacher_id", student_data.value!.teacher_id)
+    .eq("student_id", student_data.value!.student_id);
+  if (error) {
+    throw error;
+  }
+  toast.toast({
+    title: "成功",
+    description: "學生已經成功解除綁定",
+    variant: "default",
+  });
+  navigateTo("/teacher/students");
+};
 </script>
 
 <style>
