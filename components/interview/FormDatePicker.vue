@@ -20,6 +20,7 @@
                 !componentField.modelValue && 'text-muted-foreground',
               ]"
             >
+              <CalendarIcon class="mr-2 h-4 w-4" />
               <span>{{ componentField.modelValue ? getTime(componentField.modelValue) : '請選擇日期' }}</span>
             </Button>
           </FormControl>
@@ -38,6 +39,7 @@
 </template>
 
 <script lang="ts" setup>
+import { Calendar as CalendarIcon } from 'lucide-vue-next';
 const form = ref({
   date: ''
   });
