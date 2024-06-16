@@ -2,7 +2,7 @@
   <div class="head">
     修改個人資料
   </div>
-  <div class="container w-1/4 shadow-lg rounded-lg mt-6 bg-white">
+  <div class="container w-1/4 shadow-lg rounded-lg mt-6 bg-card  ">
     <form @submit.prevent="updateUser" >
       <FormField v-slot="{ componentField }" name="full_name" >
         <FormItem class="relative pt-5">
