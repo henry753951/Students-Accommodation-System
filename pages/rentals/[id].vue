@@ -1,7 +1,13 @@
 <template>
   <div class="container">
-    <div class="mb-3 flex justify-between items-end">
-      <div>
+    <div
+      class="mb-3 flex justify-between items-end p-5 text-white min-h-[300px] relative"
+      :style="{
+        backgroundImage: `url(${rentalData?.rental_property?.image || 'default-image.jpg'})`,
+        backgroundSize: 'cover',
+      }"
+    >
+      <div class="z-10">
         <h1 class="text-2xl font-bold">
           {{ rentalData?.name || '租屋點' }}
         </h1>
@@ -9,8 +15,12 @@
           {{ rentalData?.rental_property?.address || '租屋點描述' }}
         </p>
       </div>
+      <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50" />
+
+
       <Button
         v-if="rentalData"
+        class="z-10"
         @click="navigateTo('/advertisement/info-' + rentalData.rental_property?.id)"
       >
         租屋廣告平台
