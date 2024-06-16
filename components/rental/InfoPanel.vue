@@ -143,7 +143,6 @@ import type { Database, Tables, Enums } from "~/database.types";
 
 const supabase = useSupabaseClient<Database>();
 const tempQuery = supabase.from("map_rental_property_student").select("*, rental_property(*, app_user(*))").limit(1).single();
-
 type RentalData = QueryData<typeof tempQuery>;
 
 defineProps({
