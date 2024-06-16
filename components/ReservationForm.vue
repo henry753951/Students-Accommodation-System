@@ -133,6 +133,7 @@
           >
             提交
           </Button>
+          {{form}}
         </div>
       </form>
     </div>
@@ -218,6 +219,31 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
+let { data: auto_rental_property, error } = await supabase
+  .from('rental_property')
+  .select('address')
+  .eq('id', props.property_id);
+
+  if (auto_rental_property === null) {
+    auto_rental_property = [];
+}
+          
+const handleSubmit = async () => {
+  const confirmation = confirm(`
+    確定要送出嗎?
+  `);
+
+  if (confirmation) {
+    if(props.reservation_type !== '預約看房'){
+      SubmitToReserve();
+    }
+    else{
+      SubmitToReserveRental();
+    }
+  } else {
+    console.log(confirmation);
+  }
+};
 
 const form = ref({
   student_id: computed(() => props.inviter || ''), // 使用 computed 來動態獲取 user.id
@@ -258,23 +284,34 @@ const SubmitToReserve = async () => {
   }
 };
 
-
-const { data: auto_rental_property, error } = await supabase
-  .from('rental_property')
-  .select('address')
-  .eq('id', props.property_id);
-          
-const handleSubmit = async () => {
-  const confirmation = confirm(`
-    確定要送出嗎?
-  `);
-
-  if (confirmation) {
-    SubmitToReserve();
-  } else {
-    console.log(confirmation);
+const SubmitToReserveRental = async () => {
+  console.log("BINHAN SO BIG");
+  const { data, error } = await supabase
+    .from("reservations")
+    .insert([
+      {
+        "student_id": props.inviter as string,
+        "user_id": props.invitee as string,
+        "status": form.value.status as string,
+        "reservation_time": formatDate(form.value.date as unknown as DateObj),
+        "reservation_type": props.reservation_type as string,
+        "reservation_addr": auto_rental_property[0].address  as string,
+        "message": form.value.message as string,
+      },
+    ])
+    .select("*");
+  if (error) {
+    toast.toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
+    return 'error';
   }
 };
+
+
+
 </script>
 
 <style scoped>
