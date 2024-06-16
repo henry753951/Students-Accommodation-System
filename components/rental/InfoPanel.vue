@@ -115,7 +115,7 @@
                 <AvatarFallback>
                   <Icon
                     name="mingcute:user-add-fill"
-                    :size="20"
+                    size="20"
                   />
                 </AvatarFallback>
               </Avatar>
@@ -164,10 +164,7 @@ const updateRentalData = defineModel('rentalData', {
   },
 });
 
-const formatDate = (date: string | null) => {
-  if (!date) return "";
-  return new Date(date).toLocaleString();
-};
+
 </script>
 <style scoped>
 .rental-status {

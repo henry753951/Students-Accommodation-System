@@ -51,11 +51,11 @@ const menu = ref({
     href: '/advertisement',
     description: '瀏覽和查找租屋廣告信息。' 
   },
-  租屋點交流區: { 
-    title: '租屋點交流區', 
-    href: '/social',
-    description: '租屋點成員交流。' 
-  },
+  // 租屋點交流區: { 
+  //   title: '租屋點交流區', 
+  //   href: '/social',
+  //   description: '租屋點成員交流。' 
+  // },
 });
 </script>
 <template>

@@ -1,35 +1,23 @@
 <template>
-  <div
-    class="flex flex-col h-screen mx-auto"
-    style="max-width: 1100px;"
-  >
-    <!-- Header -->
-    <header
-      v-if="property_data"
-      class="bg-card shadow-sm px-6 py-4 flex items-center justify-between"
-    >
-      <h1 class="text-2xl font-bold">
-        {{ property_data[0].address }}
-      </h1>
-    </header>
+  <div class="flex flex-col mx-auto h-screen">
     <!-- Main Content -->
-    <div class="flex-1 grid grid-cols-12 gap-4 p-4">
+    <div class="flex-1 grid grid-cols-12 gap-4">
       <!-- Main Section -->
       <div class="col-span-12 lg:col-span-9 space-y-6">
         <div class="bg-card rounded-lg shadow-sm p-4">
           <!-- Post Input -->
-          <div class="relative w-full max-w-md mb-4 mx-auto">
-            <input
+          <div class="relative w-full mb-4 mx-auto flex gap-3">
+            <Textarea
               v-model="newPost"
               type="text"
               placeholder="Say something..."
-              class="pl-10 pr-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+              class="w-full text-area"
+            />
             <Button
-              class="absolute right-1 top-1/2 transform -translate-y-1/2"
+              class="rounded-full overflow-hidden mt-auto p-5"
               @click="publishPost"
             >
-              Post
+              貼文
             </Button>
           </div>
           <!-- Posts -->
@@ -42,7 +30,7 @@
               v-for="(post, postIndex) in post_data"
               :key="postIndex"
             >
-              <div class="flex items-start space-x-4">
+              <div class="flex items-start space-x-4 px-2">
                 <!-- User Avatar -->
                 <Avatar class="bg-slate-200 mr-3">
                   <AvatarImage
@@ -60,7 +48,7 @@
                       {{ post.app_user?.name }}
                     </div>
                     <div class="text-gray-500 text-sm">
-                      {{ post.created_at }}
+                      {{ formatDate(post.created_at) }}
                     </div>
                   </div>
                   <p class="mt-2">
@@ -70,16 +58,19 @@
               </div>
               <div class="flex justify-end mt-2 space-x-2">
                 <Button
-                  class="bg-red-400 text-white px-4 py-2 rounded"
+                  v-if="user && user.id == post.created_by || user?.roles?.includes('admin')"
+                  variant="ghost"
+                  class="text-red-400"
                   @click="deletePost(post.id, post.created_by ? post.created_by : 'null')"
                 >
-                  刪除
+                  <Icon name="mdi:trash" />
                 </Button>
                 <Button
-                  class="bg-red-400 text-white px-4 py-2 rounded"
+                  variant="ghost"
+                  class="text-red-400"
                   @click="reportPost()"
                 >
-                  檢舉
+                  <Icon name="mdi:alert" />
                 </Button>
               </div>
               <hr
@@ -131,7 +122,7 @@
 import type { Database, Tables, Enums, Json } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
 const supabase = useSupabaseClient<Database>();
-const user = useSupabaseUser();
+const user = await useAsyncUser();
 const toast = useToast();
 
 const props = defineProps({
@@ -185,7 +176,9 @@ const { data: students, pending: isLoading4 } = useAsyncData(async () => {
 const newPost = ref('');
 const publishPost = async () => {
     if (!newPost.value) {
-        window.alert('try to say something ~');
+        toast.toast({
+            title: 'try to say something ~'
+        });
         return;
     }
 
@@ -199,11 +192,15 @@ const publishPost = async () => {
     );
 
     if (error) {
-        window.alert('發送失敗');
+        toast.toast({
+            title: '發送失敗'
+        });
         return;
     }
     newPost.value = '';
-    window.alert('發送成功！');
+    toast.toast({
+        title: '發送成功'
+    });
     refreshPosts();
     return;
 };
@@ -211,50 +208,45 @@ const publishPost = async () => {
 //刪除貼文
 const deletePost = async (postId: string, created_by: string) => {
     if (user.value === null || user.value === undefined) {
-        window.alert('請先登入');
+        toast.toast({
+            title: '請先登入'
+        });
         return;
     }
-    if (user.value.id == created_by) {
-        const confirmDelete = window.confirm('確定刪除?');
-        if (!confirmDelete) {
-            return;
-        }
-        const { error } = await supabase.from('posts')
-            .delete()
-            .eq('id', postId);
 
-        if (error) {
-            window.alert('删除失败');
-            return;
-        }
+    const confirmDelete = window.confirm('確定刪除?');
+    if (!confirmDelete) {
+        return;
+    }
+    const { error } = await supabase.from('posts')
+        .delete()
+        .eq('id', postId);
 
-        window.alert('删除成功！');
-        refreshPosts();
+    if (error) {
+        toast.toast({
+            title: '刪除失敗'
+        });
+        return;
     }
-    else {
-        window.alert('不能刪除別人的留言');
-    }
+
+    toast.toast({
+        title: '刪除成功'
+    });
+    refreshPosts();
+
 };
 
 //檢舉貼文
 const reportPost = async () => {
-    window.alert('檢舉已送出');
+    toast.toast({
+        title: '檢舉成功'
+    });
     return;
 };
 
 </script>
 <style scoped>
-input {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-}
-
-button {
-    border: none;
-    background: gainsboro;
-    color: black;
-    padding: 0.1rem 0.8rem;
-    border-radius: 0.1rem;
+.text-area:focus-visible {
+    box-shadow: none;
 }
 </style>

@@ -1,5 +1,13 @@
 <template>
   <div class="container">
+    <div class="mb-3">
+      <h1 class="text-2xl font-bold">
+        {{ rentalData?.name || '租屋點' }}
+      </h1>
+      <p class="text-lg">
+        {{ rentalData?.rental_property?.address || '租屋點描述' }}
+      </p>
+    </div>
     <Tabs
       v-model="currentTab"
       class="w-full mb-5"

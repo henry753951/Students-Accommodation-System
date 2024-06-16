@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Database } from '~/database.types';
-
 definePageMeta({
   name: "首頁",
 });
@@ -24,6 +23,7 @@ const { data: students, refresh } = useAsyncData(async () => {
     console.error(error);
     return [];
   }
+
   return data;
 });
 </script>

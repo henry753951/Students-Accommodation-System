@@ -76,7 +76,7 @@
               <span class="text-sm"> 搜尋 : </span>
               <input
                 v-model="searchText"
-                class="focus-visible:outline-0 rounded-md p-1 px-2 bg-gray-100 dark:bg-opacity-30 dark:bg-gray-800"
+                class="focus-visible:outline-0 rounded-md p-1 px-2 bg-gray-100 dark:bg-opacity-30 dark:bg-zinc-800"
                 placeholder="Email或姓名"
               >
             </div>

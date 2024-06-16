@@ -244,9 +244,10 @@
 
 import { ref } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
+import { useToast } from '~/components/ui/toast';
 const supabase = useSupabaseClient<Database>();
 const user = useSupabaseUser();
-
+const toast = useToast();
 definePageMeta({
   name: '詳細資訊',
 });
@@ -294,16 +295,25 @@ const score = ref();
 
 const sendComment = async () => {
   if (user.value === null || user.value === undefined) {
-    window.alert('請先登入');
+    toast.toast({
+      title: '請先登入',
+      variant: 'destructive',
+    });
     return;
   }
 
   if (!comment.value || !score.value) {
-    window.alert('Please fill in comment and score');
+    toast.toast({
+      title: '請填寫評論與評分',
+      variant: 'destructive',
+    });
     return;
   }
   if (score.value < 0 || score.value > 10) {
-    window.alert('Please fill in score between 0 ~ 10');
+    toast.toast({
+      title: '評分範圍為 0 ~ 10',
+      variant: 'destructive',
+    });
     return;
   }
   const { data, error } = await supabase.from('advertise_comment').insert(
@@ -315,12 +325,17 @@ const sendComment = async () => {
     }
   );
   if (error) {
-    window.alert('發送失敗');
+    toast.toast({
+      title: '發送失敗',
+      variant: 'destructive',
+    });
     return;
   }
   comment.value = '';
   score.value = '';
-  window.alert('發送成功！');
+  toast.toast({
+    title: '發送成功',
+  });
   refreshSite();
   refreshSite2();
   return;
@@ -329,7 +344,10 @@ const sendComment = async () => {
 
 const deleteComment = async (commentId: string, userId: string) => {
   if (user.value === null || user.value === undefined) {
-    window.alert('請先登入');
+    toast.toast({
+      title: '請先登入',
+      variant: 'destructive',
+    });
     return;
   }
   if (userId == user.value.id) {
@@ -337,15 +355,23 @@ const deleteComment = async (commentId: string, userId: string) => {
     const { error } = await supabase.from('advertise_comment').delete().eq('id', commentId);
     if (error) {
       console.error(error);
-      window.alert('刪除失敗');
-    } else {
-      window.alert('刪除成功');
+      toast.toast({
+        title: '刪除失敗',
+        variant: 'destructive',
+      });
+    } else {  
+      toast.toast({
+        title: '刪除成功',
+      });
     }
     refreshSite2();
     return;
   }
   else {
-    window.alert('不能刪除別人的評論');
+    toast.toast({
+      title: '你沒有權限刪除此評論',
+      variant: 'destructive',
+    });
   }
 };
 
@@ -353,7 +379,8 @@ function switchStatus() {
   showUserCommentsOnly.value = !showUserCommentsOnly.value;
 }
 
-function parsePropertyAttributes(attr: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parsePropertyAttributes(attr: string | any) {
   try {
     return JSON.parse(attr);
   } catch (e) {

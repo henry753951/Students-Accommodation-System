@@ -139,7 +139,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
 import { Calendar as CalendarIcon } from 'lucide-vue-next';
 import type { Database } from '~/database.types';
 import { useToast } from "~/components/ui/toast/use-toast";
