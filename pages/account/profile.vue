@@ -68,6 +68,7 @@ definePageMeta({
   layout: "account-default",
 });
 const user = useSupabaseUser();
+const app_user = await useAsyncUser();
 const supabase = useSupabaseClient();
 
 const checks = ["name", "phone"];
@@ -88,7 +89,7 @@ const isChanged = ref({
 const form = useForm({
   validationSchema: toTypedSchema(
     yup.object({
-      full_name: yup.string().required("Full name is required").default(user.value?.user_metadata.full_name),
+      full_name: yup.string().required("Full name is required").default(app_user.value?.name),
       phone: yup.string().required("Phone is required").default(user.value?.user_metadata.phone),
     }),
   ),

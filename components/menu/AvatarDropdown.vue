@@ -15,7 +15,7 @@
           name="tabler:user"
           class="mr-1"
         />
-        <span>{{ user?.user_metadata.full_name }}</span>
+        <span>{{ app_user?.name }}</span>
       </DropdownMenuLabel>
       <DropdownMenuItem @click="navigateTo('/account/profile')">
         <Icon
@@ -53,6 +53,7 @@
 
 <script lang="ts" setup>
 const user = useSupabaseUser();
+const app_user = await useAsyncUser();
 
 // [computed]
 const miniName = computed(() => {
