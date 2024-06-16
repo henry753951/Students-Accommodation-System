@@ -26,7 +26,7 @@
         </div>
       </CardContent>
       <CardFooter class="flex justify-end">
-        <Button @click="handleNextStep">
+        <Button @click="handleNextStep()"  >
           完成
         </Button>
       </CardFooter>
@@ -52,6 +52,7 @@ const copyInviteLink = () => {
 const handleNextStep = () => {
   // 處理完成邏輯
   console.log("邀請連結已發送");
+  navigateTo('../rentals')
 };
 </script>
 

@@ -34,6 +34,7 @@
             <span v-else>Inactive</span>
           </div>
           <div class="text-lg">
+            {{ property.name }}
             {{ property.rental_property.address }}
           </div>
         </NuxtLink>

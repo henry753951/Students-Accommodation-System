@@ -55,9 +55,14 @@
       </CardContent>
       <CardFooter class="flex justify-end items-center">
         <div class="rental-status">
-          <p class="status-text">
+          <Button
+            class="status-text"
+            :class="{ 'text-red-500': !rentalData.is_currently_renting , 'text-green-500': rentalData.is_currently_renting }"
+            variant="ghost"
+            @click="switchRentalStatus"
+          >
             {{ rentalData.is_currently_renting ? '租賃中' : '未租賃' }}
-          </p>
+          </Button>
         </div>
       </CardFooter>
     </Card>
@@ -153,6 +158,11 @@ const updateRentalName = async (data: { name: string }) => {
   await supabase.from("map_rental_property_student").update(data).eq("id", props.rentalData!.id);
   emits("update");
 };
+
+const switchRentalStatus = async () => {
+  await supabase.from("map_rental_property_student").update({ is_currently_renting: !props.rentalData!.is_currently_renting }).eq("id", props.rentalData!.id);
+  emits("update");
+};
 const tempName = ref("");
 
 </script>
@@ -163,6 +173,5 @@ const tempName = ref("");
 
 .status-text {
   font-weight: bold;
-  color: #28a745;
 }
 </style>

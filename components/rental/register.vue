@@ -185,6 +185,7 @@ const handleSubmit = async (address: string | null = null) => {
       .from("rental_property")
       .select("*")
       .eq("address", addr)
+      .limit(1)
       .single();
     return data ? data.id : "";
   };
@@ -196,6 +197,13 @@ const handleSubmit = async (address: string | null = null) => {
       .select("*")
       .single();
     return data ? data.id : "";
+  };
+
+  const updateRentalProperty = async (rental_property_id: string) => {
+    const { error } = await supabase.from("rental_property").update({ landlord_id: props.isLandLord ? user.value?.id : undefined, image: image_url.value })
+      .eq("id", rental_property_id)
+      .is("landlord_id", null);
+    return error;
   };
 
   const upsertLandlordData = async (rental_property_id: string) => {
@@ -224,12 +232,16 @@ const handleSubmit = async (address: string | null = null) => {
     if (rental_property_id) {
       isNewData = false;
       if (props.isLandLord) {
-        toast.toast({
-          title: "錯誤",
-          description: "此租屋點已經存在",
-          variant: "destructive",
-        });
-        return;
+        const error = await updateRentalProperty(rental_property_id);
+        if (error) {
+          toast.toast({
+            title: "錯誤",
+            description: "此租屋點已經存在",
+            variant: "destructive",
+          });
+          return;
+        }
+        await upsertLandlordData(rental_property_id);
       }
     } else {
       rental_property_id = await insertNewRentalProperty(selectedAddress.value.address);
