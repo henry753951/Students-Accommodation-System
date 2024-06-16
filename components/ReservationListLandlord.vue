@@ -61,14 +61,14 @@
                   <Button
                     variant="outline"
                     class="border-2 border-green-400"
-                    @click="acceptReservation(object.student_id)"
+                    @click="acceptReservation(object.reservation_id)"
                   >
                     接受
                   </Button>
                   <Button
                     variant="outline"
                     class="border-2 border-red-400"
-                    @click="rejectReservation(object.student_id)"
+                    @click="rejectReservation(object.reservation_id)"
                   >
                     拒絕
                   </Button>
@@ -136,12 +136,11 @@ const getUserContactInfo = (userId: string) => {
 };
           
 
-const acceptReservation = async (studentID: string) => {
+const acceptReservation = async (reservationID: string) => {
   const { error } = await supabase
     .from('reservations')
     .update({ status: '已接受', message: message_to_student.value })
-    .eq('user_id', user.value?.id as string)
-    .eq('student_id', studentID as string);
+    .eq('reservation_id', reservationID as string);
   if (error) {
     console.error(error);
   } else {
@@ -150,12 +149,11 @@ const acceptReservation = async (studentID: string) => {
   }
 };
 
-const rejectReservation = async (studentID: string) => {
+const rejectReservation = async (reservationID: string) => {
   const { error } = await supabase
     .from('reservations')
     .update({ status: '已拒絕', message: message_to_student.value })
-    .eq('user_id', user.value?.id as string)
-    .eq('student_id', studentID as string);
+    .eq('reservation_id', reservationID as string);
   if (error) {
     console.error(error);
   } else {
