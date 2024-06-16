@@ -30,7 +30,9 @@
             <MenubarMenu>
               <MenubarTrigger>編輯</MenubarTrigger>
               <MenubarContent>
-                <MenubarItem> 刪除所選 </MenubarItem>
+                <MenubarItem @click="deleteUser">
+                  刪除所選
+                </MenubarItem>
                 <MenubarSub>
                   <MenubarSubTrigger>身份組編輯</MenubarSubTrigger>
                   <MenubarSubContent>
@@ -360,9 +362,9 @@ const userSync = async () => {
 
 // Database operation
 const deleteUser = async (singleUser: Tables<"app_user"> | null = null) => {
-  if (singleUser) {
+  if (singleUser == null) {
     const selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
-    const { error } = await supabase.from("app_user").delete().eq("id", singleUser.id);
+    const { error } = await supabase.from("app_user").delete().eq("id", singleUser!.id);
     if (error) {
       console.error(error);
       return;

@@ -78,6 +78,9 @@ const translate = {
 };
 
 const nextStep = async () => {
+  await supabase.from("app_user").update({
+    first_time: false,
+  }).eq("id", user.value!.id);
   navigateTo("/");
 };
 </script>

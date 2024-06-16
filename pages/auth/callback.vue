@@ -62,10 +62,12 @@ onMounted(async () => {
     if (data) {
       if (data.first_time) {
         navigateTo("/auth/role_select");
+        return;
       }
     }
   }else{
     navigateTo("/auth/login");
+    return;
   }
   navigateTo("/");
 });
