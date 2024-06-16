@@ -1,4 +1,3 @@
-import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
   ssr: true,
@@ -51,6 +50,11 @@ export default defineNuxtConfig({
     // addCsrfTokenToEventCtx: true,
     //   },
     // },
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ['vee-validate']
+    }
   },
   modules: [
     [
