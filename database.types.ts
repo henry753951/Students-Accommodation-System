@@ -501,18 +501,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "reservations_reservation_addr_fkey"
-            columns: ["reservation_addr"]
-            isOneToOne: false
-            referencedRelation: "rental_property"
-            referencedColumns: ["address"]
-          },
-          {
             foreignKeyName: "reservations_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "student"
-            referencedColumns: ["user_id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "reservations_user_id_fkey"
@@ -526,21 +519,21 @@ export type Database = {
       school_department: {
         Row: {
           created_at: string | null
-          department_code: string | null
+          department_code: string
           department_name: string
           id: string
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
-          department_code?: string | null
+          department_code: string
           department_name: string
           id?: string
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
-          department_code?: string | null
+          department_code?: string
           department_name?: string
           id?: string
           updated_at?: string | null
@@ -601,6 +594,30 @@ export type Database = {
           },
         ]
       }
+      studentimport: {
+        Row: {
+          department_uuid: string | null
+          email: string | null
+          id: string
+          name: string | null
+          teacher_name: string | null
+        }
+        Insert: {
+          department_uuid?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          teacher_name?: string | null
+        }
+        Update: {
+          department_uuid?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          teacher_name?: string | null
+        }
+        Relationships: []
+      }
       teacher: {
         Row: {
           created_at: string | null
@@ -636,24 +653,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      userimport: {
-        Row: {
-          data: Json | null
-          email_address: string
-          id: number
-        }
-        Insert: {
-          data?: Json | null
-          email_address: string
-          id?: never
-        }
-        Update: {
-          data?: Json | null
-          email_address?: string
-          id?: never
-        }
-        Relationships: []
       }
     }
     Views: {

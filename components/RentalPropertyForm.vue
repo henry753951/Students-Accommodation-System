@@ -170,18 +170,51 @@
   </form>
 </template>
 <script setup lang="ts">
+import type { QueryData } from '@supabase/supabase-js';
+import type { Database, Tables, Enums, Json } from "~/database.types";
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
+const supabase = useSupabaseClient<Database>();
+type inputType = {
+    created_at: string | null;
+    description: string | null;
+    id: string;
+    is_public: boolean;
+    price: number;
+    property_attributes: Json | null;
+    rental_property_id: string;
+    updated_at: string | null;
+};
+
+type formType = {
+  id: string;
+  price: number;
+  description: string;
+  is_public: boolean;
+  property_attributes: {
+    type: "透天" | "公寓" | "大樓" | "套房" | "雅房" | "其他房型";
+    genderRestriction: "男" | "女" | "多元" | "無";
+    rentalSubsidy: boolean
+  }
+};
+const props = defineProps({
+  rental: {
+    type: Object as PropType<inputType | null>,
+    default: null
+  },
+});
+
+const rental = ref(props.rental as unknown as formType);
 
 const formSchema = toTypedSchema(
   z.object({
-    price: z.number().min(0, 'Price must be a positive number'),
-    description: z.string().min(10, 'Description must be at least 10 characters long'),
-    is_public: z.boolean(),
+    price: z.number().min(0, 'Price must be a positive number').default(rental.value?.price || 0),
+    description: z.string().min(10, 'Description must be at least 10 characters long').default(rental.value?.description || ''),
+    is_public: z.boolean().default(rental.value?.is_public || false),
     property_attributes: z.object({
-      type: z.enum(['透天', '公寓', '大樓', '套房', '雅房', '其他房型']),
-      genderRestriction: z.enum(['男', '女', '多元', '無']),
-      rentalSubsidy: z.boolean().optional(),
+      type: z.enum(['透天', '公寓', '大樓', '套房', '雅房', '其他房型']).default(rental.value?.property_attributes.type || '透天'),
+      genderRestriction: z.enum(['男', '女', '多元', '無']).default(rental.value?.property_attributes.genderRestriction || '無'),
+      rentalSubsidy: z.boolean().optional().default(rental.value?.property_attributes.rentalSubsidy || false),
     }),
   })
 );
@@ -191,7 +224,9 @@ const form = useForm({
 });
 
 const onSubmit = form.handleSubmit(values => {
+  console.log(values);
   const formData = {
+    id: rental.value?.id || undefined,
     ...values,
     property_attributes: {
       ...values.property_attributes,
@@ -209,15 +244,6 @@ const emits = defineEmits<{
   ): void;
 }>();
 
-type formType = {
-  price: number;
-  description: string;
-  isPublic: boolean;
-  property_attributes: {
-    type: "透天" | "公寓" | "大樓" | "套房" | "雅房" | "其他房型";
-    genderRestriction: "男" | "女" | "多元" | "無";
-    rentalSubsidy: boolean
-  }
-};
+
 
 </script>
