@@ -16,8 +16,13 @@
           <CardContent>
             <p>預約時間：{{ object.reservation_time.split('T')[0] }}</p>
             <p>預約地點：{{ object.reservation_addr ? object.reservation_addr : '無' }}</p>
-            <p>預約備註：{{ object.message ? object.message : '無' }}</p>
+            <p v-if="object.status === '邀請中'">
+              預約備註：{{ object.message ? object.message : '無' }}
+            </p>
             <p>預約狀態：{{ object.status }}</p>
+            <p v-if="object.status !== '邀請中'">
+              預約回應：{{ object.message ? object.message : '無' }}
+            </p>
           </CardContent>
           <!-- <CardFooter>
             <Dialog>
