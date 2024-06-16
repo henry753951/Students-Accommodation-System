@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-gray-50 min-h-screen p-6">
-    <div class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+  <div class="bg-card min-h-screen p-6">
+    <div class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <div class="flex justify-end mb-4">
         <Select
           v-model="selectedFilter"
@@ -11,7 +11,7 @@
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>篩選條件</SelectLabel>
+              <SelectLabel>排序條件</SelectLabel>
               <SelectItem value="all">
                 全部
               </SelectItem>
@@ -46,17 +46,29 @@
               </div>
             </div>
             <div class="p-6">
-              <div class="flex items-center space-x-2 mb-4">
-                <Badge class="bg-blue-500 text-white px-2 py-1 rounded">
-                  {{ property.rental_property_info.length && property.rental_property_info[0]?.property_attributes ? property.rental_property_info[0].property_attributes : '無' }}
-                </Badge>
+              <div class="flex justify-content ">
+                <div class="flex items-center space-x-2 mb-4">
+                  <Badge class="bg-blue-500 text-white px-2 py-1 rounded">
+                    {{ property.rental_property_info.length && property.rental_property_info[0]?.property_attributes ? parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).type : '無資料' }}
+                  </Badge>
+                </div>
+                <div class="flex items-center space-x-2 mb-4 ml-4">
+                  <Badge class="bg-blue-500 text-white px-2 py-1 rounded">
+                    {{ property.rental_property_info.length && property.rental_property_info[0]?.property_attributes ? parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).sex : '無資料' }}
+                  </Badge>
+                </div>
+                <div class="flex items-center space-x-2 mb-4 ml-4">
+                  <Badge class="bg-blue-500 text-white px-2 py-1 rounded">
+                    {{ property.rental_property_info.length && property.rental_property_info[0]?.property_attributes ? parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).subsidy : '無資料' }}
+                  </Badge>
+                </div>
               </div>
               <p class="text-gray-700 mb-4 truncate">
-                {{ property.rental_property_info.length ? property.rental_property_info[0].description : 'No description available' }}
+                {{ property.rental_property_info.length ? property.rental_property_info[0].description : '尚無描述' }}
               </p>
               <div class="flex justify-between items-center mb-4">
                 <div class="text-lg font-semibold text-green-600">
-                  {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : 'Price not available' }}
+                  {{ property.rental_property_info.length ? `$${property.rental_property_info[0].price}` : '尚無價位' }}
                 </div>
                 <Button class="bg-green-500 text-white px-4 py-2 rounded">
                   <NuxtLink
@@ -72,14 +84,10 @@
                   </NuxtLink>
                 </Button>
               </div>
-              {{ getJson<property_attribute>(property.rental_property_info[0]?.property_attributes, defaultPropertyAttribute).sex }}
             </div>
           </Card>
         </div>
       </div>
-      <p class="text-green-500">
-        {{ rental_property }}
-      </p>
     </div>
   </div>
 </template>
@@ -135,6 +143,15 @@ const defaultPropertyAttribute: property_attribute = {
   subsidy: false,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parsePropertyAttributes(attr: string | any ) {
+  try {
+    return JSON.parse(attr);
+  } catch (e) {
+    console.error('Error parsing property attributes:', e);
+    return {};
+  }
+}
 </script>
 <style scoped>
 /* Add any additional styling here */
