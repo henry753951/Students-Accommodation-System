@@ -109,6 +109,16 @@ const { data: students, refresh } = useAsyncData(async () => {
           </Button>
         </NuxtLink>
       </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <NuxtLink
+          to="/social"
+          class="w-full sm:w-auto"
+        >
+          <Button class="w-full">
+            TAB
+          </Button>
+        </NuxtLink>
+      </div>
       <div>
         <!-- JOIN 範例 -->
         <h1 class="text-xl font-semibold mb-4">

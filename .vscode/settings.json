@@ -10,7 +10,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[vue]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+    "editor.defaultFormatter": "Vue.volar"
   },
   "[json]": {
     "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"

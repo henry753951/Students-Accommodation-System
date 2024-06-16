@@ -14,6 +14,7 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -26,6 +27,8 @@ definePageMeta({
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 const user = await useAsyncUser();
+
+
 
 </script>
 
