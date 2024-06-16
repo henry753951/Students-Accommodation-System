@@ -10,12 +10,12 @@
             <DialogTrigger as-child>
               <Button 
                 variant="outline"
-                :disabled="app_user?.roles.includes('student') !== true"
+                :disabled="app_user?.roles.includes('student') !== true && app_user?.roles.includes('admin') !== true"
               >
                 選擇租屋點
               </Button>
               <DialogDescription
-                v-if="app_user?.roles.includes('student') !== true"
+                v-if="app_user?.roles.includes('student') !== true && app_user?.roles.includes('admin') !== true"
                 class="pt-3"
               >
                 只有學生可以選擇租屋點
@@ -134,13 +134,14 @@ import type { Database, Tables, Enums } from "~/database.types";
 const app_user = useUser();
 type rental = Database["public"]['Tables']["rental_property"]["Row"];
 
-defineProps({
+const props = defineProps({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rentalProperty: {type: Object as any, required: true},
+  imgSrc: {type: String, required: false, default: 'https://via.placeholder.com/800x400'},
 });
 const supabase = useSupabaseClient<Database>();
 
-const img_src = ref('');
+const img_src = ref(props.imgSrc);
 </script>
 
 <style>

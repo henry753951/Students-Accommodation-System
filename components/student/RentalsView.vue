@@ -4,9 +4,6 @@
     class="h-[50px] rounded-lg border"
   />
   <div v-else-if="rentals?.length !== 0">
-    <h2 class="mb-10 text-center text-3xl font-bold text-gray-800 dark:text-white">
-      Hi {{ user?.name }} !! 從選擇租屋點開始吧 !!
-    </h2>
     <div
 
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"

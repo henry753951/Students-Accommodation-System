@@ -40,8 +40,7 @@
         <InterviewList :student-user-id="student_id" />
       </TabsContent>
       <TabsContent value="rental-points">
-        <!-- 租屋點內容 -->
-        <p>這裡是租屋點的內容。</p>
+        <StudentRentalsView :student-user-id="student_id" />
       </TabsContent>
     </Tabs>
   </div>
