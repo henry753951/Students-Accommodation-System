@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
-    <div class="max-w-lg w-full bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+  <div class="min-h-screen p-6 flex items-center justify-center">
+    <div class="max-w-lg w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
         預約表單 - {{ type }}
       </h2>
@@ -34,9 +34,9 @@
             <Command>
               <CommandInput
                 class="h-9"
-                placeholder="Search framework..."
+                placeholder="搜尋地址..."
               />
-              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandEmpty>沒有找到該地址</CommandEmpty>
               <CommandList>
                 <CommandGroup>
                   <CommandItem
