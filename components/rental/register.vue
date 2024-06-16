@@ -171,7 +171,9 @@ const handleSubmit = async (address: string | null = null) => {
   };
 
 
+
   const upsertStudentData = async (rental_property_id: string) => {
+    // 上傳學生租屋資料
     const { data: all_rental_property_id } = await supabase.from('map_rental_property_student')
       .select('rental_property_id,rental_property(*)')
       .eq('student_id', user.value?.id as string)
@@ -181,10 +183,10 @@ const handleSubmit = async (address: string | null = null) => {
     all_rental_property_id!.forEach((item, index) => {
       if (item.rental_property != null) {
         count.value++;
-      } 
+      }
     });
-    
-    if(count.value != 0){
+
+    if (count.value != 0) {
       toast.toast({
         title: "錯誤",
         description: "此租屋點已經存在，地址以重複",
@@ -193,6 +195,12 @@ const handleSubmit = async (address: string | null = null) => {
       navigateTo('/rentals');
       return;
     }
+    await supabase.from("map_rental_property_student").upsert({
+      name: name.value,
+      rental_property_id: rental_property_id,
+      student_id: user.value?.id,
+      is_currently_renting: true,
+    } as Tables<"map_rental_property_student">);
   };
 
   if (address && !selectedAddress.value) {
@@ -200,6 +208,7 @@ const handleSubmit = async (address: string | null = null) => {
     rental_property_id = await checkExistingAddress(address);
   } else if (selectedAddress.value) {
     rental_property_id = await checkExistingAddress(selectedAddress.value.address);
+
 
 
     if (rental_property_id) {
