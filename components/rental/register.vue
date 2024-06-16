@@ -9,47 +9,22 @@
         <div class="w-full mb-4 md:mb-0 md:mr-4">
           <div class="mb-4">
             <Label for="name">租屋點名稱</Label>
-            <Input
-              id="name"
-              v-model="name"
-              class="mt-1 block w-full"
-            />
+            <Input id="name" v-model="name" class="mt-1 block w-full" />
           </div>
           <div class="mb-2">
             <Label for="image_url">照片網址</Label>
-            <Input
-              id="image_url"
-              v-model="image_url"
-              class="mt-1 block w-full"
-            />
+            <Input id="image_url" v-model="image_url" class="mt-1 block w-full" />
           </div>
           <div class="mb-2">
-            <Label
-              for="address"
-              @click="debugTest()"
-            > 地址 </Label>
+            <Label for="address" @click="debugTest()"> 地址 </Label>
             <div class="flex items-center mt-1">
-              <Input
-                id="address"
-                v-model="address"
-                class="block w-full"
-              />
-              <Button
-                variant="ghost"
-                class="ml-1 border"
-                @click="searchAddress"
-              >
-                <Icon
-                  name="flat-color-icons:search"
-                  class="w-6 h-6"
-                />
+              <Input id="address" v-model="address" class="block w-full" />
+              <Button variant="ghost" class="ml-1 border" @click="searchAddress">
+                <Icon name="flat-color-icons:search" class="w-6 h-6" />
               </Button>
             </div>
             <div class="bg-white shadow rounded-lg dark:bg-zinc-900 mt-2 p-2">
-              <div
-                v-if="selectedAddress"
-                class="p-2"
-              >
+              <div v-if="selectedAddress" class="p-2">
                 <p class="text-sm font-semibold">
                   {{ selectedAddress.attributes.Match_addr }}
                 </p>
@@ -57,10 +32,7 @@
                   {{ selectedAddress.attributes.StAddr }}, {{ selectedAddress.attributes.City }}
                 </p>
               </div>
-              <div
-                v-else
-                class="p-2"
-              >
+              <div v-else class="p-2">
                 <p class="text-sm font-semibold">
                   請輸入地址以搜尋
                 </p>
@@ -70,33 +42,17 @@
         </div>
       </CardContent>
       <CardFooter class="flex justify-end">
-        <Button
-          :disabled="!selectedAddress || !name"
-          @click="handleSubmit"
-        >
+        <Button :disabled="!selectedAddress || !name" @click="handleSubmit">
           下一步
         </Button>
       </CardFooter>
     </div>
     <div class="w-full md:w-1/2 min-h-[380px]">
-      <div
-        id="map"
-        class="h-full bg-gray-200 rounded-lg overflow-hidden"
-      >
-        <iframe
-          v-if="selectedAddress"
+      <div id="map" class="h-full bg-gray-200 rounded-lg overflow-hidden">
+        <iframe v-if="selectedAddress"
           :src="`https://maps.google.com/maps?width=520&height=400&hl=en&q=${encodeURIComponent(selectedAddress.attributes.StAddr + ', ' + selectedAddress.attributes.City)}&t=&z=15&ie=UTF8&iwloc=B&output=embed`"
-          frameborder="0"
-          height="100%"
-          width="100%"
-          scrolling="no"
-          marginheight="0"
-          marginwidth="0"
-        />
-        <div
-          v-else
-          class="flex items-center justify-center h-full"
-        >
+          frameborder="0" height="100%" width="100%" scrolling="no" marginheight="0" marginwidth="0" />
+        <div v-else class="flex items-center justify-center h-full">
           <p class="text-gray-500">
             地圖預覽將顯示在這裡
           </p>
@@ -214,13 +170,29 @@ const handleSubmit = async (address: string | null = null) => {
     });
   };
 
+
   const upsertStudentData = async (rental_property_id: string) => {
-    await supabase.from("map_rental_property_student").upsert({
-      name: name.value,
-      rental_property_id: rental_property_id,
-      student_id: user.value?.id,
-      is_currently_renting: true,
-    } as Tables<"map_rental_property_student">);
+    const { data: all_rental_property_id } = await supabase.from('map_rental_property_student')
+      .select('rental_property_id,rental_property(*)')
+      .eq('student_id', user.value?.id as string)
+      .eq('rental_property.address', selectedAddress.value!.address);
+
+    let count = ref(0 as number);
+    all_rental_property_id!.forEach((item, index) => {
+      if (item.rental_property != null) {
+        count.value++;
+      } 
+    });
+    
+    if(count.value != 0){
+      toast.toast({
+        title: "錯誤",
+        description: "此租屋點已經存在，地址以重複",
+        variant: "destructive",
+      });
+      navigateTo('/rentals');
+      return;
+    }
   };
 
   if (address && !selectedAddress.value) {
@@ -228,6 +200,7 @@ const handleSubmit = async (address: string | null = null) => {
     rental_property_id = await checkExistingAddress(address);
   } else if (selectedAddress.value) {
     rental_property_id = await checkExistingAddress(selectedAddress.value.address);
+
 
     if (rental_property_id) {
       isNewData = false;
