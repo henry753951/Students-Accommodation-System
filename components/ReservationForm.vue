@@ -62,7 +62,7 @@
                 class="h-9"
                 placeholder="搜尋地址..."
               />
-              <CommandEmpty>沒有找到該地址</CommandEmpty>
+              <CommandEmpty>無地址或沒有找到該地址</CommandEmpty>
               <CommandList>
                 <CommandGroup>
                   <CommandItem
