@@ -1,6 +1,6 @@
 <template>
   <div class="p-6 flex items-center justify-center">
-    <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
+    <div class="w-full bg-card p-6 rounded-lg shadow-lg border">
       <h2 class="text-2xl font-bold mb-6 text-center">
         預約表單 - {{ reservation_type }} 
       </h2>
@@ -11,7 +11,7 @@
             id="student_id"
             v-model="inviter_name as string"
             type="text"
-            class="w-full border border-gray-300 rounded mt-1"
+            class="w-full border rounded mt-1"
             readonly
             required
           />
@@ -22,7 +22,7 @@
             id="property_name"
             v-model="invitee_name as string"
             type="tel"
-            class="w-full border border-gray-300 rounded mt-1"
+            class="w-full border rounded mt-1"
             readonly
             required
           />
@@ -37,7 +37,7 @@
             id="autoInputAddress"
             v-model="auto_rental_property![0].address as string"
             type="tel"
-            class="w-full border border-gray-300 rounded mt-1"
+            class="w-full border rounded mt-1"
             readonly
           />
           <PopoverTrigger
@@ -48,7 +48,7 @@
               variant="outline"
               role="combobox"
               :aria-expanded="open"
-              class="justify-between border-2 border-gray-300"
+              class="justify-between border-2"
             >
               {{ value
                 ? house?.find((house) => house.rental_property.address === value)?.rental_property.address
@@ -91,12 +91,12 @@
           </PopoverContent>
         </Popover>
         
-        <div class="mb-4">
+        <div class="mb-4 pt-3">
           <Label for="message">備註訊息</Label>
           <Textarea
             id="message"
             v-model="form.message"
-            class="w-full border border-gray-300 rounded mt-1"
+            class="w-full border rounded mt-1"
             rows="4"
           />
         </div>

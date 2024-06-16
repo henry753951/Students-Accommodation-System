@@ -6,7 +6,7 @@
       </Button>
     </DrawerTrigger>
     <DrawerContent class="w-1/3 h-full left-2/3">
-      <DrawerHeader>
+      <DrawerHeader class="pl-8 pb-3">
         <DrawerTitle>預約表單</DrawerTitle>
         <DrawerDescription>您可以填入您的預約資料</DrawerDescription>
       </DrawerHeader>
