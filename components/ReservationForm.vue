@@ -251,7 +251,7 @@ const form = ref({
   student_id: props.inviter, // 使用 computed 來動態獲取 user.id
   property_addr: props.property_id ? auto_rental_property![0].address : '',
   property_id: props.property_id,
-  property_name: invitee_name,
+  property_name: invitee_name.value as string,
   property_phone: '',
   status: '邀請中',
   message: '',
