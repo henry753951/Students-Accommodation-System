@@ -15,14 +15,9 @@
         <RentalRegister
           v-if="currentStep === 'registerAddress'"
           key="registerAddress"
-          :is-land-lord="false"
+          :is-land-lord="true"
           class="absolute"
           @submit="onAddressRegisterDone"
-        />
-        <RentalInviteLandlord
-          v-else-if="currentStep === 'InviteLandlord'"
-          key="InviteLandlord"
-          class="absolute"
         />
       </Transition>
     </div>
@@ -46,7 +41,7 @@ const onAddressRegisterDone = (payload: { name: string; address: string; isLandL
     ...fromData.value,
     ...payload,
   };
-  currentStep.value = "InviteLandlord"; // 假設這裡是切換到下一步的邏輯
+  navigateTo("/landlord/");
 };
 </script>
 

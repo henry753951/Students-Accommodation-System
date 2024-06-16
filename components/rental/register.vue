@@ -19,7 +19,9 @@
             <Label
               for="address"
               @click="debugTest()"
-            >地址</Label>
+            >
+              地址
+            </Label>
             <div class="flex items-center mt-1">
               <Input
                 id="address"
@@ -97,9 +99,10 @@
     </div>
   </Card>
 </template>
-
 <script lang="ts" setup>
 import type { Database, Tables, Enums } from "~/database.types";
+import { useToast } from "~/components/ui/toast/use-toast";
+const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 const name = ref("");
 const address = ref("");
@@ -162,60 +165,73 @@ const selectedAddress = computed(() => {
 const count = ref(0);
 const debugTest = () => {
   count.value++;
-  if(count.value > 5) {
+  if (count.value > 5) {
     handleSubmit(address.value);
   }
 };
 const handleSubmit = async (address: string | null = null) => {
   let isNewData = true;
   let rental_property_id = "";
-  if(address) {
-    await supabase
+
+  const checkExistingAddress = async (addr: string) => {
+    const { data } = await supabase
       .from("rental_property")
       .select("*")
-      .eq("address", address)
-      .single()
-      .then(({ data }) => {
-        if (data) rental_property_id = data.id;
-      });
-  }
-  if (selectedAddress.value && address == null) {
-    // 檢查是否已經有相同的地址存在
-    await supabase
+      .eq("address", addr)
+      .single();
+    return data ? data.id : "";
+  };
+
+  const insertNewRentalProperty = async (addr: string) => {
+    const { data } = await supabase
       .from("rental_property")
+      .insert({ address: addr })
       .select("*")
-      .eq("address", selectedAddress.value.address)
-      .single()
-      .then(({ data }) => {
-        if (data) rental_property_id = data.id;
-      });
-    console.log(rental_property_id, "rental_property_id");
-    if (rental_property_id !== "") {
+      .single();
+    return data ? data.id : "";
+  };
+
+  const upsertLandlordData = async (rental_property_id: string) => {
+    await supabase.from("map_rental_property_landlord").upsert({
+      name: name.value,
+      rental_property_id: rental_property_id,
+      landlord_id: user.value?.id,
+    });
+  };
+
+  const upsertStudentData = async (rental_property_id: string) => {
+    await supabase.from("map_rental_property_student").upsert({
+      name: name.value,
+      rental_property_id: rental_property_id,
+      student_id: user.value?.id,
+      is_currently_renting: true,
+    } as Tables<"map_rental_property_student">);
+  };
+
+  if (address && !selectedAddress.value) {
+    rental_property_id = await checkExistingAddress(address);
+  } else if (selectedAddress.value) {
+    rental_property_id = await checkExistingAddress(selectedAddress.value.address);
+
+    if (rental_property_id) {
       isNewData = false;
-    } else {
-      // 沒有相同的地址存在，新增租屋點
-      await supabase
-        .from("rental_property")
-        .insert({
-          address: selectedAddress.value.address,
-        })
-        .select("*")
-        .single()
-        .then(async ({ data }) => {
-          if (!data) {
-            return;
-          }
-          rental_property_id = data.id;
-          // 如果是房東，新增該房東對租屋點的資料
-          if (props.isLandLord) {
-            await supabase.from("map_rental_property_landlord").upsert({
-              name: name.value,
-              rental_property_id: rental_property_id,
-              landlord_id: user.value?.id,
-            });
-          }
+      if (props.isLandLord) {
+        toast.toast({
+          title: "錯誤",
+          description: "此租屋點已經存在",
+          variant: "destructive",
         });
+        return;
+      }
+    } else {
+      rental_property_id = await insertNewRentalProperty(selectedAddress.value.address);
+      if (!rental_property_id) return;
+
+      if (props.isLandLord) {
+        await upsertLandlordData(rental_property_id);
+      }
     }
+
     emits("submit", {
       name: name.value,
       address: selectedAddress.value.address,
@@ -223,17 +239,12 @@ const handleSubmit = async (address: string | null = null) => {
       isNewData,
     });
   }
-  if (!props.isLandLord) {
-      // 如果是學生，新增該學生對租屋點的資料
-      await supabase.from("map_rental_property_student").upsert({
-        name: name.value,
-        rental_property_id: rental_property_id,
-        student_id: user.value?.id,
-        is_currently_renting: true,
-      } as Tables<"map_rental_property_student">);
-    }
 
+  if (!props.isLandLord) {
+    await upsertStudentData(rental_property_id);
+  }
 };
+
 
 const emits = defineEmits<{
   (
@@ -247,5 +258,4 @@ const emits = defineEmits<{
   ): void;
 }>();
 </script>
-
 <style></style>

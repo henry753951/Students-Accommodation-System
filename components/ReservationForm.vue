@@ -2,7 +2,7 @@
   <div class="p-6 flex items-center justify-center">
     <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
-        預約表單 - {{ reservation_type }}
+        預約表單 - {{ reservationType }}
         {{property_id}}
       </h2>
       <form @submit.prevent="handleSubmit">
@@ -17,21 +17,35 @@
             required
           />
         </div>
+        <div class="mb-4">
+          <Label for="phone">受邀者</Label>
+          <Input
+            id="property_name"
+            v-model="form.property_name"
+            type="tel"
+            class="w-full border border-gray-300 rounded mt-1"
+            required
+          />
+        </div>
         <Popover v-model:open="open">
+          <Label
+            for="property_id"
+            class="pr-4"
+          >房屋地址</Label>
           <PopoverTrigger as-child>
             <Button
               variant="outline"
               role="combobox"
               :aria-expanded="open"
-              class="w-[200px] justify-between border-2 border-gray-300"
+              class="justify-between border-2 border-gray-300"
             >
               {{ value
-                ? house?.find((house) => house.address === value)?.address
+                ? house?.find((house) => house.rental_property.address === value)?.rental_property.address
                 : "搜尋或選擇地址" }}
               <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent class="w-[200px] p-0">
+          <PopoverContent class="p-0">
             <Command>
               <CommandInput
                 class="h-9"
@@ -43,7 +57,7 @@
                   <CommandItem
                     v-for="property in house"
                     :key="property.id"
-                    :value="property.address"
+                    :value="property.rental_property.address"
                     @select="(ev) => {
                       if (typeof ev.detail.value === 'string') {
                         value = ev.detail.value
@@ -54,11 +68,11 @@
                       open = false
                     }"
                   >
-                    {{ property.address }}
+                    {{ property.rental_property.address }}
                     <Check
                       :class="[
                         'ml-auto h-4 w-4',
-                        value === property.address ? 'opacity-100' : 'opacity-0',
+                        value === property.rental_property.address ? 'opacity-100' : 'opacity-0',
                       ]"
                     />
                   </CommandItem>
@@ -68,7 +82,7 @@
           </PopoverContent>
         </Popover>
         <div class="mb-4">
-          <Label for="phone">房東名稱(自動抓取)</Label>
+          <Label for="phone">受邀者</Label>
           <Input
             id="property_name"
             v-model="form.property_name"
@@ -150,7 +164,6 @@ definePageMeta({
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 const route = useRoute();
-const type = ref(route.params.id);
 const user = useUser();
 
 const open = ref(false);
@@ -179,8 +192,9 @@ const formatDate = (dateObj: DateObj): string => {
 
 
 const { data: house, refresh } = useAsyncData(async () => {
-  const { data, error } = await supabase.from("rental_property")
-    .select("*");
+  const { data, error } = await supabase.from("map_rental_property_student")
+  .select("*, rental_property!inner(*)")
+  .eq("student_id", props.inviteeId);
   if (error) {
     console.error(error);
     return [];
@@ -225,7 +239,7 @@ const SubmitToReserve = async () => {
         "user_id": form.value.property_id as string,
         "status": form.value.status as string,
         "reservation_time": formatDate(form.value.date as unknown as DateObj),
-        "reservation_type": route.params.id as string,
+        "reservation_type": props.reservation_type as string,
         "reservation_addr": form.value.property_addr as string,
         "message": form.value.message as string,
       },
@@ -244,12 +258,6 @@ const SubmitToReserve = async () => {
 
 const handleSubmit = async () => {
   const confirmation = confirm(`
-    student_id: ${form.value.student_id}
-    property_id: ${form.value.property_id}
-    status: ${form.value.status}
-    reservation_time: ${formatDate(form.value.date as unknown as DateObj)}
-    reservation_type: ${route.params.id}
-    
     確定要送出嗎?
   `);
 

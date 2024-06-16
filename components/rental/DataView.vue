@@ -3,28 +3,30 @@
     v-if="status === 'pending'"
     class="h-[50px] rounded-lg border"
   />
-  <template
-    v-else-if="rentals && rentals.length > 0"
-  >
-    <div
-      v-for="rental in rentals"
-      :key="rental.id"
-      class="rounded-lg flex flex-col gap-5 bg-card shadow-lg"
-    >
-      <img
-        :src="rental.rental_property!.image || 'https://via.placeholder.com/150'"
+  <template v-else-if="rentals && rentals.length > 0">
+    <div class="flex flex-wrap gap-5">
+      <div
+        v-for="rental in rentals"
+        :key="rental.id"
+        class="rounded-lg flex md:flex-col gap-5 bg-card shadow-lg overflow-hidden md:w-[400px]"
+        @click="navigateTo(`/rentals/edit/${rental.rental_property_id}`)"
       >
-      <div class="p-3">
-        <h2 class="text-xl font-bold">
-          {{ rental.name }}
-        </h2>
-        <p>
-          {{ rental.rental_property!.address }}
-        </p>
+        <img
+          class="md:w-full w-1/3 h-64 object-cover"
+        
+          :src="rental.rental_property!.image || 'https://via.placeholder.com/150'"
+        >
+        <div class="p-3">
+          <h2 class="text-xl font-bold">
+            {{ rental.name }}
+          </h2>
+          <p>
+            {{ rental.rental_property!.address }}
+          </p>
+        </div>
       </div>
     </div>
   </template>
-  
   <div
     v-else
     class="m-5 p-5 rounded-lg flex justify-center"
@@ -49,21 +51,25 @@ const props = defineProps({
 });
 
 const { data: rentals, status } = await useAsyncData("rentals_", async () => {
-  const query = supabase.from("map_rental_property_landlord")
-    .select("*, rental_property(*)");
-
   if (props.studentUserId) {
-    query.eq("student_user_id", props.studentUserId);
+    const query = supabase.from("map_rental_property_student")
+      .select("*, rental_property(*)");
+    query.eq("student_id", props.studentUserId);
+    const { data, error } = await query;
+    if (error) {
+      throw error;
+    }
+    return data;
+  } else if (props.landlord) {
+    const query = supabase.from("map_rental_property_landlord")
+      .select("*, rental_property(*)");
+    query.eq("landlord_id", props.landlord);
+    const { data, error } = await query;
+    if (error) {
+      throw error;
+    }
+    return data;
   }
-  if (props.landlord) {
-    query.eq("landlord", props.landlord);
-  }
-
-  const { data, error } = await query;
-  if (error) {
-    throw error;
-  }
-  return data;
 });
 </script>
 <style></style>

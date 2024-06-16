@@ -1,18 +1,6 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="bg-white p-10 rounded-lg shadow-lg space-y-10 w-full max-w-3xl">
-      <section>
-        <h2 class="text-3xl font-bold mb-4 text-center text-indigo-600">
-          編輯租屋點
-          {{ route.params.prop_id }}
-        </h2>
-        <RentalAddrForm
-          v-model:address="address"
-          v-model:landlordName="landlordName"
-          class="w-full"
-        />
-      </section>
-
+  <div class="flex justify-center items-center min-h-screen">
+    <div class="p-10 rounded-lg shadow-lg space-y-10 w-full max-w-3xl">
       <section>
         <RentalPropertyForm
           v-model:price="price"
@@ -25,10 +13,10 @@
         />
       </section>
 
-      <div>
+      <div class="flex">
         <Button
           type="submit"
-          class="bg-white text-black border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-100 transition duration-300 ml-auto block"
+          class="ml-auto"
           @click="handleSubmit"
         >
           Submit
