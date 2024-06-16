@@ -19,16 +19,16 @@ export default defineEventHandler(async (event) => {
     if (app_user) {
       // 組合用戶數據
       const other = {
-        name: app_user.data?.name || user.app_metadata.full_name || undefined,
-        phone: app_user.data?.phone || user.app_metadata.phone || undefined,
+        name: app_user.data?.name || user.user_metadata.full_name || undefined,
+        phone: app_user.data?.phone || user.user_metadata.phone || undefined,
+        avatar_url: app_user.data?.avatar_url || user.user_metadata.avatar_url || undefined,
       };
-
       // 更新 'app_user' 表中的用戶數據
-      await supabase.from("app_user").upsert({
+      await supabase.from("app_user").update({
         email: user.email,
         ...other,
-      });
-
+      }).eq("id", user.id);
+      console.log("User sync successful", other);
       // 獲取用戶角色
       const user_roles = await getRoles(event, user.id);
 

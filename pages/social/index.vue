@@ -1,7 +1,10 @@
 <template>
   <div class="max-w-prose flex flex-col justify-center">
+    <h2 class="mb-5 text-center text-3xl font-bold text-gray-800">
+      Hi {{ user?.name }} !! 從選擇租屋點開始吧 !!
+    </h2>
     <div
-      v-for="id in rental_id"
+      v-for="id in properties"
       class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black"
     >
       <NuxtLink :to="'./social/' + id.Rental_property_id">
@@ -36,7 +39,7 @@ type Rental_info = {
   address: string | null,
 };
 
-const rental_id = ref<Rental_info[]>([]);
+const properties = ref<Rental_info[]>([]);
 
 const initial_get_information = async () => {
   if(user.value === null || user.value === undefined){
@@ -57,7 +60,7 @@ const initial_get_information = async () => {
       });
       return;
     }
-    rental_id.value = data.map(item => ({
+    properties.value = data.map(item => ({
       Rental_property_id: item.rental_property_id,
       state: item.is_currently_renting,
       address: item.rental_property?.address!,
@@ -77,7 +80,7 @@ const initial_get_information = async () => {
       });
       return;
     }
-    rental_id.value = data.map(item => ({
+    properties.value = data.map(item => ({
       Rental_property_id: item.id,
       state: true,
       address: item.address,
