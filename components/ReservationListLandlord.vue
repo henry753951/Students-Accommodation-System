@@ -105,7 +105,8 @@ const message_to_student = ref('');
 const { data: reserve_list_student, refresh } = useAsyncData(async () => {
   const { data, error } = await supabase.from("reservations")
     .select('*')
-    .eq('user_id',  user.value?.id as string);
+    .eq('user_id',  user.value?.id as string)
+    .order('created_time', { ascending: false });
   if (error) {
     console.error(error);
     return [];

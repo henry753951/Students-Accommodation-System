@@ -470,6 +470,7 @@ export type Database = {
       }
       reservations: {
         Row: {
+          created_time: string | null
           message: string | null
           reservation_addr: string | null
           reservation_id: string
@@ -480,6 +481,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          created_time?: string | null
           message?: string | null
           reservation_addr?: string | null
           reservation_id?: string
@@ -490,6 +492,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          created_time?: string | null
           message?: string | null
           reservation_addr?: string | null
           reservation_id?: string
