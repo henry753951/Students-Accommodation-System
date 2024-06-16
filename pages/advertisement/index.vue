@@ -1,9 +1,9 @@
 <template>
   
-  <div class="container w-2/3">
-    <h1 class="text">房屋廣告公告</h1>
+  <div class="container w-2/3 mb-10 ">
+    <h1 class="text-2xl">房屋廣告公告</h1>
     <Carousel class="relative w-full " @init-api="(val) => emblaMainApi = val">
-      <CarouselContent class = "w-1000">
+      <CarouselContent class = "w-full">
         <CarouselItem v-for="(_, index) in items" :key="index">
           <div class="p-1">
             <Card>
