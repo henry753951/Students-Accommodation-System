@@ -32,4 +32,9 @@ export default [
     path: "/interview/record",
     role: ["admin"],
   },
+  {
+    name: "social",
+    path: "/social",
+    role: ["admin, student, landlord"],
+  },
 ];
