@@ -5,7 +5,7 @@
       name="price"
     >
       <FormItem>
-        <FormLabel>Price</FormLabel>
+        <FormLabel>價格</FormLabel>
         <FormControl>
           <Input
             v-bind="componentField"
@@ -21,7 +21,7 @@
       name="description"
     >
       <FormItem>
-        <FormLabel>Description</FormLabel>
+        <FormLabel>描述</FormLabel>
         <FormControl>
           <Textarea
             v-bind="componentField"
@@ -35,14 +35,18 @@
       v-slot="{ value, handleChange }"
       name="is_public"
     >
-      <FormItem>
-        <FormLabel>Is Public</FormLabel>
-        <FormControl>
-          <Switch
-            :checked="value"
-            @update:checked="handleChange"
-          />
-        </FormControl>
+      <FormItem class="my-4">
+        <div class="flex h-full justify-between">
+          <FormLabel class="my-auto">
+            是否公開
+          </FormLabel>
+          <FormControl>
+            <Switch
+              :checked="value"
+              @update:checked="handleChange"
+            />
+          </FormControl>
+        </div>
         <FormMessage />
       </FormItem>
     </FormField>
@@ -51,7 +55,7 @@
       name="property_attributes.type"
     >
       <FormItem>
-        <FormLabel>Property Attributes(這邊應該是能否租屋補貼/限男女....)</FormLabel>
+        <FormLabel>屋種</FormLabel>
         <FormControl>
           <div class="flex flex-wrap gap-4">
             <!-- 第一個 Select -->
@@ -95,7 +99,7 @@
       name="property_attributes.genderRestriction"
     >
       <FormItem>
-        <FormLabel>Property Attributes(這邊應該是能否租屋補貼/限男女....)</FormLabel>
+        <FormLabel>性別限制</FormLabel>
         <FormControl>
           <!-- 第二個 Select -->
           <Select v-bind="componentField">
@@ -131,7 +135,7 @@
       name="property_attributes.rentalSubsidy"
     >
       <FormItem>
-        <FormLabel>Property Attributes(這邊應該是能否租屋補貼/限男女....)</FormLabel>
+        <FormLabel>租屋補貼</FormLabel>
         <FormControl>
           <!-- Checkbox -->
           <div class="flex items-center space-x-2">
@@ -164,7 +168,7 @@
         type="submit"
         class="ml-auto"
       >
-        Submit
+        送出
       </Button>
     </div>
   </form>
@@ -204,7 +208,12 @@ const props = defineProps({
   },
 });
 
-const rental = ref(props.rental as unknown as formType);
+const rental = ref({
+  ...props.rental,
+  property_attributes:{
+    ...JSON.parse(props.rental?.property_attributes) as formType['property_attributes']
+  }
+} as formType);
 
 const formSchema = toTypedSchema(
   z.object({
