@@ -12,6 +12,7 @@
         <TableRow
           v-for="student in students"
           :key="student.id"
+          class="cursor-pointer"
           @click="navigateTo(`/teacher/student/${student.student?.user_id}`)"
         >
           <TableCell>{{ student.student?.app_user?.name }}</TableCell>

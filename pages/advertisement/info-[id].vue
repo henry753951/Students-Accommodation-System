@@ -14,7 +14,7 @@
           <div class="text-center bg-opacity-80 p-10 ">
             <h3 className="text-lg font-bold mb-2">
               留言
-            </h3>       
+            </h3>
             <p className="text-gray-500">
               <Input
                 v-model="comment"
@@ -91,10 +91,10 @@
             <div class="mb-5">
               <h3 className="text-lg font-bold mb-2">
                 平均評分
-              </h3>          
+              </h3>
               <p className="text-gray-500">
                 {{ averageScore }}
-              </p>      
+              </p>
             </div>
           </div>
         </div>
@@ -105,26 +105,21 @@
       class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
       <h3 className="text-lg font-bold mb-2">
-        評論區
-        <div
-          v-if="user != null || user != undefined"
-        >
-          <Button
-           
-            @click="switchStatus"
-          >
+        評論區 <div v-if="user != null || user != undefined">
+          <Button @click="switchStatus">
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
         </div>
-      </h3>   
+      </h3>
       <div
         v-for="items in comment_data"
+        :key="items.id"
         class="mb-4"
-      >     
+      >
         <Card>
           <CardHeader class="border-b border-gray-200 dark:border-gray-700 pb-4">
             <div class="flex items-center ">
-              <Avatar class="bg-slate-200 mr-3">        
+              <Avatar class="bg-slate-200 mr-3">
                 <AvatarImage
                   :src="items.app_user && items.app_user.avatar_url ? items.app_user.avatar_url : 'null'"
                   alt="@radix-vue"
@@ -142,7 +137,7 @@
                 >
                   刪除評論
                 </Button>
-              </div>  
+              </div>
             </div>
           </CardHeader>
           <CardContent class="py-4">
@@ -154,8 +149,8 @@
                 {{ items.comment }}
               </p>
             </div>
-            <div class="mt-4 text-left">             
-            <!-- Add more agenda items here -->
+            <div class="mt-4 text-left">
+              <!-- Add more agenda items here -->
             </div>
           </CardContent>
         </Card>
@@ -166,26 +161,21 @@
       class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
       <h3 className="text-lg font-bold mb-2">
-        評論區
-        <div
-          v-if="user != null || user != undefined"
-        >
-          <Button
-           
-            @click="switchStatus"
-          >
+        評論區 <div v-if="user != null || user != undefined">
+          <Button @click="switchStatus">
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
         </div>
-      </h3>   
+      </h3>
       <div
         v-for="items in userComments"
+        :key="items.id"
         class="mb-4"
-      >     
+      >
         <Card>
           <CardHeader class="border-b border-gray-200 dark:border-gray-700 pb-4">
             <div class="flex items-center ">
-              <Avatar class="bg-slate-200 mr-3">        
+              <Avatar class="bg-slate-200 mr-3">
                 <AvatarImage
                   :src="items.app_user && items.app_user.avatar_url ? items.app_user.avatar_url : 'null'"
                   alt="@radix-vue"
@@ -203,7 +193,7 @@
                 >
                   刪除評論
                 </Button>
-              </div>  
+              </div>
             </div>
           </CardHeader>
           <CardContent class="py-4">
@@ -215,8 +205,8 @@
                 {{ items.comment }}
               </p>
             </div>
-            <div class="mt-4 text-left">             
-            <!-- Add more agenda items here -->
+            <div class="mt-4 text-left">
+              <!-- Add more agenda items here -->
             </div>
           </CardContent>
         </Card>
@@ -227,14 +217,8 @@
       class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
       <h3 className="text-lg font-bold mb-2">
-        評論區
-        <div
-          v-if="user != null || user != undefined"
-        >
-          <Button
-           
-            @click="switchStatus"
-          >
+        評論區 <div v-if="user != null || user != undefined">
+          <Button @click="switchStatus">
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
         </div>
@@ -249,21 +233,21 @@
     >
       <h3 className="text-lg font-bold mb-2">
         評論區
-      </h3>   
+      </h3>
       <div class="text-center">
         <p>目前沒有評論</p>
       </div>
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 
 import { ref } from 'vue';
 import type { Database, Tables, Enums } from "~/database.types";
+import { useToast } from '~/components/ui/toast';
 const supabase = useSupabaseClient<Database>();
 const user = useSupabaseUser();
-
+const toast = useToast();
 definePageMeta({
   name: '詳細資訊',
 });
@@ -272,7 +256,7 @@ const route = useRoute();
 const department_id = ref(route.params.id);
 const showUserCommentsOnly = ref(false);
 
-const { data: rental_property, error ,refresh: refreshSite } = useAsyncData( async () => {
+const { data: rental_property, error, refresh: refreshSite } = useAsyncData(async () => {
   const { data } = await supabase.from('rental_property').select(`
     *,
     rental_property_info (
@@ -282,8 +266,8 @@ const { data: rental_property, error ,refresh: refreshSite } = useAsyncData( asy
   return data;
 });
 
-const { data: comment_data, error: error2 ,refresh: refreshSite2 } = useAsyncData( async () => {
-    const { data } = await supabase.from('advertise_comment').select(`
+const { data: comment_data, error: error2, refresh: refreshSite2 } = useAsyncData(async () => {
+  const { data } = await supabase.from('advertise_comment').select(`
     id,
     user_id,
     comment,
@@ -298,28 +282,38 @@ const { data: comment_data, error: error2 ,refresh: refreshSite2 } = useAsyncDat
 
 
 const userComments = computed(() => {
+  if (user.value == null) return [];
   if (!comment_data.value || !user.value) return [];
-  return comment_data.value.filter(comment => comment.user_id === user.value.id);
+  return comment_data.value.filter(comment => comment.user_id === user.value!.id);
 });
 const averageScore = computed(() => {
   if (!comment_data.value) return 0;
-  return comment_data.value.reduce((acc, cur) => acc + cur.score, 0) / comment_data.value.length;
+  return comment_data.value.reduce((acc, cur) => acc + cur.score!, 0) / comment_data.value.length;
 });
 const comment = ref('');
 const score = ref();
 
 const sendComment = async () => {
-  if(user.value === null || user.value === undefined){
-    window.alert('請先登入');
-    return;
-  } 
-
-  if(!comment.value || !score.value) {
-    window.alert('Please fill in comment and score');
+  if (user.value === null || user.value === undefined) {
+    toast.toast({
+      title: '請先登入',
+      variant: 'destructive',
+    });
     return;
   }
-  if(score.value < 0 || score.value > 10){
-    window.alert('Please fill in score between 0 ~ 10');
+
+  if (!comment.value || !score.value) {
+    toast.toast({
+      title: '請填寫評論與評分',
+      variant: 'destructive',
+    });
+    return;
+  }
+  if (score.value < 0 || score.value > 10) {
+    toast.toast({
+      title: '評分範圍為 0 ~ 10',
+      variant: 'destructive',
+    });
     return;
   }
   const { data, error } = await supabase.from('advertise_comment').insert(
@@ -331,12 +325,17 @@ const sendComment = async () => {
     }
   );
   if (error) {
-    window.alert('發送失敗');
+    toast.toast({
+      title: '發送失敗',
+      variant: 'destructive',
+    });
     return;
   }
   comment.value = '';
   score.value = '';
-  window.alert('發送成功！');
+  toast.toast({
+    title: '發送成功',
+  });
   refreshSite();
   refreshSite2();
   return;
@@ -344,32 +343,44 @@ const sendComment = async () => {
 
 
 const deleteComment = async (commentId: string, userId: string) => {
-  if(user.value === null || user.value === undefined){
-    window.alert('請先登入');
+  if (user.value === null || user.value === undefined) {
+    toast.toast({
+      title: '請先登入',
+      variant: 'destructive',
+    });
     return;
-  } 
-  if( userId == user.value.id ){
+  }
+  if (userId == user.value.id) {
     if (!user.value) return;
     const { error } = await supabase.from('advertise_comment').delete().eq('id', commentId);
     if (error) {
       console.error(error);
-      window.alert('刪除失敗');
-    } else {
-      window.alert('刪除成功');
+      toast.toast({
+        title: '刪除失敗',
+        variant: 'destructive',
+      });
+    } else {  
+      toast.toast({
+        title: '刪除成功',
+      });
     }
     refreshSite2();
     return;
   }
-  else{
-    window.alert('不能刪除別人的評論');
+  else {
+    toast.toast({
+      title: '你沒有權限刪除此評論',
+      variant: 'destructive',
+    });
   }
 };
 
-function switchStatus(){
+function switchStatus() {
   showUserCommentsOnly.value = !showUserCommentsOnly.value;
 }
 
-function parsePropertyAttributes(attr) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parsePropertyAttributes(attr: string | any) {
   try {
     return JSON.parse(attr);
   } catch (e) {
@@ -378,7 +389,4 @@ function parsePropertyAttributes(attr) {
   }
 }
 </script>
-
-<style>
-
-</style>
+<style></style>

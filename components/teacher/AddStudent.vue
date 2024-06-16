@@ -2,6 +2,7 @@
   <Dialog
     v-if="isDesktop"
     v-model:open="isDrawerOpen"
+    class="max-h-[90dvh]"
   >
     <DialogTrigger>
       <Button>新增</Button>
@@ -20,7 +21,7 @@
           @input="refresh"
         />
         <Separator />
-        <ul class="flex my-2 flex-col gap-3 overflow-y-scroll max-h-[50dvh] min-h-[30dvh]">
+        <ul class="flex my-2 flex-col gap-3 overflow-y-auto">
           <li
             v-for="student in filteredStudents"
             :key="student.user_id"
@@ -79,7 +80,7 @@
           @input="refresh"
         />
         <Separator />
-        <ul class="flex py-2 flex-col gap-3 overflow-y-scroll max-h-[50dvh] min-h-[30dvh]">
+        <ul class="flex py-2 flex-col gap-3 max-h-[50dvh] overflow-y-auto">
           <li
             v-for="student in filteredStudents"
             :key="student.user_id"
