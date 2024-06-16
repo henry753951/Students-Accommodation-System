@@ -1,54 +1,83 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen">
-    <div class="p-10 rounded-lg shadow-lg space-y-10 w-full max-w-3xl">
-      <section>
-        <RentalPropertyForm
-          v-model:price="price"
-          v-model:description="description"
-          v-model:is_public="isPublic"
-          v-model:propertyAttributesType="propertyAttributesType"
-          v-model:propertyAttributesSex="propertyAttributesSex"
-          v-model:propertyAttributesSubsidy="propertyAttributesSubsidy"
-          class="w-full"
-        />
-      </section>
-
-      <div class="flex">
-        <Button
-          type="submit"
-          class="ml-auto"
-          @click="handleSubmit"
-        >
-          Submit
-        </Button>
+  <div class="p-4 container">
+    <div class="flex flex-col gap-4">
+      <h1 class="text-2xl font-bold">
+        {{ Rental?.name || '無' }}
+      </h1>
+      <p class="text-xl">
+        {{ Rental?.rental_property?.address || '無' }}
+      </p>
+    </div>
+    <Separator class="my-5" />
+    <div
+      v-if="Rental"
+      class="space-y-3"
+    >
+      <div class="flex w-full">
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button class="ml-auto">
+              + 刊登租屋資訊
+            </Button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>刊登租屋資訊</DialogTitle>
+              <DialogDescription> 請填寫以下資訊 </DialogDescription>
+            </DialogHeader>
+            <div>
+              <RentalPropertyForm @submit="handelAddInfo" />
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <section>
-        <h2>
-          表單內容統整
-        </h2>
-        <div class="bg-gray-50 p-4 rounded-lg shadow-inner space-y-2">
-          <p><strong>地址:</strong> {{ address }}</p>
-          <p><strong>房東名稱:</strong> {{ landlordName }}</p>
-          <p><strong>租金:</strong> {{ price }}</p>
-          <p><strong>描述:</strong> {{ description }}</p>
-          <p><strong>是否公開:</strong> {{ isPublic }}</p>
-          <p>
-            <strong>房產屬性:</strong> [{{ propertyAttributesType }},{{ propertyAttributesSex }},{{
-              propertyAttributesSubsidy }}]
-          </p>
-        </div>
-      </section>
+      <div class="mx-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>建立時間</TableHead>
+              <TableHead>描述</TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>是否公開</TableHead>
+              <TableHead>價格</TableHead>
+              <TableHead>屬性</TableHead>
+              <TableHead>租賃物業ID</TableHead>
+              <TableHead>更新時間</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow
+              v-for="infos in Rental?.rental_property?.rental_property_info"
+              :key="infos.id"
+            >
+              <TableCell>{{ infos.created_at }}</TableCell>
+              <TableCell>{{ infos.description }}</TableCell>
+              <TableCell>{{ infos.id }}</TableCell>
+              <TableCell>{{ infos.is_public }}</TableCell>
+              <TableCell>{{ infos.price }}</TableCell>
+              <TableCell>{{ infos.property_attributes }}</TableCell>
+              <TableCell>{{ infos.rental_property_id }}</TableCell>
+              <TableCell>{{ infos.updated_at }}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import type { Database, Tables, Enums } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
-import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 const route = useRoute();
 definePageMeta({
   name: "修改租屋點",
@@ -56,28 +85,45 @@ definePageMeta({
 const toast = useToast();
 const supabase = useSupabaseClient<Database>();
 
-const address = ref('');
-const landlordName = ref('');
-const price = ref(0);
-const description = ref('');
-const isPublic = ref(false);
-const propertyAttributesType = ref('');
-const propertyAttributesSex = ref('無');
-const propertyAttributesSubsidy = ref(false);
+type formType = {
+  price: number;
+  description: string;
+  isPublic: boolean;
+  property_attributes: {
+    type: "透天" | "公寓" | "大樓" | "套房" | "雅房" | "其他房型";
+    genderRestriction: "男" | "女" | "多元" | "無";
+    rentalSubsidy: boolean
+  }
+};
 
-const test=ref(null);
 
-const fetchRentalData = async () => {
+const { data: Rental,refresh } = await useAsyncData('rental_property' + route.params.prop_id, async () => {
   const { data, error } = await supabase
-    .from('rental_property')
+    .from('map_rental_property_landlord')
     .select(`
       *,
-      rental_property_info (
+      rental_property(
+      *,
+        rental_property_info (
         *
+        )
       )
     `)
-    .eq('id', route.params.prop_id)
+    .eq('rental_property_id', route.params.prop_id)
     .single();
+  return data;
+});
+
+const handelAddInfo = async (data: formType) => {
+  const { error } = await supabase
+    .from('rental_property_info')
+    .insert({
+      description: data.description,
+      price: data.price,
+      is_public: data.isPublic,
+      property_attributes: JSON.stringify(data.property_attributes),
+      rental_property_id: Rental?.value?.rental_property_id,
+    } as Tables<'rental_property_info'>);
 
   if (error) {
     toast.toast({
@@ -87,72 +133,52 @@ const fetchRentalData = async () => {
     });
     return;
   }
-  console.log(data);
-  address.value = data.address;
-  landlordName.value = data.landlord_id;
-  const rentalInfo = data.rental_property_info[0];
-  price.value = rentalInfo.price;
-  description.value = rentalInfo.description;
-  isPublic.value = rentalInfo.is_public;
-  const propertyAttributes = JSON.parse(rentalInfo.property_attributes);
-  propertyAttributesType.value = propertyAttributes.type;
-  propertyAttributesSex.value = propertyAttributes.sex;
-  propertyAttributesSubsidy.value = propertyAttributes.subsidy;
+  toast.toast({
+    title: "新增成功",
+    description: "新增租屋資訊成功",
+    variant: "default",
+  }); 
+  refresh();
 };
 
-onMounted(() => {
-  fetchRentalData();
-});
+// const fetchRentalData = async () => {
+//   const { data, error } = await supabase
+//     .from('rental_property')
+//     .select(`
+//       *,
+//       rental_property_info (
+//         *
+//       )
+//     `)
+//     .eq('id', route.params.prop_id)
+//     .single();
 
-const handleSubmit = async () => {
-  const confirmation = confirm(`
-    Address: ${address.value}
-    Landlord Name: ${landlordName.value}
-    Price: ${price.value}
-    Description: ${description.value}
-    Is Public: ${isPublic.value}
-    Property Attributes: ${propertyAttributesType.value}, ${propertyAttributesSex.value}, ${propertyAttributesSubsidy.value}
-    
-    確定要送出嗎?
-  `);
+//   if (error) {
+//     toast.toast({
+//       title: "Error",
+//       description: error.message,
+//       variant: "destructive",
+//     });
+//     return;
+//   }
+//   console.log(data);
+//   address.value = data.address;
+//   landlordName.value = data.landlord_id;
+//   const rentalInfo = data.rental_property_info[0];
+//   price.value = rentalInfo.price;
+//   description.value = rentalInfo.description;
+//   isPublic.value = rentalInfo.is_public;
+//   const propertyAttributes = JSON.parse(rentalInfo.property_attributes);
+//   propertyAttributesType.value = propertyAttributes.type;
+//   propertyAttributesSex.value = propertyAttributes.sex;
+//   propertyAttributesSubsidy.value = propertyAttributes.subsidy;
+// };
 
-  if (confirmation) {
-    const time = new Date().toISOString();
-    const { data, error } = await supabase
-      .from('rental_property')
-      .update({
-        address: address.value,
-        landlord_name: landlordName.value,
-        price: price.value,
-        description: description.value,
-        is_public: isPublic.value,
-        property_attributes: JSON.stringify({
-          type: propertyAttributesType.value,
-          sex: propertyAttributesSex.value,
-          subsidy: propertyAttributesSubsidy.value
-        }),
-        updated_at: time,
-      })
-      .eq('id', route.params.prop_id);
+// onMounted(() => {
+//   fetchRentalData();
+// });
 
-    if (error) {
-      toast.toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast.toast({
-      title: "Success",
-      description: "資料已成功更新",
-      variant: "success",
-    });
-  }
-};
 </script>
-
 <style scoped>
 .bg-gray-50 {
   background-color: #f9fafb;
