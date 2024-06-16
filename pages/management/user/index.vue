@@ -76,7 +76,7 @@
               <span class="text-sm"> 搜尋 : </span>
               <input
                 v-model="searchText"
-                class="focus-visible:outline-0 rounded-md p-1 px-2 bg-gray-100 dark:bg-opacity-30 dark:bg-zinc-800"
+                class="focus-visible:outline-0 rounded-md p-1 px-2 bg-gray-100 dark:bg-opacity-30 dark:bg-gray-800"
                 placeholder="Email或姓名"
               >
             </div>
@@ -173,6 +173,8 @@
               </TableBody>
             </Table>
           </div>
+
+          {{ currentEditRole }}
           <Dialog
             v-model:open="isEditDialogOpen"
           >
@@ -184,6 +186,40 @@
                 v-if="currentEditUser"
                 class="flex flex-col gap-4"
               >
+                <Switch
+                  :checked="currentEditRole.student" 
+                  class="flex items-center gap-2"
+                  @update:checked="handleSwitch('學生', $event)"
+                >
+                  <Check />
+
+                  學生
+                </Switch>
+                <Switch
+                  :checked="currentEditRole.teacher"
+                  class="flex items-center gap-2"
+                  @update:checked="handleSwitch('教師', $event)"
+                > 
+                  <Check />
+                  教師  
+                </Switch>
+                <Switch
+                  :checked="currentEditRole.landlord"
+                  class="flex items-center gap-2"
+                  @update:checked="handleSwitch('房東', $event)"
+                >
+                  <Check />
+                  房東
+                </Switch>
+                <Switch
+                  :checked="currentEditRole.admin"
+                  class="flex items-center gap-2"
+                  @update:checked="handleSwitch('管理員', $event)"
+                >
+                  <Check />
+                  管理員
+                </Switch>
+                
                 <Input
                   v-model="currentEditUser.name"
                   placeholder="姓名"
@@ -195,7 +231,7 @@
               </div>
               <DialogFooter>
                 <Button @click="deleteUser(currentEditUser)">
-                  刪除
+                  保存
                 </Button>
                 <Button @click="isEditDialogOpen = false">
                   取消
@@ -223,6 +259,7 @@ import type { Database, Tables, Enums } from "~/database.types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check } from "lucide-vue-next";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { QueryData } from "@supabase/supabase-js";
 useHead({
   title: "校外租屋平台 | 使用者管理",
 });
@@ -367,13 +404,47 @@ const updateSingleRoleForSelections = async (role: string, action: "add" | "remo
     console.error("Errors updating role:", error);
   }
 };
+const tempQuery = supabase.from("app_user").select("*, student(*), teacher(*), landlord(*),admin(*)").single();
+type  AppUser=  QueryData<typeof tempQuery>;  
 const isEditDialogOpen = ref(false);
-const currentEditUser = ref<Tables<"app_user"> | null>(null);
-const OpenEditDialog = (user: Tables<"app_user">) => {
-  currentEditUser.value = { ...user };
+const currentEditUser = ref<AppUser | null>(null);
+const OpenEditDialog = (user: AppUser) => {
+  console.log(user);
+  currentEditUser.value = user;
   isEditDialogOpen.value = true;
 };
-// [Watch]
+const currentEditRole = computed({
+  get: () => {
+    if (!currentEditUser.value) return { student: false, teacher: false, landlord: false, admin: false};
+  return {
+    student: currentEditUser.value.student ? true : false,
+    teacher: currentEditUser.value.teacher ? true : false,
+    landlord: currentEditUser.value.landlord ? true : false,
+    admin: currentEditUser.value.admin ? true : false,
+  };
+  },
+//   set: (value) => {
+//     if (!currentEditUser.value) return;
+//     currentEditUser.value = {
+//       ...currentEditUser.value,
+//       student:
+//       teacher: 
+//       landlord: 
+//       admin:
+//     };
+//   },
+});
+const handleSwitch = async (role: string, value: boolean) => {
+  if(currentEditUser.value){
+      await updateSingleRoleForSelections(role, value ? "add" : "remove", currentEditUser.value.id);
+  }
+  currentEditRole.value = {
+    ...currentEditRole.value,
+    [role]: value,
+  };
+};
+
+// [Watch]  
 watch(searchText, () => {
   currentPage.value = 1;
 });
