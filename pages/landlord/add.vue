@@ -41,7 +41,7 @@ const onAddressRegisterDone = (payload: { name: string; address: string; isLandL
     ...fromData.value,
     ...payload,
   };
-  currentStep.value = "InviteLandlord"; // 假設這裡是切換到下一步的邏輯
+  navigateTo("/landlord/");
 };
 </script>
 
