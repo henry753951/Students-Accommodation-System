@@ -54,9 +54,6 @@
               >
                 保存
               </Button>
-              <Button>
-                取消
-              </Button>
             </DialogFooter>
           </div>
         </DialogContent>
