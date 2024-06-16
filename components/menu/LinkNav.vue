@@ -51,7 +51,7 @@ const menu_ = ref({
       roles: ['landlord']
     },
   ],
-  // 訪視系統:[
+  // 訪視系統: [
   //   { 
   //     title: '訪視記錄清單', 
   //     href: '/interview/record',
@@ -63,12 +63,14 @@ const menu_ = ref({
   //     description: '進行校外訪視的預約。' 
   //   },
   // ],
-  我的租屋點:{
+  學生專區: [
+    {
       title: '我的租屋點',
       href: '/rentals',
       description: '查看和管理您的租屋點信息。',
       roles: ['student']
-  },
+    },
+  ],
   租屋平台: {
     title: '租屋平台',
     href: '/advertisement',

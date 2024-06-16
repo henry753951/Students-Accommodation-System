@@ -8,7 +8,7 @@
       <div
         v-for="rental in rentals"
         :key="rental.id"
-        class="rounded-lg flex md:flex-col gap-5 bg-card shadow-lg overflow-hidden md:w-[400px]"
+        class="rounded-lg flex md:flex-col gap-5 bg-card shadow-lg overflow-hidden md:w-[400px] cursor-pointer"
         @click="navigateTo(`/rentals/edit/${rental.rental_property_id}`)"
       >
         <img
