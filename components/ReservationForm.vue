@@ -23,6 +23,7 @@
             v-model="invitee_name as string"
             type="tel"
             class="w-full border border-gray-300 rounded mt-1"
+            readonly
             required
           />
         </div>
@@ -276,10 +277,15 @@ const SubmitToReserve = async () => {
   if (error) {
     toast.toast({
       title: "Error",
-      description: error.message,
+      description: ifTimeError(error.message),
       variant: "destructive",
     });
     return 'error';
+  }else{
+    toast.toast({
+      title: "Success",
+      description: "預約成功",
+    });
   }
 };
 
@@ -302,14 +308,24 @@ const SubmitToReserveRental = async () => {
   if (error) {
     toast.toast({
       title: "Error",
-      description: error.message,
+      description: ifTimeError(error.message),
       variant: "destructive",
     });
     return 'error';
+  }else{
+    toast.toast({
+      title: "Success",
+      description: "預約成功",
+    });
   }
 };
 
-
+function ifTimeError(msg: string){
+  if(msg === 'invalid input syntax for type timestamp: "undefined-undefined-undefined"')
+    return '請選擇日期!';
+  else
+    return msg;
+}
 
 </script>
 
