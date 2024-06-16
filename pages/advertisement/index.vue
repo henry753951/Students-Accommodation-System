@@ -134,11 +134,11 @@
                       v-model:propertyId="property.id"
                     />
                   </div>
-                  <Button class="bg-green-500 text-white px-4 py-2 rounded">
-                    <NuxtLink :to="'/advertisement/info-' + property.id">
+                  <NuxtLink :to="'/advertisement/info-' + property.id">
+                    <Button class="bg-green-500 text-white px-4 py-2 rounded">
                       詳細
-                    </NuxtLink>
-                  </Button>
+                    </Button>
+                  </NuxtLink>
                 </div>
               </div>
             </Card>
