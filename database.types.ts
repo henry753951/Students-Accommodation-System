@@ -504,8 +504,8 @@ export type Database = {
             foreignKeyName: "reservations_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "student"
-            referencedColumns: ["user_id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "reservations_user_id_fkey"
@@ -519,21 +519,21 @@ export type Database = {
       school_department: {
         Row: {
           created_at: string | null
-          department_code: string | null
+          department_code: string
           department_name: string
           id: string
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
-          department_code?: string | null
+          department_code: string
           department_name: string
           id?: string
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
-          department_code?: string | null
+          department_code?: string
           department_name?: string
           id?: string
           updated_at?: string | null
