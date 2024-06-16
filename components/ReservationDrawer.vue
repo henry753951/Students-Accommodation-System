@@ -1,5 +1,5 @@
 <template>
-  <Drawer>
+  <Drawer class="">
     <DrawerTrigger>
       <Button
         variant="outline"
@@ -8,21 +8,19 @@
         預約清單
       </Button>
     </DrawerTrigger>
-    <DrawerContent>
-      <DrawerHeader>
-        <DrawerTitle>預約清單</DrawerTitle>
-        <DrawerDescription>以下是您的預約列表</DrawerDescription>
-      </DrawerHeader>
-      <DrawerBody>
-        <ReservationList />
-      </DrawerBody>
-      <DrawerFooter>
+    <DrawerContent class="w-1/3 h-full absolute left-2/3">
+        <DrawerHeader>
+          <DrawerTitle>預約清單</DrawerTitle>
+          <DrawerDescription>以下是您的預約列表</DrawerDescription>
+        </DrawerHeader>
+        <ScrollArea class="h-full">
+          <ReservationList class=""/>
+        </ScrollArea>
         <DrawerClose>
-          <Button variant="outline">
+          <Button variant="outline" >
             關閉
           </Button>
         </DrawerClose>
-      </DrawerFooter>
     </DrawerContent>
   </Drawer>
 </template>
@@ -32,5 +30,8 @@
 </script>
 
 <style scoped>
-/* Add any additional styling here */
+/* 確保文本可以被選擇 */
+* {
+  user-select: text;
+}
 </style>
