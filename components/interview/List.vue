@@ -74,10 +74,10 @@
             </TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead class="w-1/12">
+                <TableHead class="w-2/12">
                   老師名稱
                 </TableHead>
-                <TableHead class="w-1/12">
+                <TableHead class="w-2/12">
                   學生名稱
                 </TableHead>
                 <TableHead class="w-1/12">
@@ -86,7 +86,7 @@
                 <TableHead class="w-2/12">
                   最後編輯時間
                 </TableHead>
-                <TableHead class="w-4/12">
+                <TableHead class="w-3/12">
                   居住地址
                 </TableHead>
                 <TableHead class="w-1/12 text-right">
