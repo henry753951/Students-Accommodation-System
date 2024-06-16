@@ -219,6 +219,8 @@ const SubmitToReserve = async () => {
         "status": form.value.status as string,
         "reservation_time": formatDate(form.value.date as unknown as DateObj),
         "reservation_type": route.params.id as string,
+        "reservation_addr": form.value.property_addr as string,
+        "message": form.value.message as string,
       },
     ])
     .select("*");
