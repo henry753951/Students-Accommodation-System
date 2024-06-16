@@ -14,8 +14,8 @@
           <DrawerDescription>以下是您的預約列表</DrawerDescription>
         </DrawerHeader>
         <ScrollArea class="h-full">
-          <ReservationList class=""/>
-          <ReservationListLandlord />
+          <ReservationList v-if="user?.roles.includes('student')"/>
+          <ReservationListLandlord v-if="user?.roles.includes('landlord')"/>
         </ScrollArea>
         <DrawerClose>
           <Button variant="outline" class="border-2 border-black">
@@ -27,6 +27,9 @@
 </template>
 
 <script setup lang="ts">
+
+const user = useUser();
+
 
 </script>
 
