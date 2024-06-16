@@ -1,30 +1,40 @@
 <script setup lang="ts">
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
-
+const user = await useAsyncUser();
+type menuItem = {
+  title: string;
+  href: string;
+  description: string;
+  roles: string[] | null;
+};
 // 定義選單項目
-const menu = ref({
+const menu_ = ref({
   管理系統: [
-    { 
-      title: '使用者管理', 
+    {
+      title: '使用者管理',
       href: '/management/user',
-      description: '管理和控制所有系統使用者的訪問和權限。' 
+      description: '管理和控制所有系統使用者的訪問和權限。',
+      roles: ['admin']
     },
-    { 
-      title: '系所管理', 
+    {
+      title: '系所管理',
       href: '/management/department',
-      description: '管理大學各系所的設置和運營。' 
+      description: '管理大學各系所的設置和運營。',
+      roles: ['admin']
     },
-    { 
-      title: '訪視紀錄管理', 
+    {
+      title: '訪視紀錄管理',
       href: '/interview/record',
-      description: '管理所有訪視記錄或新增記錄。' 
+      description: '管理所有訪視記錄或新增記錄。',
+      roles: ['admin']
     },
   ],
   教師系統: [
-    { 
-      title: '旗下學生管理', 
+    {
+      title: '旗下學生管理',
       href: '/teacher/students',
-      description: '管理教師和學生之間的互動和分配。' 
+      description: '管理教師和學生之間的互動和分配。',
+      roles: ['admin']
     },
   ],
   // 訪視系統:[
@@ -40,27 +50,48 @@ const menu = ref({
   //   },
   // ],
   我的租屋點: [
-    { 
-      title: '我的租屋點', 
+    {
+      title: '我的租屋點',
       href: '/rentals',
-      description: '查看和管理您的租屋點信息。' 
+      description: '查看和管理您的租屋點信息。',
+      roles: null
     },
-    { 
-    title: '預約看屋', 
-    href: '/reserve-rental',
-    description: '進行看屋的預約。' 
+    {
+      title: '預約看屋',
+      href: '/reserve-rental',
+      description: '進行看屋的預約。',
+      roles: ['student']
     },
   ],
-  租屋平台: { 
-    title: '租屋平台', 
+  租屋平台: {
+    title: '租屋平台',
     href: '/advertisement',
-    description: '瀏覽和查找租屋廣告信息。' 
+    description: '瀏覽和查找租屋廣告信息。',
+    roles: null
   },
   // 租屋點交流區: { 
   //   title: '租屋點交流區', 
   //   href: '/social',
   //   description: '租屋點成員交流。' 
   // },
+} as Record<string, menuItem[] | menuItem>);
+const menu = computed(() => {
+  return Object.fromEntries(
+    Object.entries(menu_.value).map(([key, value]) => {
+      if (Array.isArray(value)) {
+        return [
+          key,
+          value.filter((item) => {
+            if (item.roles === null) {
+              return true;
+            }
+            return item.roles.some((role) => user.value!.roles.includes(role));
+          }),
+        ];
+      }
+      return [key, value];
+    })
+  );
 });
 </script>
 <template>
@@ -72,7 +103,7 @@ const menu = ref({
       >
         <!-- 檢查是否為陣列 -->
         <NavigationMenuItem
-          v-if="Array.isArray(items)"
+          v-if="Array.isArray(items)&&items.length>0"
           :key="`${key}-array`"
         >
           <NavigationMenuTrigger>
@@ -85,9 +116,7 @@ const menu = ref({
                 :key="item.title"
                 :to="item.href"
               >
-                <NavigationMenuLink
-                  :class="navigationMenuTriggerStyle()"
-                >
+                <NavigationMenuLink :class="navigationMenuTriggerStyle()">
                   <div class="flex flex-col gap-2 justify-start">
                     <div>
                       {{ item.title }}
@@ -103,7 +132,7 @@ const menu = ref({
         </NavigationMenuItem>
         <!-- 單一項目 -->
         <NavigationMenuItem
-          v-else
+          v-if="!Array.isArray(items)"
           :key="`${key}-single`"
         >
           <NuxtLink :to="items.href">
