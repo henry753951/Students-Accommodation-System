@@ -128,12 +128,14 @@
           </FormField>
         </div>
         <div class="text-center">
-          <Button
-            type="submit"
-            class="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            提交
-          </Button>
+          <DrawerClose>
+            <Button
+              type="submit"
+              class="bg-green-500 text-white px-4 py-2 rounded"
+            >
+              提交
+            </Button>
+          </DrawerClose>
         </div>
       </form>
     </div>
