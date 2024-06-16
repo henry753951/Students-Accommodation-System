@@ -88,27 +88,8 @@
             </Command>
           </PopoverContent>
         </Popover>
-        <div class="mb-4">
-          <Label for="phone">受邀者</Label>
-          <Input
-            id="property_name"
-            v-model="form.property_name"
-            type="tel"
-            class="w-full border border-gray-300 rounded mt-1"
-            required
-          />
-        </div>
-        <div class="mb-4">
-          <Label for="status">狀態</Label>
-          <Input
-            id="status"
-            v-model="form.status"
-            type="email"
-            class="w-full border border-gray-300 rounded mt-1"
-            required
-            readonly
-          />
-        </div>
+        
+      
         <div class="mb-4">
           <Label for="message">備註訊息</Label>
           <Textarea
