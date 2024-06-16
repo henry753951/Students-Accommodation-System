@@ -397,6 +397,7 @@ export type Database = {
           address: string
           created_at: string | null
           id: string
+          image: string | null
           landlord_id: string | null
           updated_at: string | null
         }
@@ -404,6 +405,7 @@ export type Database = {
           address: string
           created_at?: string | null
           id?: string
+          image?: string | null
           landlord_id?: string | null
           updated_at?: string | null
         }
@@ -411,6 +413,7 @@ export type Database = {
           address?: string
           created_at?: string | null
           id?: string
+          image?: string | null
           landlord_id?: string | null
           updated_at?: string | null
         }

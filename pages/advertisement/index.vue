@@ -34,7 +34,7 @@
           <Card class="rounded-lg shadow-lg overflow-hidden border border-gray-300">
             <div class="relative">
               <img
-                src="https://via.placeholder.com/800x400"
+                :src="property.image!"
                 alt="House Image"
                 class="w-full h-64 object-cover"
               >
@@ -108,7 +108,6 @@ function getJson<T>(data: Json, defaultValue: T): T {
   if (!data) return defaultValue;
   return data as T;
 }
-
 
 const selectedFilter = ref('all');
 

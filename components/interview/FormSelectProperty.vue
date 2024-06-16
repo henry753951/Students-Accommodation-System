@@ -38,7 +38,7 @@
                     <Card class="rounded-lg shadow-lg overflow-hidden border border-gray-300">
                       <div class="relative">
                         <img
-                          src="https://via.placeholder.com/800x400"
+                          :src="property.rental_property.image!"
                           alt="House Image"
                           class="w-full h-64 object-cover"
                         >
@@ -64,7 +64,8 @@
                           <Button
                             type="submit"
                             class="bg-green-500 text-whitepx-4 py-2 rounded"
-                            @click="componentField.onChange(property.rental_property.address);"
+                            @click="componentField.onChange(property.rental_property.address); 
+                                    img_src = property.rental_property.image!;"
                           >
                             選擇
                           </Button>
@@ -105,13 +106,12 @@
         <FormLabel class="font-bold text-lg">
           以下為您選擇的租屋點
         </FormLabel>
-      
         <Card
           class="rounded-lg shadow-lg overflow-hidden border"
         >
           <div class="relative">
             <img
-              src="https://via.placeholder.com/800x400"
+              :src="img_src"
               alt="House Image"
               class="w-full h-64 object-cover"
             >
@@ -138,6 +138,9 @@ defineProps({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rentalProperty: {type: Object as any, required: true},
 });
+const supabase = useSupabaseClient<Database>();
+
+const img_src = ref('');
 </script>
 
 <style>
