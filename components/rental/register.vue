@@ -185,7 +185,7 @@ const handleSubmit = async (address: string | null = null) => {
   const insertNewRentalProperty = async (addr: string) => {
     const { data } = await supabase
       .from("rental_property")
-      .insert({ address: addr })
+      .insert({ address: addr, landlord_id: props.isLandLord ? user.value?.id : undefined })
       .select("*")
       .single();
     return data ? data.id : "";
@@ -209,6 +209,7 @@ const handleSubmit = async (address: string | null = null) => {
   };
 
   if (address && !selectedAddress.value) {
+    // for debugging purposes
     rental_property_id = await checkExistingAddress(address);
   } else if (selectedAddress.value) {
     rental_property_id = await checkExistingAddress(selectedAddress.value.address);

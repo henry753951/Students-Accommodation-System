@@ -9,18 +9,17 @@
       </Button>
     </DrawerTrigger>
     <DrawerContent class="w-1/3 h-full left-2/3">
-      <DrawerHeader>
+      <DrawerHeader class="pl-8 pb-3">
         <DrawerTitle>預約清單</DrawerTitle>
-        <DrawerDescription>以下是您的預約列表</DrawerDescription>
+        <DrawerDescription>以下是您所有的預約列表</DrawerDescription>
       </DrawerHeader>
       <ScrollArea class="h-full">
-        <ReservationList v-if="user?.roles.includes('student')" />
-        <ReservationListLandlord v-if="user?.roles.includes('landlord')" />
+        <ReservationList />
+        <ReservationListLandlord />
       </ScrollArea>
-      <DrawerClose>
+      <DrawerClose class="p-3">
         <Button
           variant="outline"
-          class="border-2 border-black"
         >
           關閉
         </Button>

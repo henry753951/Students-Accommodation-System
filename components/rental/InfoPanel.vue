@@ -15,6 +15,7 @@
               <Button
                 class="edit-button"
                 variant="ghost"
+                @click="tempName = rentalData.name"
               >
                 ✎
               </Button>
@@ -28,27 +29,19 @@
                   <Label
                     for="name"
                     class="text-right"
-                  > 原始資料 </Label>
+                  > 名稱 </Label>
                   <Input
-                    id="name"
-                    class="col-span-3"
-                    readonly
-                  />
-                </div>
-                <div class="grid grid-cols-4 items-center gap-4">
-                  <Label
-                    for="username"
-                    class="text-right"
-                  > 修該資料 </Label>
-                  <Input
-                    id="username"
+                    v-model="tempName"
                     class="col-span-3"
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">
-                  Save changes
+                <Button
+                  type="submit"
+                  @click="updateRentalName({ name: tempName })"
+                >
+                  儲存
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -145,24 +138,22 @@ const supabase = useSupabaseClient<Database>();
 const tempQuery = supabase.from("map_rental_property_student").select("*, rental_property(*, app_user(*))").limit(1).single();
 type RentalData = QueryData<typeof tempQuery>;
 
-defineProps({
+const props = defineProps({
   rentalData: {
     type: Object as PropType<RentalData | null>,
     required: true,
   },
 });
 
-const updateRentalData = defineModel('rentalData', {
-  type: Object as PropType<{
-    name: string,
-    is_currently_renting: boolean,
-  }>,
-  default: {
-    name: "",
-    is_currently_renting: false,
-  },
-});
+const emits = defineEmits<{
+  (event: "update"): void;
+}>();
 
+const updateRentalName = async (data: { name: string }) => {
+  await supabase.from("map_rental_property_student").update(data).eq("id", props.rentalData!.id);
+  emits("update");
+};
+const tempName = ref("");
 
 </script>
 <style scoped>
