@@ -168,10 +168,10 @@ const open = ref(false);
 const value = ref(''); //選擇表單的value
 
 const props = defineProps<{
-  inviter: string;
-  invitee: string;
+  inviter: string;  //我有小改變數名稱
+  invitee: string; //房東or老師id
   reservation_type: string;//預約類型
-  property_id: string; //房屋的id，要拿去抓房東名字
+  property_id: string; //房屋的id
 }>();
 
 
