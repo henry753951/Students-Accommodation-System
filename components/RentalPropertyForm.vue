@@ -180,14 +180,14 @@ import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 const supabase = useSupabaseClient<Database>();
 type inputType = {
-    created_at: string | null;
-    description: string | null;
-    id: string;
-    is_public: boolean;
-    price: number;
-    property_attributes: Json | null;
-    rental_property_id: string;
-    updated_at: string | null;
+  created_at: string | null;
+  description: string | null;
+  id: string;
+  is_public: boolean;
+  price: number;
+  property_attributes: Json | null;
+  rental_property_id: string;
+  updated_at: string | null;
 };
 
 type formType = {
@@ -208,10 +208,17 @@ const props = defineProps({
   },
 });
 
+
+const temp = props.rental ? JSON.parse(props.rental!.property_attributes! as string) as formType['property_attributes'] : {
+  type: '透天',
+  genderRestriction: '無',
+  rentalSubsidy: false
+};
+
 const rental = ref({
-  ...props.rental,
-  property_attributes:{
-    ...JSON.parse(props.rental?.property_attributes) as formType['property_attributes']
+  ...props.rental!,
+  property_attributes: {
+    ...temp
   }
 } as formType);
 

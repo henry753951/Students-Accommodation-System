@@ -29,6 +29,7 @@ const { data: student } = await useAsyncData(async () => {
   if (error) {
     throw error;
   }
+  await supabase.from("studentimport").delete().eq("email", user.value!.email!);
   return data;
 });
 const { data: teacher } = await useAsyncData(async () => {
@@ -36,6 +37,7 @@ const { data: teacher } = await useAsyncData(async () => {
   if (error) {
     throw error;
   }
+  await supabase.from("teacherimport").delete().eq("email", user.value!.email!);
   return data;
 });
 
@@ -62,10 +64,12 @@ onMounted(async () => {
     if (data) {
       if (data.first_time) {
         navigateTo("/auth/role_select");
+        return;
       }
     }
   }else{
     navigateTo("/auth/login");
+    return;
   }
   navigateTo("/");
 });

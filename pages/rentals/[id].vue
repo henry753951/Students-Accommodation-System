@@ -89,10 +89,14 @@ const { data: rentalData, refresh } = await useAsyncData("rental_property_data_i
   }
   return data;
 });
+
+definePageMeta({
+  name: "租屋點空間"
+});
+
 const updateRentalData = ref({
 
 });
-
 
 const currentTab = ref('rental-points');
 

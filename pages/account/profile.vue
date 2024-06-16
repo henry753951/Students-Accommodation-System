@@ -59,15 +59,16 @@
 
 
 <script lang="ts" setup>
+definePageMeta({
+  name: "修改個人資料",
+});
 import { useToast } from "@/components/ui/toast/use-toast";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import * as yup from "yup";
 import { toTypedSchema } from "@vee-validate/yup";
 
-definePageMeta({
-  layout: "account-default",
-});
 const user = useSupabaseUser();
+const app_user = await useAsyncUser();
 const supabase = useSupabaseClient();
 
 const checks = ["name", "phone"];
@@ -88,7 +89,7 @@ const isChanged = ref({
 const form = useForm({
   validationSchema: toTypedSchema(
     yup.object({
-      full_name: yup.string().required("Full name is required").default(user.value?.user_metadata.full_name),
+      full_name: yup.string().required("Full name is required").default(app_user.value?.name),
       phone: yup.string().required("Phone is required").default(user.value?.user_metadata.phone),
     }),
   ),
@@ -104,7 +105,7 @@ const updateUser = form.handleSubmit(async (values) => {
   if(payload.phone?.length !== 10){
     toast.toast({
       title: "Error",
-      description: "Phone number 需要10位數字",
+      description: "Phone number 應為10位數字",
       variant: "destructive",
     });
     return;}
@@ -116,6 +117,7 @@ const updateUser = form.handleSubmit(async (values) => {
         phone: payload.phone,
       } as never) // Cast the object to 'never' type to resolve the error
       .eq("id", user.value.id);
+      navigateTo("/");
   }
 
   if (error) {
