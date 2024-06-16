@@ -9,7 +9,7 @@
           <Label for="student_id">邀請者</Label>
           <Input
             id="student_id"
-            v-model="inviter_name as string"
+            v-model="inviter_name"
             type="text"
             class="w-full border rounded mt-1"
             readonly
@@ -20,7 +20,7 @@
           <Label for="phone">受邀者</Label>
           <Input
             id="property_name"
-            v-model="invitee_name as string"
+            v-model="invitee_name"
             type="tel"
             class="w-full border rounded mt-1"
             readonly
@@ -35,7 +35,7 @@
           <Input
             v-if="reservation_type === '預約看房'"
             id="autoInputAddress"
-            v-model="auto_rental_property![0].address as string"
+            v-model="auto_rental_property![0].address"
             type="tel"
             class="w-full border rounded mt-1"
             readonly
@@ -251,7 +251,7 @@ const form = ref({
   student_id: props.inviter, // 使用 computed 來動態獲取 user.id
   property_addr: props.property_id ? auto_rental_property![0].address : '',
   property_id: props.property_id,
-  property_name: invitee_name.value as string,
+  property_name: invitee_name.value!,
   property_phone: '',
   status: '邀請中',
   message: '',
