@@ -28,6 +28,12 @@ const menu_ = ref({
       description: '管理所有訪視記錄或新增記錄。',
       roles: ['admin']
     },
+    {
+      title: '租屋點管理',
+      href: '/social',
+      description: '管理所有租屋點及相關平台。',
+      roles: ['admin']
+    },
   ],
   教師系統: [
     {
