@@ -1,5 +1,8 @@
 <template>
-  <Drawer class="">
+  <Drawer
+    v-if="user"
+    class=""
+  >
     <DrawerTrigger>
       <Button
         variant="outline"
@@ -31,7 +34,6 @@
 <script setup lang="ts">
 
 const user = useUser();
-
 
 </script>
 
