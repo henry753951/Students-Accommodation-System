@@ -65,6 +65,7 @@
           <CardContent>
             <InterviewFormSelectProperty 
               :rental-property="rental_property!"
+              :img-src="current_choose_property_img"
             />
           </CardContent>
         </FormField>
@@ -763,6 +764,14 @@ const { data: rental_property, pending, refresh } = useAsyncData('rental_propert
     throw error;
   }
   return data;
+});
+
+const { data: current_choose_property_img } = useAsyncData('current_choose_property', async () => {
+  const { data, error } = await supabase.from("rental_property").select("*").eq("address", modelValue!.value!.PropertyAddress);
+  if (error) {
+    throw error;
+  }
+  return data![0].image;
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

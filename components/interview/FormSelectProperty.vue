@@ -134,13 +134,14 @@ import type { Database, Tables, Enums } from "~/database.types";
 const app_user = useUser();
 type rental = Database["public"]['Tables']["rental_property"]["Row"];
 
-defineProps({
+const props = defineProps({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rentalProperty: {type: Object as any, required: true},
+  imgSrc: {type: String, required: false, default: 'https://via.placeholder.com/800x400'},
 });
 const supabase = useSupabaseClient<Database>();
 
-const img_src = ref('');
+const img_src = ref(props.imgSrc);
 </script>
 
 <style>
