@@ -17,6 +17,9 @@
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+  name: "我的租屋點",
+});
 import type { Database, Tables, Enums } from "~/database.types";
 import { useToast } from "~/components/ui/toast/use-toast";
 
