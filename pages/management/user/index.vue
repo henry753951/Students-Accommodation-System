@@ -109,6 +109,7 @@
                   </TableHead>
                   <TableHead>姓名</TableHead>
                   <TableHead>電子郵件</TableHead>
+                  <TableHead>系所</TableHead>
                   <TableHead>身份</TableHead>
                   <TableHead>操作</TableHead>
                 </TableRow>
@@ -123,6 +124,7 @@
                   </TableCell>
                   <TableCell>{{ user.name }}</TableCell>
                   <TableCell>{{ user.email }}</TableCell>
+                  <TableCell>{{ user.student?.department?.department_name || "" }}</TableCell>
                   <TableCell class="flex gap-2">
                     <Badge
                       v-if="user.student"
@@ -168,16 +170,12 @@
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell>  
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </div>
-
-          {{ currentEditRole }}
-          <Dialog
-            v-model:open="isEditDialogOpen"
-          >
+          <Dialog v-model:open="isEditDialogOpen">
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>編輯使用者</DialogTitle>
@@ -186,51 +184,71 @@
                 v-if="currentEditUser"
                 class="flex flex-col gap-4"
               >
-                <Switch
-                  :checked="currentEditRole.student" 
-                  class="flex items-center gap-2"
-                  @update:checked="handleSwitch('學生', $event)"
+                <div class="flex justify-between items-center px-2 py-4 rounded-lg border shadow">
+                  <p>學生身分組</p>
+                  <Switch
+                    :checked="currentEditRole.student"
+                    class="flex items-center gap-2"
+                    @update:checked="handleSwitch('學生', $event)"
+                  />
+                </div>
+                <div class="flex justify-between items-center px-2 py-4 rounded-lg border shadow">
+                  <p>教師身分組</p>
+                  <Switch
+                    :checked="currentEditRole.teacher"
+                    class="flex items-center gap-2"
+                    @update:checked="handleSwitch('教師', $event)"
+                  />
+                </div>
+                <div class="flex justify-between items-center px-2 py-4 rounded-lg border shadow">
+                  <p>房東身分組</p>
+                  <Switch
+                    :checked="currentEditRole.landlord"
+                    class="flex items-center gap-2"
+                    @update:checked="handleSwitch('房東', $event)"
+                  />
+                </div>
+                <div class="flex justify-between items-center px-2 py-4 rounded-lg border shadow-sm">
+                  <p>管理員身分組</p>
+                  <Switch
+                    :checked="currentEditRole.admin"
+                    class="flex items-center gap-2"
+                    @update:checked="handleSwitch('管理員', $event)"
+                  />
+                </div>
+                <div class="flex justify-between items-center">
+                  <p>姓名</p>
+                  <Input
+                    v-model="currentEditUser.name"
+                    class="w-[180px]"
+                    placeholder="姓名"
+                  />
+                </div>
+                <div
+                  v-if="currentEditUser.student"
+                  class="flex justify-between items-center"
                 >
-                  <Check />
-
-                  學生
-                </Switch>
-                <Switch
-                  :checked="currentEditRole.teacher"
-                  class="flex items-center gap-2"
-                  @update:checked="handleSwitch('教師', $event)"
-                > 
-                  <Check />
-                  教師  
-                </Switch>
-                <Switch
-                  :checked="currentEditRole.landlord"
-                  class="flex items-center gap-2"
-                  @update:checked="handleSwitch('房東', $event)"
-                >
-                  <Check />
-                  房東
-                </Switch>
-                <Switch
-                  :checked="currentEditRole.admin"
-                  class="flex items-center gap-2"
-                  @update:checked="handleSwitch('管理員', $event)"
-                >
-                  <Check />
-                  管理員
-                </Switch>
-                
-                <Input
-                  v-model="currentEditUser.name"
-                  placeholder="姓名"
-                />
-                <Input
-                  v-model="currentEditUser.email"
-                  placeholder="電子郵件"
-                />
+                  <p>系所</p>
+                  <Select v-model="currentEditUser.student!.department_id">
+                    <SelectTrigger class="w-[180px]">
+                      <SelectValue placeholder="選擇系所" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem
+                          v-for="department in departments"
+                          :key="department.id"
+                          :value="department.id"
+                        >
+                          {{ department.department_name }}
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <DialogFooter>
-                <Button @click="deleteUser(currentEditUser)">
+                <Button @click="saveChanged">
                   保存
                 </Button>
                 <Button @click="isEditDialogOpen = false">
@@ -257,8 +275,8 @@
 <script lang="ts" setup>
 import type { Database, Tables, Enums } from "~/database.types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check } from "lucide-vue-next";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Switch } from '@/components/ui/switch';
 import type { QueryData } from "@supabase/supabase-js";
 useHead({
   title: "校外租屋平台 | 使用者管理",
@@ -271,14 +289,17 @@ definePageMeta({
 
 const roles = ["學生", "教師", "房東", "管理員"] as "學生" | "教師" | "房東" | "管理員"[];
 const supabase = useSupabaseClient<Database>();
-
+  const { data: departments } = await useAsyncData("departments", async () => {
+  const { data } = await supabase.from("school_department").select("*");
+  return data;
+});
 // [Data]
 const {
   data: users,
   pending: isLoading,
   refresh: refresh,
 } = useAsyncData("users", async () => {
-  const { data } = await supabase.from("app_user").select("*, student(*), teacher(*), landlord(*),admin(*)");
+  const { data } = await supabase.from("app_user").select("*, student(*, department:school_department(*)), teacher(*), landlord(*), admin(*)");
   return data;
 });
 
@@ -356,13 +377,39 @@ const deleteUser = async (singleUser: Tables<"app_user"> | null = null) => {
   }
   await refresh();
 };
+
+const saveChanged = async()=>{
+  if (!currentEditUser.value) return;
+  const { error } = await supabase.from("app_user").update({
+    name: currentEditUser.value.name,
+  }).eq("id", currentEditUser.value.id);
+  if (error) {
+    console.error(error);
+    return;
+  }
+  if(currentEditUser.value.student){
+    const { error: studentError } = await supabase.from("student").upsert({
+      user_id: currentEditUser.value.id,
+      department_id: currentEditUser.value.student.department_id,
+    });
+    if (studentError) {
+      console.error(studentError);
+      return;
+    }
+
+  }
+
+  isEditDialogOpen.value = false;
+  await refresh();
+};
+
 // if singleUser is null, it will update all selected users
 const updateSingleRoleForSelections = async (role: string, action: "add" | "remove", userID: null | string = null) => {
   let selectedUserIds: string[] = [];
   if (userID) {
-     selectedUserIds = [userID];
+    selectedUserIds = [userID];
   } else {
-     selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
+    selectedUserIds = Object.keys(selectedUsers.value).filter((userId) => selectedUsers.value[userId]);
   }
   const data = selectedUserIds.map((userId) => ({ user_id: userId }));
 
@@ -404,8 +451,8 @@ const updateSingleRoleForSelections = async (role: string, action: "add" | "remo
     console.error("Errors updating role:", error);
   }
 };
-const tempQuery = supabase.from("app_user").select("*, student(*), teacher(*), landlord(*),admin(*)").single();
-type  AppUser=  QueryData<typeof tempQuery>;  
+const tempQuery = supabase.from("app_user").select("*, student(*, department:school_department(*)), teacher(*), landlord(*), admin(*)").single();
+type AppUser = QueryData<typeof tempQuery>;
 const isEditDialogOpen = ref(false);
 const currentEditUser = ref<AppUser | null>(null);
 const OpenEditDialog = (user: AppUser) => {
@@ -415,28 +462,29 @@ const OpenEditDialog = (user: AppUser) => {
 };
 const currentEditRole = computed({
   get: () => {
-    if (!currentEditUser.value) return { student: false, teacher: false, landlord: false, admin: false};
-  return {
-    student: currentEditUser.value.student ? true : false,
-    teacher: currentEditUser.value.teacher ? true : false,
-    landlord: currentEditUser.value.landlord ? true : false,
-    admin: currentEditUser.value.admin ? true : false,
-  };
+    if (!currentEditUser.value) return { student: false, teacher: false, landlord: false, admin: false };
+    return {
+      student: currentEditUser.value.student ? true : false,
+      teacher: currentEditUser.value.teacher ? true : false,
+      landlord: currentEditUser.value.landlord ? true : false,
+      admin: currentEditUser.value.admin ? true : false,
+    };
   },
-//   set: (value) => {
-//     if (!currentEditUser.value) return;
-//     currentEditUser.value = {
-//       ...currentEditUser.value,
-//       student:
-//       teacher: 
-//       landlord: 
-//       admin:
-//     };
-//   },
+  set: (value) => {
+    const newCurrentEditUser = users.value?.find((user) => user.id === currentEditUser.value?.id);
+    if (!newCurrentEditUser) return;
+    currentEditUser.value = {
+      ...currentEditUser.value,
+      student: newCurrentEditUser.student,
+      teacher: newCurrentEditUser.teacher,
+      landlord: newCurrentEditUser.landlord,
+      admin: newCurrentEditUser.admin,
+    } as AppUser;
+  },
 });
 const handleSwitch = async (role: string, value: boolean) => {
-  if(currentEditUser.value){
-      await updateSingleRoleForSelections(role, value ? "add" : "remove", currentEditUser.value.id);
+  if (currentEditUser.value) {
+    await updateSingleRoleForSelections(role, value ? "add" : "remove", currentEditUser.value.id);
   }
   currentEditRole.value = {
     ...currentEditRole.value,

@@ -18,6 +18,14 @@
     </div>
   </TableCell>
   <TableCell :class="['text-right', status ==='填答完畢' && 'text-green-400', status === '尚未完成' && 'text-orange-500']">
+    <Icon
+      v-if="status === '填答完畢'"
+      name="line-md:confirm-circle"
+    />
+    <Icon
+      v-if="status === '尚未完成'"
+      name="line-md:close-circle"
+    />
     {{ status }}
   </TableCell>
 </template>

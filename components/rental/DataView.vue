@@ -3,12 +3,28 @@
     v-if="status === 'pending'"
     class="h-[50px] rounded-lg border"
   />
-  <div
+  <template
     v-else-if="rentals && rentals.length > 0"
-    class="m-5 p-5 rounded-lg"
   >
-    <!--  -->
-  </div>
+    <div
+      v-for="rental in rentals"
+      :key="rental.id"
+      class="rounded-lg flex flex-col gap-5 bg-card shadow-lg"
+    >
+      <img
+        :src="rental.rental_property!.image || 'https://via.placeholder.com/150'"
+      >
+      <div class="p-3">
+        <h2 class="text-xl font-bold">
+          {{ rental.name }}
+        </h2>
+        <p>
+          {{ rental.rental_property!.address }}
+        </p>
+      </div>
+    </div>
+  </template>
+  
   <div
     v-else
     class="m-5 p-5 rounded-lg flex justify-center"
@@ -33,8 +49,8 @@ const props = defineProps({
 });
 
 const { data: rentals, status } = await useAsyncData("rentals_", async () => {
-  const query = supabase.from("rental_property")
-    .select("*");
+  const query = supabase.from("map_rental_property_landlord")
+    .select("*, rental_property(*)");
 
   if (props.studentUserId) {
     query.eq("student_user_id", props.studentUserId);

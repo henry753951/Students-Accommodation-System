@@ -1,54 +1,62 @@
 <template>
-  <div>
-    <form @submit="updateUser">
-      <FormField
-        v-slot="{ componentField }"
-        name="full_name"
-      >
-        <FormItem class="relative">
-          <FormLabel>Full Name</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              class="w-full"
-              placeholder=""
-              type="text"
-              autocomplete="off"
-              @change="isChanged.full_name = true"
-            />
-          </FormControl>
-          <FormMessage class="absolute top-0 right-1" />
-        </FormItem>
-      </FormField>
-      <FormField
-        v-slot="{ componentField }"
-        name="phone"
-      >
-        <FormItem class="relative">
-          <FormLabel>Phone</FormLabel>
-          <FormControl>
-            <Input
-              v-bind="componentField"
-              class="w-full"
-              placeholder=""
-              type="text"
-              autocomplete="off"
-              @change="isChanged.phone = true"
-            />
-          </FormControl>
-          <FormMessage class="absolute top-0 right-1" />
-        </FormItem>
-      </FormField>
-      <Button
-        class="w-full mt-6"
-        type="submit"
-      >
-        Update
-      </Button>
-    </form>
-    {{ isChanged }}
+  <div class="container flex flex-col items-center">
+    <div class="head">
+      修改個人資料
+    </div>
+    <div class="w-full shadow-lg rounded-lg bg-card p-5 max-w-[700px]">
+      <form @submit.prevent="updateUser">
+        <FormField
+          v-slot="{ componentField }"
+          name="full_name"
+        >
+          <FormItem class="relative pt-5">
+            <FormLabel>名稱</FormLabel>
+            <FormControl>
+              <Input
+                v-bind="componentField"
+                class="w-full"
+                placeholder="Enter your full name"
+                type="text"
+                autocomplete="off"
+                @change="isChanged.full_name = true"
+              />
+            </FormControl>
+            <FormMessage class="absolute top-0 right-1" />
+          </FormItem>
+        </FormField>
+        <FormField
+          v-slot="{ componentField }"
+          name="phone"
+        >
+          <FormItem class="relative mt-5">
+            <FormLabel>手機號碼</FormLabel>
+            <FormControl>
+              <Input
+                v-bind="componentField"
+                class="w-full"
+                placeholder="請輸入手機號碼"
+                type="text"
+                autocomplete="off"
+                @change="isChanged.phone = true"
+              />
+            </FormControl>
+            <FormMessage class="absolute top-0 right-1" />
+          </FormItem>
+        </FormField>
+        <div class="mt-6">
+          <Button
+            type="submit"
+            class="w-full bg-blue-500 text-white py-2 rounded-lg mb-6"
+            @click="updateUser()"
+          >
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
+
 
 <script lang="ts" setup>
 import { useToast } from "@/components/ui/toast/use-toast";
@@ -91,9 +99,25 @@ const updateUser = form.handleSubmit(async (values) => {
     full_name: isChanged.value.full_name ? values.full_name : undefined,
     phone: isChanged.value.phone ? values.phone : undefined,
   };
-  console.log(payload);
-
+  console.log(user.value?.id);
   const { data, error } = await supabase.auth.updateUser({ data: payload });
+  if(payload.phone?.length !== 10){
+    toast.toast({
+      title: "Error",
+      description: "Phone number 需要10位數字",
+      variant: "destructive",
+    });
+    return;}
+  if (user.value) {
+    const { data: __user, error: usererror } = await supabase
+      .from('app_user')
+      .update({
+        name: payload.full_name,
+        phone: payload.phone,
+      } as never) // Cast the object to 'never' type to resolve the error
+      .eq("id", user.value.id);
+  }
+
   if (error) {
     toast.toast({
       title: "Error",
@@ -109,4 +133,10 @@ const updateUser = form.handleSubmit(async (values) => {
 });
 </script>
 
-<style></style>
+<style>
+.head{
+  font-size: 40px;
+  font-weight: 600;
+  text-align: center;
+}
+</style>
