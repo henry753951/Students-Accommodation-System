@@ -3,13 +3,15 @@
     <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
         預約表單 - {{ reservation_type }} 
+        {{inviter_name}}
+        {{invitee_name}}
       </h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
-          <Label for="student_id">學生ID</Label>
+          <Label for="student_id">邀請者</Label>
           <Input
             id="student_id"
-            v-model="form.student_id"
+            v-model="inviter_name as string"
             type="text"
             class="w-full border border-gray-300 rounded mt-1"
             readonly
@@ -20,7 +22,7 @@
           <Label for="phone">受邀者</Label>
           <Input
             id="property_name"
-            v-model="form.property_name"
+            v-model="invitee_name as string"
             type="tel"
             class="w-full border border-gray-300 rounded mt-1"
             required
@@ -188,6 +190,35 @@ const formatDate = (dateObj: DateObj): string => {
   return `${year}-${month}-${day}`;
 };
 
+const { data: inviter_name } = useAsyncData('get_inviter_name', async () => {
+  try {
+    const { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', props.inviter);
+
+      console.log(app_user);
+      return app_user![0].name;   
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    return '';
+  }
+}); 
+
+const { data: invitee_name } = useAsyncData('get_invitee_name', async () => {
+  try {
+    const { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', props.invitee);
+
+      console.log(app_user);
+      return app_user![0].name;   
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    return '';
+  }
+});
 
 const { data: house, refresh } = useAsyncData(async () => {
   const { data, error } = await supabase.from("map_rental_property_student")
@@ -202,30 +233,17 @@ const { data: house, refresh } = useAsyncData(async () => {
 
 
 const form = ref({
-  student_id: computed(() => user.value?.id || ''), // 使用 computed 來動態獲取 user.id
+  student_id: computed(() => props.inviter || ''), // 使用 computed 來動態獲取 user.id
   property_addr: '',
-  property_id: '',
-  property_name: '',
+  property_id: computed(() => props.invitee || ''),
+  property_name: invitee_name,
   property_phone: '',
   status: '邀請中',
   message: '',
   date: '',
 });
 
-const fetchAppUser = async () => {
-  try {
-    const { data: app_user, error } = await supabase
-      .from('app_user')
-      .select('*')
-      .eq('id', form.value.property_id);
 
-      form.value.property_name = app_user && app_user.length > 0 && app_user[0].name !== null ? app_user[0].name : '';
-      form.value.property_phone = app_user && app_user.length > 0 && app_user[0].phone !== null ? app_user[0].phone : '房東沒有留下電話';
-    } catch (error) {
-    console.error('Error fetching app_user:', error);
-    form.value.property_name = '';
-  }
-};
 
 const SubmitToReserve = async () => {
   console.log("BINHAN SO BIG");
@@ -233,8 +251,8 @@ const SubmitToReserve = async () => {
     .from("reservations")
     .insert([
       {
-        "student_id": form.value.student_id as string,
-        "user_id": form.value.property_id as string,
+        "student_id": props.inviter as string,
+        "user_id": props.invitee as string,
         "status": form.value.status as string,
         "reservation_time": formatDate(form.value.date as unknown as DateObj),
         "reservation_type": props.reservation_type as string,
