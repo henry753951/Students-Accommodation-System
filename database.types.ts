@@ -127,6 +127,7 @@ export type Database = {
           status: string | null
           student_id: string
           teacher_id: string
+          updated_at: string | null
         }
         Insert: {
           landlord_id?: string | null
@@ -139,6 +140,7 @@ export type Database = {
           status?: string | null
           student_id?: string
           teacher_id?: string
+          updated_at?: string | null
         }
         Update: {
           landlord_id?: string | null
@@ -151,6 +153,7 @@ export type Database = {
           status?: string | null
           student_id?: string
           teacher_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -464,6 +467,8 @@ export type Database = {
       }
       reservations: {
         Row: {
+          message: string | null
+          reservation_addr: string | null
           reservation_id: string
           reservation_time: string
           reservation_type: string
@@ -472,6 +477,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          message?: string | null
+          reservation_addr?: string | null
           reservation_id?: string
           reservation_time?: string
           reservation_type: string
@@ -480,6 +487,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          message?: string | null
+          reservation_addr?: string | null
           reservation_id?: string
           reservation_time?: string
           reservation_type?: string
@@ -488,6 +497,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reservations_reservation_addr_fkey"
+            columns: ["reservation_addr"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
+            referencedColumns: ["address"]
+          },
           {
             foreignKeyName: "reservations_student_id_fkey"
             columns: ["student_id"]

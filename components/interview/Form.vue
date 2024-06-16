@@ -667,6 +667,7 @@ const SubmitToInterviewRecord = async (firstForm :any, secondForm: any, time:str
         "response": secondForm,
         "record_time":time,
         "status": status.value,
+        "updated_at": new Date().toISOString(),
       }
       ) 
       // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain

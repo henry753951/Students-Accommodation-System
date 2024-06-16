@@ -3,8 +3,8 @@
     {{ teacherName }}
   </TableCell>
   <TableCell>{{ studentName }}</TableCell>
-  <TableCell>{{ createdTime }}</TableCell>
-    
+  <TableCell>{{ recordTime }}</TableCell>
+  <TableCell>{{ updatedTime }}</TableCell>
   <TableCell>
     <NuxtLink
       v-if="propertyLink !== null"
@@ -27,7 +27,8 @@
 defineProps({
   teacherName: {type: String, required: false, default: '無資料'},
   studentName: {type: String, required: false, default: '無資料'},
-  createdTime: {type: String, required: false, default: '無資料'},
+  recordTime: {type: String, required: false, default: '無資料'},
+  updatedTime: {type: String, required: false, default: '無資料'},
   location: {type: String, required: false, default: '無資料'},
   propertyLink: {type: String, required: false, default: '無資料'},
   recordLink: {type: String, required: false, default: '無資料'},

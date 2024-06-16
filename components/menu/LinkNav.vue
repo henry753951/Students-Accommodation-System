@@ -14,6 +14,11 @@ const menu = ref({
       href: '/management/department',
       description: '管理大學各系所的設置和運營。' 
     },
+    { 
+      title: '訪視紀錄管理', 
+      href: '/interview/record',
+      description: '管理所有訪視記錄或新增記錄。' 
+    },
   ],
   教師系統: [
     { 
