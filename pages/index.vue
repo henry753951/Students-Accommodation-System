@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Database } from '~/database.types';
-
 definePageMeta({
   name: "首頁",
 });
@@ -24,6 +23,7 @@ const { data: students, refresh } = useAsyncData(async () => {
     console.error(error);
     return [];
   }
+
   return data;
 });
 </script>
@@ -106,6 +106,16 @@ const { data: students, refresh } = useAsyncData(async () => {
         >
           <Button class="w-full">
             廣告頁面
+          </Button>
+        </NuxtLink>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <NuxtLink
+          to="/social"
+          class="w-full sm:w-auto"
+        >
+          <Button class="w-full">
+            TAB
           </Button>
         </NuxtLink>
       </div>

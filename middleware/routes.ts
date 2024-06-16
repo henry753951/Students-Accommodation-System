@@ -27,4 +27,9 @@ export default [
     path: "/management/*",
     role: ["admin"],
   },
+  {
+    name: "record",
+    path: "/interview/record",
+    role: ["admin"],
+  },
 ];

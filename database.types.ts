@@ -127,6 +127,7 @@ export type Database = {
           status: string | null
           student_id: string
           teacher_id: string
+          updated_at: string | null
         }
         Insert: {
           landlord_id?: string | null
@@ -139,6 +140,7 @@ export type Database = {
           status?: string | null
           student_id?: string
           teacher_id?: string
+          updated_at?: string | null
         }
         Update: {
           landlord_id?: string | null
@@ -151,6 +153,7 @@ export type Database = {
           status?: string | null
           student_id?: string
           teacher_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -205,6 +208,45 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "app_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      map_rental_property_landlord: {
+        Row: {
+          created_at: string
+          id: number
+          landlord_id: string | null
+          name: string | null
+          rental_property_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          landlord_id?: string | null
+          name?: string | null
+          rental_property_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          landlord_id?: string | null
+          name?: string | null
+          rental_property_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "map_rental_property_landlord_landlord_id_fkey"
+            columns: ["landlord_id"]
+            isOneToOne: false
+            referencedRelation: "landlord"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "map_rental_property_landlord_rental_property_id_fkey"
+            columns: ["rental_property_id"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
             referencedColumns: ["id"]
           },
         ]
@@ -332,6 +374,24 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          id: string
+          name?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
       rental_property: {
         Row: {
           address: string
@@ -407,6 +467,8 @@ export type Database = {
       }
       reservations: {
         Row: {
+          message: string | null
+          reservation_addr: string | null
           reservation_id: string
           reservation_time: string
           reservation_type: string
@@ -415,6 +477,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          message?: string | null
+          reservation_addr?: string | null
           reservation_id?: string
           reservation_time?: string
           reservation_type: string
@@ -423,6 +487,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          message?: string | null
+          reservation_addr?: string | null
           reservation_id?: string
           reservation_time?: string
           reservation_type?: string
@@ -431,6 +497,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reservations_reservation_addr_fkey"
+            columns: ["reservation_addr"]
+            isOneToOne: false
+            referencedRelation: "rental_property"
+            referencedColumns: ["address"]
+          },
           {
             foreignKeyName: "reservations_student_id_fkey"
             columns: ["student_id"]
@@ -468,6 +541,21 @@ export type Database = {
           department_name?: string
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      share_resource: {
+        Row: {
+          id: string
+          img: string | null
+        }
+        Insert: {
+          id?: string
+          img?: string | null
+        }
+        Update: {
+          id?: string
+          img?: string | null
         }
         Relationships: []
       }

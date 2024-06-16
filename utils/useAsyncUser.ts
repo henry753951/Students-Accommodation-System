@@ -10,6 +10,9 @@ export default async () => {
     userStore.setUser(null);
     return a_user;
   }
+  if(a_user.value){
+    return a_user;
+  }
   if (import.meta.server) {
     const p = supabase
       .from("app_user")

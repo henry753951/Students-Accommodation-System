@@ -139,7 +139,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
 import { Calendar as CalendarIcon } from 'lucide-vue-next';
 import type { Database } from '~/database.types';
 import { useToast } from "~/components/ui/toast/use-toast";
@@ -219,6 +218,8 @@ const SubmitToReserve = async () => {
         "status": form.value.status as string,
         "reservation_time": formatDate(form.value.date as unknown as DateObj),
         "reservation_type": route.params.id as string,
+        "reservation_addr": form.value.property_addr as string,
+        "message": form.value.message as string,
       },
     ])
     .select("*");
