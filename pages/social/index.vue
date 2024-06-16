@@ -1,19 +1,27 @@
 <template>
-  <div class="max-w-prose flex flex-col justify-center">
-    <h2 class="mb-5 text-center text-3xl font-bold text-gray-800">
+  <div class="max-w-6xl mx-auto p-4">
+    <h2 class="mb-10 text-center text-3xl font-bold text-gray-800 dark:text-white">
       Hi {{ user?.name }} !! 從選擇租屋點開始吧 !!
     </h2>
-    <div
-      v-for="id in properties"
-      class="text-white m-5 p-5 rounded-lg bg-black dark:bg-white dark:text-black"
-    >
-      <NuxtLink :to="'./social/' + id.Rental_property_id">
-        <div :class="{ 'text-red-500': id.state }">
-          <span v-if="id.state">Active</span>
-          <span v-else>Inactive</span>
-        </div>
-        <div>{{ id.address }}</div>
-      </NuxtLink>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        v-for="property in properties"
+        :key="property.Rental_property_id!"
+        class="p-5 rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800"
+      >
+        <NuxtLink :to="'./social/' + property.Rental_property_id" class="block">
+          <img
+            :src="property.image!"
+            alt="House Image"
+            class="w-full h-64 object-cover rounded-lg mb-3"
+          />
+          <div :class="{ 'text-green-500': property.state, 'text-red-500': !property.state }" class="font-semibold">
+            <span v-if="property.state">Active</span>
+            <span v-else>Inactive</span>
+          </div>
+          <div class="text-lg">{{ property.address }}</div>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +45,7 @@ type Rental_info = {
   Rental_property_id: string | null,
   state: boolean | null,
   address: string | null,
+  image:string |null
 };
 
 const properties = ref<Rental_info[]>([]);
@@ -49,7 +58,7 @@ const initial_get_information = async () => {
   else if((user.value.roles.includes("admin")) == true){
     const { data, error } = await supabase
       .from("rental_property")
-      .select("id,updated_at,address")
+      .select("id,updated_at,address,image")
       .order('updated_at', { ascending: false });
     if (error) {
       toast.toast({
@@ -63,12 +72,13 @@ const initial_get_information = async () => {
       Rental_property_id: item.id,
       state: true,
       address: item.address,
+      image: item.image
     }));
   }
   else if((user.value.roles.includes("student")) == true){
     const { data, error } = await supabase
       .from("map_rental_property_student")
-      .select("rental_property_id,is_currently_renting,updated_at,rental_property(address)")
+      .select("rental_property_id,is_currently_renting,updated_at,rental_property(address,image)")
       .eq("student_id", user.value?.id!)
       .order('updated_at', { ascending: false });
     if (error) {
@@ -83,12 +93,13 @@ const initial_get_information = async () => {
       Rental_property_id: item.rental_property_id,
       state: item.is_currently_renting,
       address: item.rental_property?.address!,
+      image: item.rental_property?.image!
     }));
   }
   else if((user.value.roles.includes("landlord")) == true){
     const { data, error } = await supabase
       .from("rental_property")
-      .select("id,updated_at,address")
+      .select("id,updated_at,address,image")
       .eq("landlord_id", user.value?.id!)
       .order('updated_at', { ascending: false });
     if (error) {
@@ -103,6 +114,7 @@ const initial_get_information = async () => {
       Rental_property_id: item.id,
       state: true,
       address: item.address,
+      image: item.image
     }));
   }
   else{
@@ -111,5 +123,4 @@ const initial_get_information = async () => {
   }
 };
 </script>
-
 <style></style>

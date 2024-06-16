@@ -149,7 +149,7 @@
                     <Badge
                       v-if="user.admin"
                       variant="secondary"
-                      class="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 dark:bg-opacity-30"
+                      class="bg-rose-300 text-rose-900 dark:bg-rose-400 dark:text-rose-100 dark:bg-opacity-30"
                     >
                       管理員
                     </Badge>

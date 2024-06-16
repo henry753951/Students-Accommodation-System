@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen p-6 flex items-center justify-center">
-    <div class="max-w-lg w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
+  <div class="p-6 flex items-center justify-center">
+    <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
-        預約表單 - {{ type }}
+        預約表單 - {{ inviter }}
       </h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
-          <Label for="student_id">學生ID</Label>
+          <Label for="student_id">學生ID:{{ inviter }}</Label>
           <Input
             id="student_id"
             v-model="form.student_id"
@@ -131,7 +131,6 @@
             提交
           </Button>
         </div>
-        {{ form }}
       </form>
     </div>
   </div>
@@ -154,6 +153,10 @@ const user = useUser();
 
 const open = ref(false);
 const value = ref(''); //選擇表單的value
+
+const props = defineProps<{
+  inviter: string;
+}>();
 
 
 interface DateObj {

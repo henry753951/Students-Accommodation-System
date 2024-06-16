@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center container">
-    <InterviewList />
+    <InterviewList class="w-full" />
   </div>
 </template>
 
