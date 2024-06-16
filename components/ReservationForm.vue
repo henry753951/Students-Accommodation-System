@@ -2,14 +2,14 @@
   <div class="p-6 flex items-center justify-center">
     <div class="w-full bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <h2 class="text-2xl font-bold mb-6 text-center">
-        預約表單 - {{ inviter }}
+        預約表單 - {{ reservation_type }}
       </h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
-          <Label for="student_id">學生ID:{{ inviter }}</Label>
+          <Label for="student_id">邀請者</Label>
           <Input
             id="student_id"
-            v-model="form.student_id"
+            v-model="inviter_name"
             type="text"
             class="w-full border border-gray-300 rounded mt-1"
             readonly
@@ -47,8 +47,6 @@
                       if (typeof ev.detail.value === 'string') {
                         value = ev.detail.value
                         form.property_addr = ev.detail.value
-                        form.property_id = house?.find((house) => house.address === value)?.landlord_id ?? ''
-                        fetchAppUser()
                       }
                       open = false
                     }"
@@ -67,7 +65,7 @@
           </PopoverContent>
         </Popover>
         <div class="mb-4">
-          <Label for="phone">房東名稱(自動抓取)</Label>
+          <Label for="phone">受邀者</Label>
           <Input
             id="property_name"
             v-model="form.property_name"
@@ -123,6 +121,7 @@
             </Popover>
           </FormField>
         </div>
+        {{ form }}
         <div class="text-center">
           <Button
             type="submit"
@@ -155,7 +154,9 @@ const open = ref(false);
 const value = ref(''); //選擇表單的value
 
 const props = defineProps<{
-  inviter: string;
+  inviterId: string;
+  inviteeId: string;
+  reservation_type: string;
 }>();
 
 
@@ -183,32 +184,47 @@ const { data: house, refresh } = useAsyncData(async () => {
   return data;
 });
 
+const { data: inviter_name } = useAsyncData('get_inviter_name', async () => {
+  try {
+    const { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', props.inviterId);
+      
+      console.log(app_user);
+      return app_user![0].name;   
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    return '';
+  }
+}); 
+
+const { data: invitee_name } = useAsyncData('get_invitee_name', async () => {
+  try {
+    const { data: app_user, error } = await supabase
+      .from('app_user')
+      .select('*')
+      .eq('id', props.inviteeId);
+      
+      console.log(app_user);
+      return app_user![0].name;   
+    } catch (error) {
+    console.error('Error fetching app_user:', error);
+    return '';
+  }
+});
 
 const form = ref({
-  student_id: computed(() => user.value?.id || ''), // 使用 computed 來動態獲取 user.id
+  student_id: computed(() => props.inviterId || ''), // 使用 computed 來動態獲取 user.id
   property_addr: '',
-  property_id: '',
-  property_name: '',
-  property_phone: '',
+  property_id: computed(() => props.inviteeId || ''),
+  property_name: invitee_name,
   status: '邀請中',
   message: '',
   date: '',
 });
 
-const fetchAppUser = async () => {
-  try {
-    const { data: app_user, error } = await supabase
-      .from('app_user')
-      .select('*')
-      .eq('id', form.value.property_id);
 
-      form.value.property_name = app_user && app_user.length > 0 && app_user[0].name !== null ? app_user[0].name : '';
-      form.value.property_phone = app_user && app_user.length > 0 && app_user[0].phone !== null ? app_user[0].phone : '房東沒有留下電話';
-    } catch (error) {
-    console.error('Error fetching app_user:', error);
-    form.value.property_name = '';
-  }
-};
 
 const SubmitToReserve = async () => {
   console.log("BINHAN SO BIG");
@@ -216,11 +232,11 @@ const SubmitToReserve = async () => {
     .from("reservations")
     .insert([
       {
-        "student_id": form.value.student_id as string,
-        "user_id": form.value.property_id as string,
+        "student_id": props.inviterId as string,
+        "user_id": props.inviteeId as string,
         "status": form.value.status as string,
         "reservation_time": formatDate(form.value.date as unknown as DateObj),
-        "reservation_type": route.params.id as string,
+        "reservation_type": props.reservation_type as string,
         "reservation_addr": form.value.property_addr as string,
         "message": form.value.message as string,
       },
