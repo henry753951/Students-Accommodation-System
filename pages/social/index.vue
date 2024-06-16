@@ -118,9 +118,11 @@ const initial_get_information = async () => {
     }));
   }
   else{
-    window.alert('身分不符');
-    return;
-  }
-};
+    toast.toast({
+      title: "Error",
+      description: "Unknown Character",
+    })
+  };
+}
 </script>
 <style></style>

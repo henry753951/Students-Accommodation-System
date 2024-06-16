@@ -32,14 +32,17 @@
             class="pr-4"
           >房屋地址</Label>
           <Input
-            id="autoInputAddress"
             v-if="reservation_type === '預約看房'"
-            v-model="auto_rental_property[0].address as string"
+            id="autoInputAddress"
+            v-model="auto_rental_property![0].address as string"
             type="tel"
             class="w-full border border-gray-300 rounded mt-1"
             readonly
           />
-          <PopoverTrigger as-child v-if="reservation_type !== '預約看房'">
+          <PopoverTrigger
+            v-if="reservation_type !== '預約看房'"
+            as-child
+          >
             <Button
               variant="outline"
               role="combobox"
@@ -69,8 +72,6 @@
                       if (typeof ev.detail.value === 'string') {
                         value = ev.detail.value
                         form.property_addr = ev.detail.value
-                        form.property_id = house?.find((house) => house.address === value)?.landlord_id ?? ''
-                        fetchAppUser()
                       }
                       open = false
                     }"
@@ -89,7 +90,6 @@
           </PopoverContent>
         </Popover>
         
-      
         <div class="mb-4">
           <Label for="message">備註訊息</Label>
           <Textarea
@@ -259,7 +259,7 @@ const SubmitToReserve = async () => {
 };
 
 
-let { data: auto_rental_property, error } = await supabase
+const { data: auto_rental_property, error } = await supabase
   .from('rental_property')
   .select('address')
   .eq('id', props.property_id);
