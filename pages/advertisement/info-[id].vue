@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-gray min-h-screen p-10">
-    <div class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300">
+  <div class="bg-card min-h-screen p-10">
+    <div class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300">
       <div
         v-if="rental_property && rental_property.length > 0"
         class="flex flex-col md:flex-row h-full"
@@ -15,7 +15,7 @@
             <h3 className="text-lg font-bold mb-2">
               留言
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 mb-3">
               <Input
                 v-model="comment"
                 placeholder="Comment"
@@ -31,7 +31,7 @@
               />
             </p>
             <Button
-              class="bg-green-500 text-white px-4 py-2 rounded mb-2"
+              class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3"
               @click="sendComment"
             >
               發送
@@ -41,57 +41,71 @@
         <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-between">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-bold mb-2">
-                地址
-              </h3>
+              <Badge class="bg-black text-white rounded mb-3">
+                <h3 className="text-lg font-bold ">
+                  地址
+                </h3>
+              </Badge>
               <p className="text-gray-500">
                 {{ rental_property[0].address ? rental_property[0].address : 'Nothing' }}
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">
-                價錢
-              </h3>
+              <Badge class="bg-black text-white rounded mb-3">
+                <h3 className="text-lg font-bold ">
+                  價錢
+                </h3>
+              </Badge>
               <p className="text-gray-500">
                 {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].price ? rental_property[0].rental_property_info[0].price : 'Nothing' }}
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">
-                房型
-              </h3>
+              <Badge class="bg-black text-white rounded mb-3">
+                <h3 className="text-lg font-bold ">
+                  房型
+                </h3>
+              </Badge>
               <p className="text-gray-500">
                 {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].price ? parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).type : 'Nothing' }}
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">
-                限租性別
-              </h3>
+              <Badge class="bg-black text-white rounded mb-3">
+                <h3 className="text-lg font-bold ">
+                  限租性別
+                </h3>
+              </Badge>
               <p className="text-gray-500">
                 {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].price ? parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).sex : 'Nothing' }}
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">
-                補助
-              </h3>
+              <Badge class="bg-black text-white rounded mb-3">
+                <h3 className="text-lg font-bold ">
+                  補助
+                </h3>
+              </Badge>
               <p className="text-gray-500">
                 {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].price ? (parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).subsidy ? '有' : '無') : 'Nothing' }}
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">
-                上傳日期
-              </h3>
+              <Badge class="bg-black text-white rounded mb-3">
+                <h3 className="text-lg font-bold ">
+                  上傳日期
+                </h3>
+              </Badge>
               <p className="text-gray-500">
                 {{ rental_property[0].created_at ? rental_property[0].created_at.substring(0, 10) : 'Nothing' }}
               </p>
             </div>
             <div class="mb-5">
-              <h3 className="text-lg font-bold mb-2">
-                平均評分
-              </h3>
+              <Badge class="bg-black text-white rounded mb-3">
+                <h3 className="text-lg font-bold ">
+                  平均評分
+                </h3>
+              </Badge>
               <p className="text-gray-500">
                 {{ averageScore }}
               </p>
@@ -102,10 +116,13 @@
     </div>
     <div
       v-if="comment_data?.length !== 0 && showUserCommentsOnly === false"
-      class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
-      <h3 className="text-lg font-bold mb-2">
-        評論區 <div v-if="user != null || user != undefined">
+      <h3 className="flex justify-content text-lg font-bold mb-4">
+        評論區 <div
+          v-if="user != null || user != undefined"
+          class="flex ml-4"
+        >
           <Button @click="switchStatus">
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
@@ -143,7 +160,7 @@
           <CardContent class="py-4">
             <div class="mt-2 text-left">
               <h3 class="font-semibold">
-                - 評論
+                評論:
               </h3>
               <p>
                 {{ items.comment }}
@@ -158,10 +175,13 @@
     </div>
     <div
       v-else-if="userComments.length !== 0 && showUserCommentsOnly === true"
-      class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
-      <h3 className="text-lg font-bold mb-2">
-        評論區 <div v-if="user != null || user != undefined">
+      <h3 className="flex justify-content text-lg font-bold mb-2">
+        評論區 <div
+          v-if="user != null || user != undefined"
+          class="flex ml-4"
+        >
           <Button @click="switchStatus">
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
@@ -214,10 +234,13 @@
     </div>
     <div
       v-else-if="userComments.length == 0 && showUserCommentsOnly === true && comment_data?.length !== 0"
-      class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
-      <h3 className="text-lg font-bold mb-2">
-        評論區 <div v-if="user != null || user != undefined">
+      <h3 className="flex justify-content text-lg font-bold mb-2">
+        評論區 <div
+          v-if="user != null || user != undefined"
+          class="flex ml-4"
+        >
           <Button @click="switchStatus">
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
@@ -229,7 +252,7 @@
     </div>
     <div
       v-else
-      class="max-w-4xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300 mt-5"
     >
       <h3 className="text-lg font-bold mb-2">
         評論區
