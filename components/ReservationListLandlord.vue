@@ -24,9 +24,7 @@
               <DialogTrigger>
                 <Button
                   v-if="object.status === '邀請中'"
-                  variant="outline"
                   size="sm"
-                  class="border-2 border-blue-600"
                 >
                   接受/拒絕預約
                 </Button>
