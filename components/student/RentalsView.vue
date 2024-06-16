@@ -18,7 +18,7 @@
         class="p-5 rounded-lg shadow-lg bg-gray-200 dark:bg-gray-800"
       >
         <NuxtLink
-          :to="'./social/' + property.id"
+          :to="'/rentals/' + property.id"
           class="block"
         >
           <img
