@@ -58,7 +58,10 @@
                     </h3>
                   </div>
                   <div class="mt-2">
-                    <Icon class = "bg-blue-300" name="subway:location-3" size="20" />
+                    ⭐⭐⭐
+                    <Icon class="text-blue-400" name="subway:location-3" size="15" />
+                    <span class="text-blue-400 mt-2 text-sm"> 中區-台中市 - 查看地圖 </span>
+
                   </div>
                   <div class="mt-2">
                     <div class="flex justify-content ">
@@ -104,10 +107,37 @@
                       {{ property.rental_property_info.length ? property.rental_property_info[0].description : '尚無描述' }}
                     </p>
                   </div>
-
                 </div>
-                <div class="w-auto">
-                  54
+                <div class="w-3/12 flex flex-col border h-60 justify-between ">
+                  <div class="flex justify-end m-2">
+                    <div class="">
+                      <div class="text-gray-400 font-sans text-[12px] mr-2 mt-3">2則評論</div>
+                    </div>
+                    <div class="p-2 border-2 border-blue-600 rounded-lg text-blue-600">
+                      8.1
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-end mr-2">
+                    <div class="text-[18px]">
+                      月租費
+                    </div>
+                    <div class="text-[22px] font-semibold text-red-600 ">
+                      {{ property.rental_property_info.length ? `NT$${property.rental_property_info[0].price}` : '尚無價位'
+                      }}
+                    </div>
+                    <div class = "flex mb-2 gap-3">
+                      <div v-if="user != null || user != undefined">
+                        <ReservationInviteDrawer v-if="user" v-model:inviter="user.id"
+                          v-model:invitee="property.landlord_id" v-model:reservation_type="ReserveType"
+                          v-model:propertyId="property.id" />
+                      </div>
+                      <NuxtLink :to="'/advertisement/info-' + property.id">
+                        <Button class="bg-green-500 text-white px-4 py-1 rounded">
+                          詳細
+                        </Button>
+                      </NuxtLink>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -115,7 +145,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div v-for="property in filteredProperties" :key="property.id" class="mb-6">
             <Card class="rounded-lg shadow-lg overflow-hidden border border-gray-300">
               <div class="relative">
@@ -181,7 +211,7 @@
               </div>
             </Card>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
