@@ -79,11 +79,16 @@ const user = await useAsyncUser();
 const route = useRoute();
 const map_id = ref(route.params.id);
 
+
+// get params ?student_id
+const student_id = route.query.student_id as string;
 const { data: rentalData, refresh } = await useAsyncData("rental_property_data_info", async () => {
   if (!user.value) {
     throw new Error("User not found");
   }
-  const { data, error } = await supabase.from("map_rental_property_student").select("*, rental_property(*, app_user(*))").eq("student_id", user.value.id).eq("id", map_id.value).limit(1).single();
+  const { data, error } = await supabase.from("map_rental_property_student").select("*, rental_property(*, app_user(*))")
+  .eq("student_id", student_id||user.value.id )
+  .eq("id", map_id.value).limit(1).single();
   if (error) {
     throw error;
   }

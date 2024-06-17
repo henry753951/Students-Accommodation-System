@@ -15,7 +15,7 @@
         class="p-5 rounded-lg shadow-lg bg-gray-200 dark:bg-gray-800"
       >
         <NuxtLink
-          :to="'/rentals/' + property.id"
+          :to="`/rentals/${property.id}?student_id=${props.studentUserId}`"
           class="block"
         >
           <img
