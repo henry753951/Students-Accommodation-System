@@ -30,8 +30,8 @@
         @init-api="(val) => emblaThumbnailApi = val"
       />
     </div>
-    <div class="bg-card min-h-screen p-6">
-      <div class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border">
+    <div class="container w-2/3 p-6">
+      <div class="w-full mx-auto space-y-6 bg-card p-6 rounded-lg">
         <div class="flex justify-end mb-4">
           <Select
             v-model="selectedFilter"
@@ -62,29 +62,41 @@
             :key="property.id"
             class="mb-6"
           >
-            <Card class="rounded-lg shadow-lg overflow-hidden border">
+            <Card
+              class="rounded-lg shadow-lg overflow-hidden border cursor-pointer"
+            >
               <div class="flex">
                 <div class="relative w-4/12 ">
                   <img
                     :src="property.image!"
                     alt="House Image"
                     class="w-full h-60 object-cover"
+                    @click="navigateTo('/advertisement/info-' + property.id)"
                   >
                 </div>
                 <div class="w-5/12 gap-5 ml-3 mt-3">
                   <div>
-                    <h3 class="text-2xl font-bold">
+                    <h3
+                      class="text-2xl font-bold"
+                      @click="navigateTo('/advertisement/info-' + property.id)"
+                    >
                       {{ property.address }}
                     </h3>
                   </div>
                   <div class="mt-2">
-                    ⭐⭐⭐
+                    <template v-for="_ in parseInt((getAvgScore(property.advertise_comment!)/2).toFixed(1)) ">
+                      ⭐
+                    </template>
                     <Icon
                       class="text-blue-400"
                       name="subway:location-3"
                       size="15"
                     />
-                    <span class="text-blue-400 mt-2 text-sm"> 中區-台中市 - 查看地圖 </span>
+                    <a
+                      class="text-blue-400 mt-2 text-sm"
+                      :href="'https://www.google.com/maps/search/?api=1&query='+property.address"
+                      target="_blank" 
+                    >查看地圖 </a>
                   </div>
                   <div class="mt-2">
                     <div class="flex justify-content ">
@@ -132,7 +144,9 @@
                       </div>
                     </div>
                   </div>
-                  <div>
+                  <div
+                    @click="navigateTo('/advertisement/info-' + property.id)"
+                  >
                     <p class="text-gray-600  truncate mt-3 text-base font-sans ">
                       {{ property.rental_property_info.length ? property.rental_property_info[0].description : '尚無描述' }}
                     </p>
@@ -142,11 +156,18 @@
                   <div class="flex justify-end m-2">
                     <div class="">
                       <div class="text-gray-400 font-sans text-[12px] mr-2 mt-3">
-                        2則評論
+                        {{ property.advertise_comment.length }} 則評論
                       </div>
                     </div>
-                    <div class="p-2 border-2 border-blue-600 rounded-lg text-blue-600">
-                      8.1
+                    <div
+                      class="p-2 border-2 rounded-lg w-[40px] h-[40px] text-[15px] font-semibold flex justify-center items-center"
+                      :class="{
+                        'text-blue-500 border-blue-500': getAvgScore(property.advertise_comment!) >= 4,
+                        'text-green-500 border-green-500': getAvgScore(property.advertise_comment!) >= 2 && getAvgScore(property.advertise_comment!) < 4,
+                        'text-yellow-500 border-yellow-500': getAvgScore(property.advertise_comment!) < 2
+                      }"
+                    >
+                      {{ getAvgScore(property.advertise_comment!) }}
                     </div>
                   </div>
                   <div class="flex flex-col items-end mr-2">
@@ -154,7 +175,7 @@
                       月租費
                     </div>
                     <div class="text-[22px] font-semibold text-red-600 ">
-                      {{ property.rental_property_info.length ? `NT$${property.rental_property_info[0].price}` : '尚無價位'
+                      {{ property.rental_property_info.length ? `$ NT ${property.rental_property_info[0].price}` : '尚無價位'
                       }}
                     </div>
                     <div class="flex mb-2 gap-3">
@@ -292,7 +313,7 @@ definePageMeta({
 });
 
 const { data: rental_property, pending: isLoading, refresh: refresh } = await useAsyncData('rental_property', async () => {
-  const { data } = await supabase.from('rental_property').select(`*,rental_property_info(*)`).eq('rental_property_info.is_public', true);
+  const { data } = await supabase.from('rental_property').select(`*,rental_property_info(*), advertise_comment(score)`).eq('rental_property_info.is_public', true);
   return data;
 });
 
@@ -329,6 +350,11 @@ const filteredProperties = computed(() => {
     return new_rental_property.value;
   }
 });
+
+const getAvgScore = (comments: { score: number|null }[]) => {
+  if (comments.length === 0) return 0;
+  return Math.round((comments.reduce((a, b) => a + b.score!||0, 0) / comments.length) * 10) / 10;
+};
 
 const items = ref(
   [

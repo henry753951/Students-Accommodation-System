@@ -63,8 +63,9 @@
         </div>
       </div>
     </div>
-
-
+    
+    <!-- Landlord Information Card -->
+   
     <div class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg border mt-5">
       <div v-if="rental_property && rental_property.length > 0">
         <div class="flex flex-row justify-center gap-[100px]">
@@ -153,6 +154,72 @@
       </div>
     </div>
 
+    <div class="max-w-4xl mx-auto mt-5 space-y-3 flex flex-col">
+      <p class="text-2xl font-bold">
+        房東資料
+      </p>
+      <Card
+        v-if="rental_property![0].app_user"
+        class="h-full"
+      >
+        <CardHeader>
+          <CardTitle>
+            <div class="flex w-full items-center gap-3">
+              <Avatar>
+                <AvatarImage :src="rental_property![0].app_user.avatar_url || 'default-avatar.png'" />
+              </Avatar>
+              <p>{{ rental_property![0].app_user.name || '無' }}</p>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="flex flex-col">
+            <p>
+              <Icon
+                name="line-md:phone-call-loop"
+                class="mr-2"
+              />
+              {{ rental_property![0].app_user.phone || '無' }}
+            </p>
+            <p>
+              <Icon
+                name="octicon:mail-16"
+                class="mr-2"
+              />
+              {{ rental_property![0].app_user.email || '無' }}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+      <Card v-else>
+        <CardHeader>
+          <CardTitle>
+            <div class="flex w-full items-center gap-3">
+              <Avatar>
+                <AvatarImage :src="''" />
+                <AvatarFallback>
+                  <Icon
+                    name="mingcute:user-add-fill"
+                    size="20"
+                  />
+                </AvatarFallback>
+              </Avatar>
+              <p>無房東資料</p>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="mb-3">
+            邀請房東加入平台，讓房東可以更方便地管理租屋資訊。
+          </p>
+          <div class="flex justify-center">
+            <Button class="w-full">
+              邀請房東使用此平台
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
 
     <div
       v-if="comment_data?.length !== 0 && showUserCommentsOnly === false"
@@ -435,9 +502,8 @@ const showUserCommentsOnly = ref(false);
 const { data: rental_property, error, refresh: refreshSite } = await useAsyncData(route.params.id as string ,async () => {
   const { data } = await supabase.from('rental_property').select(`
     *,
-    rental_property_info (
-      *
-    )
+    rental_property_info (*),
+    app_user(*)
   `).eq('id', department_id.value);
   return data;
 });
