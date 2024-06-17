@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center min-h-[100dvh] min-h-100vh bg-gray-100 dark:bg-gray-900">
+  <div class="flex justify-center min-h-[100dvh] min-h-screen bg-gray-100 dark:bg-gray-900">
     <div
       class="flex max-w-4xl w-full mx-auto my-auto bg-white dark:bg-black md:rounded-2xl shadow-lg md:min-h-fit min-h-[100dvh]"
     >
