@@ -25,7 +25,12 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref } from "vue";
+
+definePageMeta({
+  name: "房東新增租屋點",
+});
 
 const currentStep = ref<"registerAddress" | "InviteLandlord">("registerAddress");
 

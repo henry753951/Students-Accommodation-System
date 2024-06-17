@@ -292,7 +292,7 @@ definePageMeta({
 });
 
 const { data: rental_property, pending: isLoading, refresh: refresh } = await useAsyncData('rental_property', async () => {
-  const { data } = await supabase.from('rental_property').select(`*,rental_property_info(*)`).eq('rental_property_info.is_public', true);
+  const { data } = await supabase.from('rental_property').select(`*,rental_property_info(*)`).eq('rental_property_info.is_public', true).order('created_at', { ascending: false });
   return data;
 });
 
