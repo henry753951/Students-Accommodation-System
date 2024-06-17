@@ -28,7 +28,7 @@
 
           <div class="flex flex-row gap-5 mt-auto">
             <div class="text-xl font-bold">
-              {{ averageScore }} / 10
+              {{ averageScore.toFixed(1) }} / 10
             </div>
             <div v-if="averageScore >= 5">
               <Icon
@@ -212,11 +212,6 @@
           <p class="mb-3">
             邀請房東加入平台，讓房東可以更方便地管理租屋資訊。
           </p>
-          <div class="flex justify-center">
-            <Button class="w-full">
-              邀請房東使用此平台
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

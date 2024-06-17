@@ -163,9 +163,9 @@
                     <div
                       class="p-2 border-2 rounded-lg w-[40px] h-[40px] text-[15px] font-semibold flex justify-center items-center"
                       :class="{
-                        'text-blue-500 border-blue-500': getAvgScore(property.advertise_comment!) >= 4,
-                        'text-green-500 border-green-500': getAvgScore(property.advertise_comment!) >= 2 && getAvgScore(property.advertise_comment!) < 4,
-                        'text-yellow-500 border-yellow-500': getAvgScore(property.advertise_comment!) < 2
+                        'text-blue-500 border-blue-500': getAvgScore(property.advertise_comment!) >= 7,
+                        'text-green-500 border-green-500': getAvgScore(property.advertise_comment!) >= 3 && getAvgScore(property.advertise_comment!) < 7,
+                        'text-yellow-500 border-yellow-500': getAvgScore(property.advertise_comment!) < 3
                       }"
                     >
                       {{ getAvgScore(property.advertise_comment!) }}
