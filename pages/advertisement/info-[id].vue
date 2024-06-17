@@ -175,7 +175,7 @@
         <h3 class="text-lg font-bold mb-1">
           留言
         </h3>
-        <p class="text-gray-500 mb-3">
+        <p class="mb-3">
           <Input
             v-model="comment"
             placeholder="Comment"
@@ -184,7 +184,7 @@
         <h3 class="text-lg font-bold mb-2">
           評分
         </h3>
-        <p class="text-gray-500 mb-2">
+        <p class="mb-2">
           <Input
             v-model="score"
             placeholder="0 ~ 10"
