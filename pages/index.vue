@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <template>
   <div>
     <div class="container w-2/3 mb-10 ">
@@ -313,7 +314,7 @@ definePageMeta({
 });
 
 const { data: rental_property, pending: isLoading, refresh: refresh } = await useAsyncData('rental_property', async () => {
-  const { data } = await supabase.from('rental_property').select(`*,rental_property_info(*), advertise_comment(score)`).eq('rental_property_info.is_public', true);
+  const { data } = await supabase.from('rental_property').select(`*,rental_property_info(*), advertise_comment(score)`).eq('rental_property_info.is_public', true).order('created_at', { ascending: false });
   return data;
 });
 
