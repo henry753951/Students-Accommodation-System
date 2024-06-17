@@ -4,9 +4,15 @@
       <h1 class="text-2xl">
         房屋廣告公告
       </h1>
-      <Carousel class="relative w-full " @init-api="(val) => emblaMainApi = val">
+      <Carousel
+        class="relative w-full "
+        @init-api="(val) => emblaMainApi = val"
+      >
         <CarouselContent class="w-full">
-          <CarouselItem v-for="(_, index) in items" :key="index">
+          <CarouselItem
+            v-for="(_, index) in items"
+            :key="index"
+          >
             <div class="p-1">
               <Card>
                 <CardContent class="flex  items-center justify-center p-6 ">
@@ -19,12 +25,18 @@
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-      <Carousel class="relative w-full max-w-xs" @init-api="(val) => emblaThumbnailApi = val" />
+      <Carousel
+        class="relative w-full max-w-xs"
+        @init-api="(val) => emblaThumbnailApi = val"
+      />
     </div>
     <div class="bg-card min-h-screen p-6">
-      <div class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300">
+      <div class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border">
         <div class="flex justify-end mb-4">
-          <Select v-model="selectedFilter" class="w-48 border border-gray-300 rounded">
+          <Select
+            v-model="selectedFilter"
+            class="w-48 border border-gray-300 rounded"
+          >
             <SelectTrigger>
               <SelectValue placeholder="選擇篩選條件" />
             </SelectTrigger>
@@ -45,11 +57,19 @@
           </Select>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
-          <div v-for="property in filteredProperties" :key="property.id" class="mb-6">
-            <Card class="rounded-lg shadow-lg overflow-hidden border border-gray-300 ">
+          <div
+            v-for="property in filteredProperties"
+            :key="property.id"
+            class="mb-6"
+          >
+            <Card class="rounded-lg shadow-lg overflow-hidden border">
               <div class="flex">
                 <div class="relative w-4/12 ">
-                  <img :src="property.image!" alt="House Image" class="w-full h-60 object-cover">
+                  <img
+                    :src="property.image!"
+                    alt="House Image"
+                    class="w-full h-60 object-cover"
+                  >
                 </div>
                 <div class="w-5/12 gap-5 ml-3 mt-3">
                   <div>
@@ -59,43 +79,53 @@
                   </div>
                   <div class="mt-2">
                     ⭐⭐⭐
-                    <Icon class="text-blue-400" name="subway:location-3" size="15" />
+                    <Icon
+                      class="text-blue-400"
+                      name="subway:location-3"
+                      size="15"
+                    />
                     <span class="text-blue-400 mt-2 text-sm"> 中區-台中市 - 查看地圖 </span>
-
                   </div>
                   <div class="mt-2">
                     <div class="flex justify-content ">
-                      <div v-if="parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).type"
-                        class="flex items-center space-x-2 mb-4">
-                        <Badge class="text-black px-2 py-1 rounded-sm bg-card border-gray-400">
+                      <div
+                        v-if="parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).type"
+                        class="flex items-center space-x-2 mb-4"
+                      >
+                        <Badge class="text-black px-2 py-1 rounded-sm bg-card border-gray-400 dark:text-gray-200">
                           {{ property.rental_property_info.length &&
                             property.rental_property_info[0]?.property_attributes ?
-                            parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).type : '無資料' }}
+                              parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).type : '無資料' }}
                         </Badge>
                       </div>
                       <div
                         v-if="parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).genderRestriction && (parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).genderRestriction === '男' || parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).genderRestriction === '女')"
-                        class="flex items-center space-x-2 mb-4 ml-2">
-                        <Badge class="text-black px-2 py-1 rounded-sm bg-card border-gray-400">
+                        class="flex items-center space-x-2 mb-4 ml-2"
+                      >
+                        <Badge class="text-black px-2 py-1 rounded-sm bg-card border-gray-400 dark:text-gray-200">
                           {{ property.rental_property_info.length &&
                             property.rental_property_info[0]?.property_attributes ?
-                            parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).genderRestriction
+                              parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).genderRestriction
                             :
-                            '無資料' }}
+                              '無資料' }}
                         </Badge>
                       </div>
                       <div
                         v-if="parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).rentalSubsidy"
-                        class="flex items-center space-x-2 mb-4 ml-2">
-                        <Badge class="text-black px-2 py-1 rounded-sm bg-card border-gray-400">
+                        class="flex items-center space-x-2 mb-4 ml-2"
+                      >
+                        <Badge class="text-black px-2 py-1 rounded-sm bg-card border-gray-400 dark:text-gray-200">
                           {{ property.rental_property_info.length &&
                             property.rental_property_info[0]?.property_attributes ?
-                            (parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).rentalSubsidy
-                              ?
-                              '有補助' : '無補助') : '無資料' }}
+                              (parsePropertyAttributes(property.rental_property_info[0]?.property_attributes).rentalSubsidy
+                                ?
+                                  '有補助' : '無補助') : '無資料' }}
                         </Badge>
                       </div>
-                      <div v-else class="flex items-center space-x-2 mb-4">
+                      <div
+                        v-else
+                        class="flex items-center space-x-2 mb-4"
+                      >
                         <Badge class="invisible px-2 py-1 rounded">
                           123
                         </Badge>
@@ -111,7 +141,9 @@
                 <div class="w-3/12 flex flex-col border h-60 justify-between ">
                   <div class="flex justify-end m-2">
                     <div class="">
-                      <div class="text-gray-400 font-sans text-[12px] mr-2 mt-3">2則評論</div>
+                      <div class="text-gray-400 font-sans text-[12px] mr-2 mt-3">
+                        2則評論
+                      </div>
                     </div>
                     <div class="p-2 border-2 border-blue-600 rounded-lg text-blue-600">
                       8.1
@@ -125,11 +157,15 @@
                       {{ property.rental_property_info.length ? `NT$${property.rental_property_info[0].price}` : '尚無價位'
                       }}
                     </div>
-                    <div class = "flex mb-2 gap-3">
+                    <div class="flex mb-2 gap-3">
                       <div v-if="user != null || user != undefined">
-                        <ReservationInviteDrawer v-if="user" v-model:inviter="user.id"
-                          v-model:invitee="property.landlord_id" v-model:reservation_type="ReserveType"
-                          v-model:propertyId="property.id" />
+                        <ReservationInviteDrawer
+                          v-if="user"
+                          v-model:inviter="user.id"
+                          v-model:invitee="property.landlord_id"
+                          v-model:reservation_type="ReserveType"
+                          v-model:propertyId="property.id"
+                        />
                       </div>
                       <NuxtLink :to="'/advertisement/info-' + property.id">
                         <Button class="bg-green-500 text-white px-4 py-1 rounded">
@@ -140,7 +176,6 @@
                   </div>
                 </div>
               </div>
-
             </Card>
           </div>
         </div>

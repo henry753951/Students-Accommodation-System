@@ -1,8 +1,15 @@
 <template>
   <div class="bg-card min-h-screen p-10">
     <div class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg border">
-      <div v-if="rental_property && rental_property.length > 0" class="flex flex-col md:flex-row gap-5">
-        <img :src="rental_property[0].image!" alt="House Image" class="w-full h-64 object-cover md:w-1/2 rounded-lg">
+      <div
+        v-if="rental_property && rental_property.length > 0"
+        class="flex flex-col md:flex-row gap-5"
+      >
+        <img
+          :src="rental_property[0].image!"
+          alt="House Image"
+          class="w-full h-64 object-cover md:w-1/2 rounded-lg"
+        >
         <div class="flex flex-col w-1/2 gap-3">
           <div class="text-2xl font-bold">
             {{ rental_property[0].address ? rental_property[0].address : 'Nothing' }}
@@ -15,7 +22,7 @@
             <div class="text-gray-500 dark:text-gray-400 mb-3 break-words max-w-full">
               {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 &&
                 rental_property[0].rental_property_info[0].description ?
-                rental_property[0].rental_property_info[0].description : 'Nothing' }}
+                  rental_property[0].rental_property_info[0].description : 'Nothing' }}
             </div>
           </div>
 
@@ -24,17 +31,25 @@
               {{ averageScore }} / 10
             </div>
             <div v-if="averageScore >= 5">
-              <Icon name="line-md:emoji-smile" size="28" class="text-green-500" />
+              <Icon
+                name="line-md:emoji-smile"
+                size="28"
+                class="text-green-500"
+              />
             </div>
             <div v-else>
-              <Icon name="line-md:emoji-frown" size="28" class="text-red-600" />
+              <Icon
+                name="line-md:emoji-frown"
+                size="28"
+                class="text-red-600"
+              />
             </div>
           </div>
           <div class="flex flex-row justify-between">
             <div class="text-3xl font-bold">
               $ NT {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 &&
                 rental_property[0].rental_property_info[0].price ? rental_property[0].rental_property_info[0].price :
-              'Nothing' }}
+                  'Nothing' }}
             </div>
             <div class="flex flex-row gap-2 items-end pb-[2px]">
               <div class="font-bold">
@@ -54,32 +69,60 @@
       <div v-if="rental_property && rental_property.length > 0">
         <div class="flex flex-row justify-center gap-[100px]">
           <div class="flex flex-col items-center gap-2">
-            <Icon name="flat-color-icons:home" size="40" />
+            <Icon
+              name="flat-color-icons:home"
+              size="40"
+            />
             <div class="text-gray-500 dark:text-gray-400">
               {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 &&
                 rental_property[0].rental_property_info[0].property_attributes ?
-                parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).type : 'Nothing'
+                  parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).type : 'Nothing'
               }}
             </div>
           </div>
 
           <div class="flex flex-col items-center gap-2">
-            <Icon name="noto:transgender-symbol" size="40" />
+            <Icon
+              v-if="parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).genderRestriction === '男'"
+              name="mdi:gender-male"
+              size="40"
+              class="text-blue-500"
+            />
+            <Icon
+              v-else-if="parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).genderRestriction === '女'"
+              name="mdi:gender-female"
+              size="40"
+              class="text-pink-500"
+            />
+            <Icon
+              v-else
+              name="noto:transgender-symbol"
+              size="40"
+            />
             <div class="text-gray-500 dark:text-gray-400">
               {{ rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 &&
                 rental_property[0].rental_property_info[0].property_attributes ?
-                parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).genderRestriction
-              : 'Nothing' }}
+                  parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).genderRestriction
+                : 'Nothing' }}
             </div>
           </div>
 
           <div class="flex flex-col items-center gap-2">
             <div
-              v-if="rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].property_attributes && parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).rentalSubsidy">
-              <Icon name="line-md:check-all" size="40" class="text-green-500" />
+              v-if="rental_property[0].rental_property_info && rental_property[0].rental_property_info.length > 0 && rental_property[0].rental_property_info[0].property_attributes && parsePropertyAttributes(rental_property[0].rental_property_info[0].property_attributes).rentalSubsidy"
+            >
+              <Icon
+                name="line-md:check-all"
+                size="40"
+                class="text-green-500"
+              />
             </div>
             <div v-else>
-              <Icon name="line-md:close" size="40" class="text-red-600" />
+              <Icon
+                name="line-md:close"
+                size="40"
+                class="text-red-600"
+              />
             </div>
             <div class="text-gray-500 dark:text-gray-400">
               租金補助
@@ -87,29 +130,43 @@
           </div>
 
           <div class="flex flex-col items-center gap-2">
-            <Icon name="uiw:wifi" size="40" class="text-sky-600" />
+            <Icon
+              name="uiw:wifi"
+              size="40"
+              class="text-sky-600"
+            />
             <div class="text-gray-500 dark:text-gray-400">
               500Mbps
             </div>
           </div>
 
           <div class="flex flex-col items-center gap-2">
-            <Icon name="twemoji:fire-extinguisher" size="40" />
+            <Icon
+              name="twemoji:fire-extinguisher"
+              size="40"
+            />
             <div class="text-gray-500 dark:text-gray-400">
               有滅火設施
             </div>
           </div>
-
         </div>
       </div>
     </div>
 
 
-    <div v-if="comment_data?.length !== 0 && showUserCommentsOnly === false"
-      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg border mt-5">
+    <div
+      v-if="comment_data?.length !== 0 && showUserCommentsOnly === false"
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg border mt-5"
+    >
       <h3 class="flex justify-content text-2xl font-bold mb-4">
-        評論區 <div v-if="user != null || user != undefined" class="flex ml-4">
-          <Button variant="outline" @click="switchStatus">
+        評論區 <div
+          v-if="user != null || user != undefined"
+          class="flex ml-4"
+        >
+          <Button
+            variant="outline"
+            @click="switchStatus"
+          >
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
         </div>
@@ -119,25 +176,40 @@
           留言
         </h3>
         <p class="text-gray-500 mb-3">
-          <Input v-model="comment" placeholder="Comment" />
+          <Input
+            v-model="comment"
+            placeholder="Comment"
+          />
         </p>
         <h3 class="text-lg font-bold mb-2">
           評分
         </h3>
         <p class="text-gray-500 mb-2">
-          <Input v-model="score" placeholder="0 ~ 10" />
+          <Input
+            v-model="score"
+            placeholder="0 ~ 10"
+          />
         </p>
-        <Button class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3" @click="sendComment">
+        <Button
+          class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3"
+          @click="sendComment"
+        >
           發送
         </Button>
       </div>
-      <div v-for="items in comment_data" :key="items.id" class="mb-4">
+      <div
+        v-for="items in comment_data"
+        :key="items.id"
+        class="mb-4"
+      >
         <Card>
           <CardHeader class="border-b border-gray-200 dark:border-gray-700 pb-4">
             <div class="flex items-center ">
               <Avatar class="bg-slate-200 mr-3">
-                <AvatarImage :src="items.app_user && items.app_user.avatar_url ? items.app_user.avatar_url : 'null'"
-                  alt="@radix-vue" />
+                <AvatarImage
+                  :src="items.app_user && items.app_user.avatar_url ? items.app_user.avatar_url : 'null'"
+                  alt="@radix-vue"
+                />
                 <AvatarFallback>name</AvatarFallback>
               </Avatar>
               <span class="font-semibold mr-5">{{ items.app_user ? items.app_user.name : '訪客' }}</span>
@@ -145,8 +217,10 @@
                 {{ items.score }}/10
               </div>
               <div class="ml-auto">
-                <Button class="bg-red-400 text-white px-4 py-2 rounded ml-auto"
-                  @click="deleteComment(items.id, items.user_id ? items.user_id : 'null')">
+                <Button
+                  class="bg-red-400 text-white px-4 py-2 rounded ml-auto"
+                  @click="deleteComment(items.id, items.user_id ? items.user_id : 'null')"
+                >
                   刪除評論
                 </Button>
               </div>
@@ -168,11 +242,19 @@
         </Card>
       </div>
     </div>
-    <div v-else-if="userComments.length !== 0 && showUserCommentsOnly === true"
-      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300 mt-5">
+    <div
+      v-else-if="userComments.length !== 0 && showUserCommentsOnly === true"
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border mt-5"
+    >
       <h3 class="flex justify-content text-2xl font-bold mb-4">
-        評論區 <div v-if="user != null || user != undefined" class="flex ml-4">
-          <Button variant="outline" @click="switchStatus">
+        評論區 <div
+          v-if="user != null || user != undefined"
+          class="flex ml-4"
+        >
+          <Button
+            variant="outline"
+            @click="switchStatus"
+          >
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
         </div>
@@ -182,25 +264,40 @@
           留言
         </h3>
         <p class="text-gray-500 mb-3">
-          <Input v-model="comment" placeholder="Comment" />
+          <Input
+            v-model="comment"
+            placeholder="Comment"
+          />
         </p>
         <h3 class="text-lg font-bold mb-2">
           評分
         </h3>
         <p class="text-gray-500 mb-2">
-          <Input v-model="score" placeholder="0 ~ 10" />
+          <Input
+            v-model="score"
+            placeholder="0 ~ 10"
+          />
         </p>
-        <Button class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3" @click="sendComment">
+        <Button
+          class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3"
+          @click="sendComment"
+        >
           發送
         </Button>
       </div>
-      <div v-for="items in userComments" :key="items.id" class="mb-4">
+      <div
+        v-for="items in userComments"
+        :key="items.id"
+        class="mb-4"
+      >
         <Card>
           <CardHeader class="border-b border-gray-200 dark:border-gray-700 pb-4">
             <div class="flex items-center ">
               <Avatar class="bg-slate-200 mr-3">
-                <AvatarImage :src="items.app_user && items.app_user.avatar_url ? items.app_user.avatar_url : 'null'"
-                  alt="@radix-vue" />
+                <AvatarImage
+                  :src="items.app_user && items.app_user.avatar_url ? items.app_user.avatar_url : 'null'"
+                  alt="@radix-vue"
+                />
                 <AvatarFallback>name</AvatarFallback>
               </Avatar>
               <span class="font-semibold mr-5">{{ items.app_user ? items.app_user.name : '訪客' }}</span>
@@ -208,8 +305,10 @@
                 {{ items.score }}/10
               </div>
               <div class="ml-auto">
-                <Button class="bg-red-400 text-white px-4 py-2 rounded ml-auto"
-                  @click="deleteComment(items.id, items.user_id ? items.user_id : 'null')">
+                <Button
+                  class="bg-red-400 text-white px-4 py-2 rounded ml-auto"
+                  @click="deleteComment(items.id, items.user_id ? items.user_id : 'null')"
+                >
                   刪除評論
                 </Button>
               </div>
@@ -231,11 +330,19 @@
         </Card>
       </div>
     </div>
-    <div v-else-if="userComments.length == 0 && showUserCommentsOnly === true && comment_data?.length !== 0"
-      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300 mt-5">
+    <div
+      v-else-if="userComments.length == 0 && showUserCommentsOnly === true && comment_data?.length !== 0"
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border mt-5"
+    >
       <h3 class="flex justify-content text-2xl font-bold mb-4">
-        評論區 <div v-if="user != null || user != undefined" class="flex ml-4">
-          <Button variant="outline" @click="switchStatus">
+        評論區 <div
+          v-if="user != null || user != undefined"
+          class="flex ml-4"
+        >
+          <Button
+            variant="outline"
+            @click="switchStatus"
+          >
             {{ showUserCommentsOnly ? '顯示所有評論' : '只顯示我的評論' }}
           </Button>
         </div>
@@ -245,15 +352,24 @@
           留言
         </h3>
         <p class="text-gray-500 mb-3">
-          <Input v-model="comment" placeholder="Comment" />
+          <Input
+            v-model="comment"
+            placeholder="Comment"
+          />
         </p>
         <h3 class="text-lg font-bold mb-2">
           評分
         </h3>
         <p class="text-gray-500 mb-2">
-          <Input v-model="score" placeholder="0 ~ 10" />
+          <Input
+            v-model="score"
+            placeholder="0 ~ 10"
+          />
         </p>
-        <Button class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3" @click="sendComment">
+        <Button
+          class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3"
+          @click="sendComment"
+        >
           發送
         </Button>
       </div>
@@ -261,7 +377,10 @@
         <p>你目前沒有評論</p>
       </div>
     </div>
-    <div v-else class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border border-gray-300 mt-5">
+    <div
+      v-else
+      class="max-w-4xl mx-auto space-y-6 bg-card p-6 rounded-lg shadow-lg border mt-5"
+    >
       <h3 class="flex justify-content text-2xl font-bold mb-4">
         評論區
       </h3>
@@ -270,15 +389,24 @@
           留言
         </h3>
         <p class="text-gray-500 mb-3">
-          <Input v-model="comment" placeholder="Comment" />
+          <Input
+            v-model="comment"
+            placeholder="Comment"
+          />
         </p>
         <h3 class="text-lg font-bold mb-2">
           評分
         </h3>
         <p class="text-gray-500 mb-2">
-          <Input v-model="score" placeholder="0 ~ 10" />
+          <Input
+            v-model="score"
+            placeholder="0 ~ 10"
+          />
         </p>
-        <Button class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3" @click="sendComment">
+        <Button
+          class="bg-green-500 text-white px-4 py-2 rounded mb-2 mt-3"
+          @click="sendComment"
+        >
           發送
         </Button>
       </div>
@@ -304,7 +432,7 @@ const route = useRoute();
 const department_id = ref(route.params.id);
 const showUserCommentsOnly = ref(false);
 
-const { data: rental_property, error, refresh: refreshSite } = useAsyncData(async () => {
+const { data: rental_property, error, refresh: refreshSite } = await useAsyncData(route.params.id as string ,async () => {
   const { data } = await supabase.from('rental_property').select(`
     *,
     rental_property_info (
@@ -314,7 +442,7 @@ const { data: rental_property, error, refresh: refreshSite } = useAsyncData(asyn
   return data;
 });
 
-const { data: comment_data, error: error2, refresh: refreshSite2 } = useAsyncData(async () => {
+const { data: comment_data, error: error2, refresh: refreshSite2 } = await useAsyncData(async () => {
   const { data } = await supabase.from('advertise_comment').select(`
     id,
     user_id,
