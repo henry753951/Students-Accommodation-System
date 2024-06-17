@@ -71,12 +71,12 @@ const menu_ = ref({
       roles: ['student']
     },
   ],
-  租屋平台: {
-    title: '租屋平台',
-    href: '/advertisement',
-    description: '瀏覽和查找租屋廣告信息。',
-    roles: null
-  },
+  // 租屋平台: {
+  //   title: '租屋平台',
+  //   href: '/advertisement',
+  //   description: '瀏覽和查找租屋廣告信息。',
+  //   roles: null
+  // },
   // 租屋點交流區: { 
   //   title: '租屋點交流區', 
   //   href: '/social',
